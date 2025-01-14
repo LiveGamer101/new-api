@@ -164,25 +164,35 @@ const HeaderBar = () => {
             selectedKeys={[]}
             // items={headerButtons}
             onSelect={(key) => {}}
-            header={styleState.isMobile?{
-              logo: (
+            header={{
+              logo: styleState.isMobile ? (
                 <>
-                  {
-                    !styleState.showSider ?
-                      <Button icon={<IconMenu />} theme="light" aria-label={t('展开侧边栏')} onClick={
-                        () => styleDispatch({ type: 'SET_SIDER', payload: true })
-                      } />:
-                      <Button icon={<IconIndentLeft />} theme="light" aria-label={t('闭侧边栏')} onClick={
-                        () => styleDispatch({ type: 'SET_SIDER', payload: false })
-                      } />
-                  }
+                  {!styleState.showSider ? (
+                    <Button
+                      icon={<IconMenu />}
+                      theme="borderless"
+                      style={{ color: 'var(--semi-color-text-0)' }}
+                      aria-label={t('展开侧边栏')}
+                      onClick={() => styleDispatch({ type: 'SET_SIDER', payload: true })}
+                    />
+                  ) : (
+                    <Button
+                      icon={<IconIndentLeft />}
+                      theme="borderless"
+                      style={{ color: 'var(--semi-color-text-0)' }}
+                      aria-label={t('闭侧边栏')}
+                      onClick={() => styleDispatch({ type: 'SET_SIDER', payload: false })}
+                    />
+                  )}
                 </>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img src={logo} alt='logo' style={{ height: '32px' }} />
+                  <Text strong style={{ fontSize: '18px', color: 'var(--semi-color-text-0)' }}>
+                    {systemName}
+                  </Text>
+                </div>
               ),
-            }:{
-              logo: (
-                <img src={logo} alt='logo' />
-              ),
-              text: systemName,
             }}
             items={buttons}
             footer={
@@ -242,20 +252,50 @@ const HeaderBar = () => {
                   <>
                     <Dropdown
                       position='bottomRight'
+                      trigger="hover"
                       render={
                         <Dropdown.Menu>
-                          <Dropdown.Item onClick={logout}>{t('退出')}</Dropdown.Item>
+                          <Dropdown.Item
+                            icon={<IconUser />}
+                            onClick={() => navigate('/setting/personal')}
+                          >
+                            {t('个人中心')}
+                          </Dropdown.Item>
+                          <Dropdown.Divider />
+                          <Dropdown.Item
+                            icon={<IconClose />}
+                            type="danger"
+                            onClick={logout}
+                          >
+                            {t('退出')}
+                          </Dropdown.Item>
                         </Dropdown.Menu>
                       }
                     >
-                      <Avatar
-                        size='small'
-                        color={stringToColor(userState.user.username)}
-                        style={{ margin: 4 }}
-                      >
-                        {userState.user.username[0]}
-                      </Avatar>
-                      {styleState.isMobile?null:<Text>{userState.user.username}</Text>}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        ':hover': {
+                          background: 'var(--semi-color-fill-0)'
+                        }
+                      }}>
+                        <Avatar
+                          size='small'
+                          color={stringToColor(userState.user.username)}
+                        >
+                          {userState.user.username[0]}
+                        </Avatar>
+                        {!styleState.isMobile && (
+                          <Text strong style={{ color: 'var(--semi-color-text-0)' }}>
+                            {userState.user.username}
+                          </Text>
+                        )}
+                      </div>
                     </Dropdown>
                   </>
                 ) : (

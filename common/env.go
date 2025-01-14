@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func GetEnvOrDefault(env string, defaultValue int) int {
@@ -24,7 +25,6 @@ func GetEnvOrDefaultString(env string, defaultValue string) string {
 	}
 	return os.Getenv(env)
 }
-
 func GetEnvOrDefaultBool(env string, defaultValue bool) bool {
 	if env == "" || os.Getenv(env) == "" {
 		return defaultValue
@@ -35,4 +35,16 @@ func GetEnvOrDefaultBool(env string, defaultValue bool) bool {
 		return defaultValue
 	}
 	return b
+}
+
+func GetEnvAsStringSlice(env string, separator string) []string {
+	if env == "" || os.Getenv(env) == "" {
+		return []string{}
+	}
+	value := os.Getenv(env)
+	if value == "" {
+		return []string{}
+	}
+	return strings.Split(value, separator)
+}
 }

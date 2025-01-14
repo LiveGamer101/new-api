@@ -8,10 +8,12 @@ import (
 	"one-api/common"
 	"one-api/constant"
 	"one-api/controller"
+	"one-api/discord"
 	"one-api/middleware"
 	"one-api/model"
 	"one-api/router"
 	"one-api/service"
+	"one-api/setting"
 	"os"
 	"strconv"
 
@@ -124,6 +126,17 @@ func main() {
 		}()
 		go common.Monitor()
 		common.SysLog("pprof enabled")
+	}
+
+	// Initialize Discord bot if enabled
+	if setting.EnableDiscordBot() {
+		err := discord.Init()
+		if err != nil {
+			common.SysError("failed to initialize Discord bot: " + err.Error())
+		} else {
+			common.SysLog("Discord bot initialized")
+			defer discord.Close()
+		}
 	}
 
 	service.InitTokenEncoders()

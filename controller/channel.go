@@ -8,6 +8,8 @@ import (
 	"one-api/model"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,6 +42,11 @@ type OpenAIModelsResponse struct {
 	Success bool          `json:"success"`
 }
 
+const (
+	channelCacheKeyPrefix = "channel:"
+	channelCacheDuration = 5 * time.Minute
+)
+
 func GetAllChannels(c *gin.Context) {
 	p, _ := strconv.Atoi(c.Query("p"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
@@ -49,9 +56,38 @@ func GetAllChannels(c *gin.Context) {
 	if pageSize < 0 {
 		pageSize = common.ItemsPerPage
 	}
+
+	// Generate cache key
+	cacheKey := fmt.Sprintf("%sall:%d:%d", channelCacheKeyPrefix, p, pageSize)
+	if idSort, _ := strconv.ParseBool(c.Query("id_sort")); idSort {
+		cacheKey += ":sorted"
+	}
+	if enableTagMode, _ := strconv.ParseBool(c.Query("tag_mode")); enableTagMode {
+		cacheKey += ":tagged"
+	}
+
+	// Try to get from cache first
+	if common.RedisEnabled {
+		var channelData []*model.Channel
+		cachedData, err := common.RedisGet(cacheKey)
+		if err == nil {
+			if err := json.Unmarshal([]byte(cachedData), &channelData); err == nil {
+				c.JSON(http.StatusOK, gin.H{
+					"success": true,
+					"message": "",
+					"data":    channelData,
+					"cached":  true,
+				})
+				return
+			}
+		}
+	}
+
+	// If not in cache, get from database
 	channelData := make([]*model.Channel, 0)
 	idSort, _ := strconv.ParseBool(c.Query("id_sort"))
 	enableTagMode, _ := strconv.ParseBool(c.Query("tag_mode"))
+	
 	if enableTagMode {
 		tags, err := model.GetPaginatedTags(p*pageSize, pageSize)
 		if err != nil {
@@ -61,14 +97,25 @@ func GetAllChannels(c *gin.Context) {
 			})
 			return
 		}
+		
+		// Use goroutines to fetch channels in parallel
+		var wg sync.WaitGroup
+		var mu sync.Mutex
 		for _, tag := range tags {
 			if tag != nil && *tag != "" {
-				tagChannel, err := model.GetChannelsByTag(*tag, idSort)
-				if err == nil {
-					channelData = append(channelData, tagChannel...)
-				}
+				wg.Add(1)
+				go func(tag string) {
+					defer wg.Done()
+					tagChannel, err := model.GetChannelsByTag(tag, idSort)
+					if err == nil {
+						mu.Lock()
+						channelData = append(channelData, tagChannel...)
+						mu.Unlock()
+					}
+				}(*tag)
 			}
 		}
+		wg.Wait()
 	} else {
 		channels, err := model.GetAllChannels(p*pageSize, pageSize, false, idSort)
 		if err != nil {
@@ -80,10 +127,19 @@ func GetAllChannels(c *gin.Context) {
 		}
 		channelData = channels
 	}
+
+	// Cache the result
+	if common.RedisEnabled {
+		if jsonData, err := json.Marshal(channelData); err == nil {
+			common.RedisSet(cacheKey, string(jsonData), channelCacheDuration)
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
 		"data":    channelData,
+		"cached":  false,
 	})
 	return
 }
@@ -233,73 +289,193 @@ func GetChannel(c *gin.Context) {
 	return
 }
 
+const (
+	maxKeyLength = 1000
+	maxBatchSize = 100
+	addChannelRateLimit = 10 // requests per minute
+)
+
 func AddChannel(c *gin.Context) {
-	channel := model.Channel{}
-	err := c.ShouldBindJSON(&channel)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
-		return
-	}
-	channel.CreatedTime = common.GetTimestamp()
-	keys := strings.Split(channel.Key, "\n")
-	if channel.Type == common.ChannelTypeVertexAi {
-		if channel.Other == "" {
-			c.JSON(http.StatusOK, gin.H{
-				"success": false,
-				"message": "部署地区不能为空",
-			})
-			return
-		} else {
-			if common.IsJsonStr(channel.Other) {
-				// must have default
-				regionMap := common.StrToMap(channel.Other)
-				if regionMap["default"] == nil {
-					c.JSON(http.StatusOK, gin.H{
-						"success": false,
-						"message": "部署地区必须包含default字段",
-					})
-					return
-				}
-			}
-		}
-		keys = []string{channel.Key}
-	}
-	channels := make([]model.Channel, 0, len(keys))
-	for _, key := range keys {
-		if key == "" {
-			continue
-		}
-		localChannel := channel
-		localChannel.Key = key
-		// Validate the length of the model name
-		models := strings.Split(localChannel.Models, ",")
-		for _, model := range models {
-			if len(model) > 255 {
-				c.JSON(http.StatusOK, gin.H{
+	// Rate limiting
+	clientIP := c.ClientIP()
+	rateLimitKey := fmt.Sprintf("ratelimit:addchannel:%s", clientIP)
+	if common.RedisEnabled {
+		count, _ := common.RedisGet(rateLimitKey)
+		if count != "" {
+			if requests, _ := strconv.Atoi(count); requests > addChannelRateLimit {
+				c.JSON(http.StatusTooManyRequests, gin.H{
 					"success": false,
-					"message": fmt.Sprintf("模型名称过长: %s", model),
+					"message": "Too many requests, please try again later",
 				})
 				return
 			}
+			common.RedisIncr(rateLimitKey, 1)
+		} else {
+			common.RedisSet(rateLimitKey, "1", time.Minute)
 		}
-		channels = append(channels, localChannel)
 	}
-	err = model.BatchInsertChannels(channels)
+
+	channel := model.Channel{}
+	err := c.ShouldBindJSON(&channel)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Invalid request data: " + err.Error(),
+		})
+		return
+	}
+
+	// Basic validation
+	if err := validateChannel(&channel); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 		return
 	}
+
+	channel.CreatedTime = common.GetTimestamp()
+	
+	// Split and validate keys
+	keys := strings.Split(channel.Key, "\n")
+	if len(keys) > maxBatchSize {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("Too many keys. Maximum allowed is %d", maxBatchSize),
+		})
+		return
+	}
+
+	// Handle VertexAI specific validation
+	if channel.Type == common.ChannelTypeVertexAi {
+		if err := validateVertexAIChannel(&channel); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+			return
+		}
+		keys = []string{channel.Key}
+	}
+
+	// Process channels in batches
+	channels := make([]model.Channel, 0, len(keys))
+	processedCount := 0
+	
+	for _, key := range keys {
+		if key = strings.TrimSpace(key); key == "" {
+			continue
+		}
+
+		if len(key) > maxKeyLength {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": fmt.Sprintf("Key too long. Maximum length is %d", maxKeyLength),
+			})
+			return
+		}
+
+		localChannel := channel
+		localChannel.Key = key
+
+		if err := validateModels(&localChannel); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		channels = append(channels, localChannel)
+		processedCount++
+
+		// Process in batches to avoid memory issues with large inputs
+		if len(channels) >= maxBatchSize {
+			if err := processBatchWithRetry(channels); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"success": false,
+					"message": "Error processing channels: " + err.Error(),
+				})
+				return
+			}
+			channels = channels[:0]
+		}
+	}
+
+	// Process remaining channels
+	if len(channels) > 0 {
+		if err := processBatchWithRetry(channels); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": "Error processing channels: " + err.Error(),
+			})
+			return
+		}
+	}
+
+	// Clear related caches
+	if common.RedisEnabled {
+		// Use pattern matching to clear all related cache keys
+		common.RedisDel(channelCacheKeyPrefix + "*")
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"message": "",
+		"message": fmt.Sprintf("Successfully added %d channels", processedCount),
 	})
-	return
+}
+
+func validateChannel(channel *model.Channel) error {
+	if channel.Name == "" {
+		return fmt.Errorf("channel name is required")
+	}
+	if channel.Key == "" {
+		return fmt.Errorf("channel key is required")
+	}
+	if len(channel.Key) > maxKeyLength {
+		return fmt.Errorf("key too long, maximum length is %d", maxKeyLength)
+	}
+	return nil
+}
+
+func validateVertexAIChannel(channel *model.Channel) error {
+	if channel.Other == "" {
+		return fmt.Errorf("deployment region cannot be empty")
+	}
+	
+	if common.IsJsonStr(channel.Other) {
+		regionMap := common.StrToMap(channel.Other)
+		if regionMap["default"] == nil {
+			return fmt.Errorf("deployment region must contain default field")
+		}
+	}
+	return nil
+}
+
+func validateModels(channel *model.Channel) error {
+	models := strings.Split(channel.Models, ",")
+	for _, model := range models {
+		if len(model) > 255 {
+			return fmt.Errorf("model name too long: %s", model)
+		}
+	}
+	return nil
+}
+
+func processBatchWithRetry(channels []model.Channel) error {
+	maxRetries := 3
+	var lastErr error
+	
+	for i := 0; i < maxRetries; i++ {
+		if err := model.BatchInsertChannels(channels); err != nil {
+			lastErr = err
+			time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
+			continue
+		}
+		return nil
+	}
+	
+	return fmt.Errorf("failed after %d retries: %v", maxRetries, lastErr)
 }
 
 func DeleteChannel(c *gin.Context) {

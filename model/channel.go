@@ -2,40 +2,126 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"one-api/common"
 	"strings"
 	"sync"
+	"time"
 
 	"gorm.io/gorm"
 )
 
+const (
+	batchSize = 100
+	maxRetries = 3
+	retryDelay = 100 * time.Millisecond
+)
+
+// Cache functions
+func getChannelCacheKey(id int) string {
+	return fmt.Sprintf("channel:%d", id)
+}
+
+func (channel *Channel) Cache() error {
+	if !common.RedisEnabled {
+		return nil
+	}
+	data, err := json.Marshal(channel)
+	if err != nil {
+		return err
+	}
+	return common.RedisSet(getChannelCacheKey(channel.Id), string(data), 5*time.Minute)
+}
+
+func GetChannelFromCache(id int) (*Channel, error) {
+	if !common.RedisEnabled {
+		return nil, fmt.Errorf("redis not enabled")
+	}
+	data, err := common.RedisGet(getChannelCacheKey(id))
+	if err != nil {
+		return nil, err
+	}
+	var channel Channel
+	err = json.Unmarshal([]byte(data), &channel)
+	if err != nil {
+		return nil, err
+	}
+	return &channel, nil
+}
+
+func InvalidateChannelCache(id int) error {
+	if !common.RedisEnabled {
+		return nil
+	}
+	return common.RedisDel(getChannelCacheKey(id))
+}
+
 type Channel struct {
-	Id                 int     `json:"id"`
-	Type               int     `json:"type" gorm:"default:0"`
-	Key                string  `json:"key" gorm:"not null"`
+	Id                 int     `json:"id" gorm:"primaryKey;autoIncrement"`
+	Type               int     `json:"type" gorm:"default:0;index:idx_type"`
+	Key                string  `json:"key" gorm:"not null;index:idx_key"`
 	OpenAIOrganization *string `json:"openai_organization"`
 	TestModel          *string `json:"test_model"`
-	Status             int     `json:"status" gorm:"default:1"`
-	Name               string  `json:"name" gorm:"index"`
-	Weight             *uint   `json:"weight" gorm:"default:0"`
-	CreatedTime        int64   `json:"created_time" gorm:"bigint"`
+	Status             int     `json:"status" gorm:"default:1;index:idx_status"`
+	Name               string  `json:"name" gorm:"index:idx_name"`
+	Weight             *uint   `json:"weight" gorm:"default:0;index:idx_weight"`
+	CreatedTime        int64   `json:"created_time" gorm:"bigint;index:idx_created_time"`
 	TestTime           int64   `json:"test_time" gorm:"bigint"`
 	ResponseTime       int     `json:"response_time"` // in milliseconds
 	BaseURL            *string `json:"base_url" gorm:"column:base_url;default:''"`
 	Other              string  `json:"other"`
 	Balance            float64 `json:"balance"` // in USD
 	BalanceUpdatedTime int64   `json:"balance_updated_time" gorm:"bigint"`
-	Models             string  `json:"models"`
-	Group              string  `json:"group" gorm:"type:varchar(64);default:'default'"`
-	UsedQuota          int64   `json:"used_quota" gorm:"bigint;default:0"`
+	Models             string  `json:"models" gorm:"index:idx_models"`
+	Group              string  `json:"group" gorm:"type:varchar(64);default:'default';index:idx_group"`
+	UsedQuota          int64   `json:"used_quota" gorm:"bigint;default:0;index:idx_used_quota"`
 	ModelMapping       *string `json:"model_mapping" gorm:"type:varchar(1024);default:''"`
-	//MaxInputTokens     *int    `json:"max_input_tokens" gorm:"default:0"`
-	StatusCodeMapping *string `json:"status_code_mapping" gorm:"type:varchar(1024);default:''"`
-	Priority          *int64  `json:"priority" gorm:"bigint;default:0"`
+	StatusCodeMapping  *string `json:"status_code_mapping" gorm:"type:varchar(1024);default:''"`
+	Priority          *int64  `json:"priority" gorm:"bigint;default:0;index:idx_priority"`
 	AutoBan           *int    `json:"auto_ban" gorm:"default:1"`
 	OtherInfo         string  `json:"other_info"`
-	Tag               *string `json:"tag" gorm:"index"`
+	Tag               *string `json:"tag" gorm:"index:idx_tag"`
 	Setting           string  `json:"setting" gorm:"type:text"`
+}
+
+// Cache keys
+const (
+	channelCacheKeyPrefix = "channel:"
+	channelCacheExpiration = 5 * time.Minute
+	channelListCacheKey = "channel:list"
+	channelListCacheExpiration = 1 * time.Minute
+)
+
+// Cache functions
+func cacheKey(id int) string {
+	return fmt.Sprintf("%s%d", channelCacheKeyPrefix, id)
+}
+
+func (channel *Channel) Cache() error {
+	if !common.RedisEnabled {
+		return nil
+	}
+	return common.RedisHSetObj(cacheKey(channel.Id), channel, channelCacheExpiration)
+}
+
+func GetChannelFromCache(id int) (*Channel, error) {
+	if !common.RedisEnabled {
+		return nil, fmt.Errorf("redis not enabled")
+	}
+	
+	channel := &Channel{}
+	err := common.RedisHGetObj(cacheKey(id), channel)
+	if err != nil {
+		return nil, err
+	}
+	return channel, nil
+}
+
+func DeleteChannelCache(id int) error {
+	if !common.RedisEnabled {
+		return nil
+	}
+	return common.RedisDel(cacheKey(id))
 }
 
 func (channel *Channel) GetModels() []string {

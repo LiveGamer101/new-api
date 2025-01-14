@@ -53,6 +53,17 @@ func LoadEnv() {
 	if os.Getenv("SQLITE_PATH") != "" {
 		SQLitePath = os.Getenv("SQLITE_PATH")
 	}
+
+	// Load Discord bot settings
+	if os.Getenv("DISCORD_BOT_TOKEN") != "" {
+		setting.DiscordBotToken = os.Getenv("DISCORD_BOT_TOKEN")
+	}
+	
+	// Load Discord admin IDs
+	adminIds := GetEnvAsStringSlice("DISCORD_ADMIN_IDS", ",")
+	for _, id := range adminIds {
+		setting.AddDiscordAdmin(strings.TrimSpace(id))
+	}
 	if *LogDir != "" {
 		var err error
 		*LogDir, err = filepath.Abs(*LogDir)
