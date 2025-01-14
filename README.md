@@ -18,10 +18,10 @@ mkdir new-api && cd new-api
 2. Download the configuration files:
 ```bash
 # Download docker-compose.yml
-curl -O https://raw.githubusercontent.com/yourusername/new-api/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/LiveGamer101/new-api/main/docker-compose.yml
 
 # Download environment template
-curl -O https://raw.githubusercontent.com/yourusername/new-api/main/.env.example
+curl -O https://raw.githubusercontent.com/LiveGamer101/new-api/main/.env.example
 ```
 
 3. Create your environment file:

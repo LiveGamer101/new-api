@@ -181,11 +181,8 @@ const HeaderBar = () => {
                   )}
                 </>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <img src={logo} alt='logo' style={{ height: '32px' }} />
-                  <Text strong style={{ fontSize: '18px', color: 'var(--semi-color-text-0)' }}>
-                    {systemName}
-                  </Text>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img src={logo} alt={systemName} style={{ height: '32px' }} />
                 </div>
               ),
             }}
@@ -211,11 +208,16 @@ const HeaderBar = () => {
                 <>
                   <Switch
                     checkedText='🌞'
-                    size={styleState.isMobile?'default':'large'}
+                    size={styleState.isMobile ? 'default' : 'large'}
                     checked={theme === 'dark'}
                     uncheckedText='🌙'
                     onChange={(checked) => {
-                      setTheme(checked);
+                      setTheme(checked ? 'dark' : 'light');
+                    }}
+                    style={{
+                      marginRight: '12px',
+                      marginLeft: '12px',
+                      backgroundColor: theme === 'dark' ? 'var(--semi-color-primary)' : 'var(--semi-color-tertiary)',
                     }}
                   />
                 </>
