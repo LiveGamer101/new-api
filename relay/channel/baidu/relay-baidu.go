@@ -15,7 +15,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-)
+
+	"one-api/logging")
 
 // https://cloud.baidu.com/doc/WENXINWORKSHOP/s/flfmc9do2
 
@@ -145,7 +146,7 @@ func baiduStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			var baiduResponse BaiduChatStreamResponse
 			err := json.Unmarshal([]byte(data), &baiduResponse)
 			if err != nil {
-				common.SysError("error unmarshalling stream response: " + err.Error())
+				logging.SysError("error unmarshalling stream response: " + err.Error())
 				return true
 			}
 			if baiduResponse.Usage.TotalTokens != 0 {
@@ -156,7 +157,7 @@ func baiduStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			response := streamResponseBaidu2OpenAI(&baiduResponse)
 			jsonResponse, err := json.Marshal(response)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			c.Render(-1, common.CustomEvent{Data: "data: " + string(jsonResponse)})

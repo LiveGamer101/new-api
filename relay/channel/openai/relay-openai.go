@@ -10,6 +10,7 @@ import (
 	"one-api/common"
 	"one-api/constant"
 	"one-api/dto"
+	"one-api/logging"
 	relaycommon "one-api/relay/common"
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
@@ -39,7 +40,7 @@ func sendStreamData(c *gin.Context, data string, forceFormat bool) error {
 
 func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
 	if resp == nil || resp.Body == nil {
-		common.LogError(c, "invalid response or response body")
+		logging.LogError(c, "invalid response or response body")
 		return service.OpenAIErrorWrapper(fmt.Errorf("invalid response"), "invalid_response", http.StatusInternalServerError), nil
 	}
 
@@ -96,7 +97,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 				if lastStreamData != "" {
 					err := sendStreamData(c, lastStreamData, forceFormat)
 					if err != nil {
-						common.LogError(c, "streaming error: "+err.Error())
+						logging.LogError(c, "streaming error: "+err.Error())
 					}
 				}
 				lastStreamData = data
@@ -110,7 +111,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 	select {
 	case <-ticker.C:
 		// 超时处理逻辑
-		common.LogError(c, "streaming timeout")
+		logging.LogError(c, "streaming timeout")
 	case <-stopChan:
 		// 正常结束
 	}
@@ -148,7 +149,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 		err := json.Unmarshal(common.StringToByteSlice(streamResp), &streamResponses)
 		if err != nil {
 			// 一次性解析失败，逐个解析
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			for _, item := range streamItems {
 				var streamResponse dto.ChatCompletionsStreamResponse
 				err := json.Unmarshal(common.StringToByteSlice(item), &streamResponse)
@@ -195,7 +196,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 		err := json.Unmarshal(common.StringToByteSlice(streamResp), &streamResponses)
 		if err != nil {
 			// 一次性解析失败，逐个解析
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			for _, item := range streamItems {
 				var streamResponse dto.CompletionsStreamResponse
 				err := json.Unmarshal(common.StringToByteSlice(item), &streamResponse)
@@ -465,7 +466,7 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 					errChan <- fmt.Errorf("error counting text token: %v", err)
 					return
 				}
-				common.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
+				logging.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
 				localUsage.TotalTokens += textToken + audioToken
 				localUsage.InputTokens += textToken + audioToken
 				localUsage.InputTokenDetails.TextTokens += textToken
@@ -538,7 +539,7 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 							errChan <- fmt.Errorf("error counting text token: %v", err)
 							return
 						}
-						common.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
+						logging.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
 						localUsage.TotalTokens += textToken + audioToken
 						info.IsFirstRequest = false
 						localUsage.InputTokens += textToken + audioToken
@@ -570,7 +571,7 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 						errChan <- fmt.Errorf("error counting text token: %v", err)
 						return
 					}
-					common.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
+					logging.LogInfo(c, fmt.Sprintf("type: %s, textToken: %d, audioToken: %d", realtimeEvent.Type, textToken, audioToken))
 					localUsage.TotalTokens += textToken + audioToken
 					localUsage.OutputTokens += textToken + audioToken
 					localUsage.OutputTokenDetails.TextTokens += textToken
@@ -596,7 +597,7 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 	case <-targetClosed:
 	case err := <-errChan:
 		//return service.OpenAIErrorWrapper(err, "realtime_error", http.StatusInternalServerError), nil
-		common.LogError(c, "realtime error: "+err.Error())
+		logging.LogError(c, "realtime error: "+err.Error())
 	case <-c.Done():
 	}
 

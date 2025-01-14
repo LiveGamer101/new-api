@@ -3,6 +3,7 @@ package constant
 import (
 	"fmt"
 	"one-api/common"
+	"one-api/logging"
 	"os"
 	"strings"
 )
@@ -37,7 +38,7 @@ func InitEnv() {
 		if len(parts) == 2 {
 			GeminiModelMap[parts[0]] = parts[1]
 		} else {
-			common.SysError(fmt.Sprintf("invalid model version map: %s", pair))
+			logging.SysError(fmt.Sprintf("invalid model version map: %s", pair))
 		}
 	}
 }

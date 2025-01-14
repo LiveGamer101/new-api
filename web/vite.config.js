@@ -23,12 +23,22 @@ export default defineConfig({
   ],
   optimizeDeps: {
     force: true,
+    include: [
+      '@douyinfe/semi-ui',
+      '@douyinfe/semi-icons',
+      '@douyinfe/semi-ui/lib/es/theme/index'
+    ],
     esbuildOptions: {
       loader: {
         '.js': 'jsx',
         '.json': 'json',
       },
     },
+  },
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
   },
   build: {
     rollupOptions: {

@@ -14,7 +14,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-)
+
+	"one-api/logging")
 
 // https://open.bigmodel.cn/doc/api#chatglm_std
 // chatglm_std, chatglm_lite
@@ -35,7 +36,7 @@ func getZhipuToken(apikey string) string {
 
 	split := strings.Split(apikey, ".")
 	if len(split) != 2 {
-		common.SysError("invalid zhipu key: " + apikey)
+		logging.SysError("invalid zhipu key: " + apikey)
 		return ""
 	}
 
@@ -184,7 +185,7 @@ func zhipuStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			response := streamResponseZhipu2OpenAI(data)
 			jsonResponse, err := json.Marshal(response)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			c.Render(-1, common.CustomEvent{Data: "data: " + string(jsonResponse)})
@@ -193,13 +194,13 @@ func zhipuStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			var zhipuResponse ZhipuStreamMetaResponse
 			err := json.Unmarshal([]byte(data), &zhipuResponse)
 			if err != nil {
-				common.SysError("error unmarshalling stream response: " + err.Error())
+				logging.SysError("error unmarshalling stream response: " + err.Error())
 				return true
 			}
 			response, zhipuUsage := streamMetaResponseZhipu2OpenAI(&zhipuResponse)
 			jsonResponse, err := json.Marshal(response)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			usage = zhipuUsage

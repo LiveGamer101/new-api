@@ -13,7 +13,8 @@ import (
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
 	"one-api/setting"
-)
+
+	"one-api/logging")
 
 func getAndValidAudioRequest(c *gin.Context, info *relaycommon.RelayInfo) (*dto.AudioRequest, error) {
 	audioRequest := &dto.AudioRequest{}
@@ -58,7 +59,7 @@ func AudioHelper(c *gin.Context) (openaiErr *dto.OpenAIErrorWithStatusCode) {
 	audioRequest, err := getAndValidAudioRequest(c, relayInfo)
 
 	if err != nil {
-		common.LogError(c, fmt.Sprintf("getAndValidAudioRequest failed: %s", err.Error()))
+		logging.LogError(c, fmt.Sprintf("getAndValidAudioRequest failed: %s", err.Error()))
 		return service.OpenAIErrorWrapper(err, "invalid_audio_request", http.StatusBadRequest)
 	}
 

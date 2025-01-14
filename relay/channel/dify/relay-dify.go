@@ -12,7 +12,8 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
-)
+
+	"one-api/logging")
 
 func requestOpenAI2Dify(request dto.GeneralOpenAIRequest) *DifyChatRequest {
 	content := ""
@@ -77,7 +78,7 @@ func difyStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Re
 		var difyResponse DifyChunkChatCompletionResponse
 		err := json.Unmarshal([]byte(data), &difyResponse)
 		if err != nil {
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			continue
 		}
 		var openaiResponse dto.ChatCompletionsStreamResponse
@@ -94,17 +95,17 @@ func difyStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Re
 		}
 		err = service.ObjectData(c, openaiResponse)
 		if err != nil {
-			common.SysError(err.Error())
+			logging.SysError(err.Error())
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		common.SysError("error reading stream: " + err.Error())
+		logging.SysError("error reading stream: " + err.Error())
 	}
 	service.Done(c)
 	err := resp.Body.Close()
 	if err != nil {
 		//return service.OpenAIErrorWrapper(err, "close_response_body_failed", http.StatusInternalServerError), nil
-		common.SysError("close_response_body_failed: " + err.Error())
+		logging.SysError("close_response_body_failed: " + err.Error())
 	}
 	if usage.TotalTokens == 0 {
 		usage.PromptTokens = info.PromptTokens

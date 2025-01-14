@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
-	"one-api/common"
 	"one-api/dto"
+	"one-api/logging"
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
@@ -48,7 +48,7 @@ func cfStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rela
 		var response dto.ChatCompletionsStreamResponse
 		err := json.Unmarshal([]byte(data), &response)
 		if err != nil {
-			common.LogError(c, "error_unmarshalling_stream_response: "+err.Error())
+			logging.LogError(c, "error_unmarshalling_stream_response: "+err.Error())
 			continue
 		}
 		for _, choice := range response.Choices {
@@ -63,26 +63,26 @@ func cfStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rela
 			info.FirstResponseTime = time.Now()
 		}
 		if err != nil {
-			common.LogError(c, "error_rendering_stream_response: "+err.Error())
+			logging.LogError(c, "error_rendering_stream_response: "+err.Error())
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		common.LogError(c, "error_scanning_stream_response: "+err.Error())
+		logging.LogError(c, "error_scanning_stream_response: "+err.Error())
 	}
 	usage, _ := service.ResponseText2Usage(responseText, info.UpstreamModelName, info.PromptTokens)
 	if info.ShouldIncludeUsage {
 		response := service.GenerateFinalUsageResponse(id, info.StartTime.Unix(), info.UpstreamModelName, *usage)
 		err := service.ObjectData(c, response)
 		if err != nil {
-			common.LogError(c, "error_rendering_final_usage_response: "+err.Error())
+			logging.LogError(c, "error_rendering_final_usage_response: "+err.Error())
 		}
 	}
 	service.Done(c)
 
 	err := resp.Body.Close()
 	if err != nil {
-		common.LogError(c, "close_response_body_failed: "+err.Error())
+		logging.LogError(c, "close_response_body_failed: "+err.Error())
 	}
 
 	return nil, usage

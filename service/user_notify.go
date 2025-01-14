@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"one-api/common"
 	"one-api/model"
-)
+
+	"one-api/logging")
 
 func notifyRootUser(subject string, content string) {
 	if common.RootUserEmail == "" {
@@ -12,6 +13,6 @@ func notifyRootUser(subject string, content string) {
 	}
 	err := common.SendEmail(subject, common.RootUserEmail, content)
 	if err != nil {
-		common.SysError(fmt.Sprintf("failed to send email: %s", err.Error()))
+		logging.SysError(fmt.Sprintf("failed to send email: %s", err.Error()))
 	}
 }

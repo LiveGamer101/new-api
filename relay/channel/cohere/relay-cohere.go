@@ -13,7 +13,8 @@ import (
 	"one-api/service"
 	"strings"
 	"time"
-)
+
+	"one-api/logging")
 
 func requestOpenAI2Cohere(textRequest dto.GeneralOpenAIRequest) *CohereRequest {
 	cohereReq := CohereRequest{
@@ -116,7 +117,7 @@ func cohereStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 			var cohereResp CohereResponse
 			err := json.Unmarshal([]byte(data), &cohereResp)
 			if err != nil {
-				common.SysError("error unmarshalling stream response: " + err.Error())
+				logging.SysError("error unmarshalling stream response: " + err.Error())
 				return true
 			}
 			var openaiResp dto.ChatCompletionsStreamResponse
@@ -151,7 +152,7 @@ func cohereStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 			}
 			jsonStr, err := json.Marshal(openaiResp)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			c.Render(-1, common.CustomEvent{Data: "data: " + string(jsonStr)})

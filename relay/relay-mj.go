@@ -21,7 +21,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-)
+
+	"one-api/logging")
 
 func RelayMidjourneyImage(c *gin.Context) {
 	taskId := c.Param("id")
@@ -196,11 +197,11 @@ func RelaySwapFace(c *gin.Context) *dto.MidjourneyResponse {
 		if mjResp.StatusCode == 200 && mjResp.Response.Code == 1 {
 			err := model.PostConsumeQuota(relayInfo, userQuota, quota, 0, true)
 			if err != nil {
-				common.SysError("error consuming token remain quota: " + err.Error())
+				logging.SysError("error consuming token remain quota: " + err.Error())
 			}
 			//err = model.CacheUpdateUserQuota(userId)
 			if err != nil {
-				common.SysError("error update user quota cache: " + err.Error())
+				logging.SysError("error update user quota cache: " + err.Error())
 			}
 			if quota != 0 {
 				tokenName := c.GetString("token_name")
@@ -502,7 +503,7 @@ func RelayMidjourneySubmit(c *gin.Context, relayMode int) *dto.MidjourneyRespons
 		if consumeQuota && midjResponseWithStatus.StatusCode == 200 {
 			err := model.PostConsumeQuota(relayInfo, userQuota, quota, 0, true)
 			if err != nil {
-				common.SysError("error consuming token remain quota: " + err.Error())
+				logging.SysError("error consuming token remain quota: " + err.Error())
 			}
 			if quota != 0 {
 				tokenName := c.GetString("token_name")
@@ -549,7 +550,7 @@ func RelayMidjourneySubmit(c *gin.Context, relayMode int) *dto.MidjourneyRespons
 		//无实例账号自动禁用渠道（No available account instance）
 		channel, err := model.GetChannelById(midjourneyTask.ChannelId, true)
 		if err != nil {
-			common.SysError("get_channel_null: " + err.Error())
+			logging.SysError("get_channel_null: " + err.Error())
 		}
 		if channel.GetAutoBan() && common.AutomaticDisableChannelEnabled {
 			model.UpdateChannelStatusById(midjourneyTask.ChannelId, 2, "No available account instance")

@@ -1,70 +1,74 @@
-import { Theme } from '@douyinfe/semi-ui';
+import { Button } from '@douyinfe/semi-ui';
 
-export const lightTheme = {
-  colors: {
-    primary: '#2563EB', // Modern blue
-    secondary: '#6B7280', // Cool gray
-    tertiary: '#E5E7EB', // Light gray
-    success: '#059669', // Green
-    warning: '#D97706', // Amber
-    danger: '#DC2626', // Red
-    info: '#3B82F6', // Blue
+// Modern color palette
+const colors = {
+  light: {
+    primary: 'rgb(37, 99, 235)',
+    secondary: 'rgb(107, 114, 128)',
+    tertiary: 'rgb(229, 231, 235)',
+    success: 'rgb(5, 150, 105)',
+    warning: 'rgb(217, 119, 6)',
+    danger: 'rgb(220, 38, 38)',
+    info: 'rgb(59, 130, 246)',
   },
-  shadows: {
+  dark: {
+    primary: 'rgb(59, 130, 246)',
+    secondary: 'rgb(156, 163, 175)',
+    tertiary: 'rgb(55, 65, 81)',
+    success: 'rgb(16, 185, 129)',
+    warning: 'rgb(245, 158, 11)',
+    danger: 'rgb(239, 68, 68)',
+    info: 'rgb(96, 165, 250)',
+  }
+};
+
+// Modern shadows
+const shadows = {
+  light: {
     elevated: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  }
-};
-
-export const darkTheme = {
-  colors: {
-    primary: '#3B82F6', // Brighter blue for dark mode
-    secondary: '#9CA3AF', // Lighter gray
-    tertiary: '#374151', // Dark gray
-    success: '#10B981', // Brighter green
-    warning: '#F59E0B', // Brighter amber
-    danger: '#EF4444', // Brighter red
-    info: '#60A5FA', // Lighter blue
+    dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
   },
-  shadows: {
+  dark: {
     elevated: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.18)',
-    dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15)',
+    dropdown: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15)'
   }
 };
 
-// Apply theme to Semi UI
+// Border radius configuration
+const borderRadius = {
+  base: '8px',
+  small: '6px',
+  medium: '8px',
+  large: '12px'
+};
+
+// Apply theme
 export const applyTheme = (isDark) => {
-  const theme = isDark ? darkTheme : lightTheme;
+  const mode = isDark ? 'dark' : 'light';
+  const root = document.documentElement;
   
-  Theme.setTheme({
-    variables: {
-      'color-primary': theme.colors.primary,
-      'color-secondary': theme.colors.secondary,
-      'color-tertiary': theme.colors.tertiary,
-      'color-success': theme.colors.success,
-      'color-warning': theme.colors.warning,
-      'color-danger': theme.colors.danger,
-      'color-info': theme.colors.info,
-      
-      // Shadows
-      'shadow-elevated': theme.shadows.elevated,
-      'shadow-dropdown': theme.shadows.dropdown,
-
-      // Border radius
-      'border-radius': '8px',
-      'border-radius-small': '6px',
-      'border-radius-medium': '8px',
-      'border-radius-large': '12px',
-
-      // Spacing
-      'spacing-tight': '4px',
-      'spacing-base': '8px',
-      'spacing-loose': '16px',
-      'spacing-extra-loose': '24px',
-
-      // Animation
-      'motion-duration': '0.3s',
-      'motion-ease': 'cubic-bezier(0.4, 0, 0.2, 1)',
-    }
+  // Apply colors
+  Object.entries(colors[mode]).forEach(([key, value]) => {
+    root.style.setProperty(`--semi-color-${key}`, value);
   });
+
+  // Apply shadows
+  Object.entries(shadows[mode]).forEach(([key, value]) => {
+    root.style.setProperty(`--semi-shadow-${key}`, value);
+  });
+
+  // Apply border radius
+  Object.entries(borderRadius).forEach(([key, value]) => {
+    root.style.setProperty(
+      `--semi-border-radius${key === 'base' ? '' : '-' + key}`,
+      value
+    );
+  });
+
+  // Apply motion
+  root.style.setProperty('--semi-motion-duration', '0.3s');
+  root.style.setProperty('--semi-motion-ease', 'cubic-bezier(0.4, 0, 0.2, 1)');
+
+  // Update body theme mode
+  document.body.setAttribute('theme-mode', mode);
 };

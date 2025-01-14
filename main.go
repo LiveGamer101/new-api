@@ -9,11 +9,11 @@ import (
 	"one-api/constant"
 	"one-api/controller"
 	"one-api/discord"
+	"one-api/logging"
 	"one-api/middleware"
 	"one-api/model"
 	"one-api/router"
 	"one-api/service"
-	"one-api/setting"
 	"os"
 	"strconv"
 
@@ -40,7 +40,7 @@ func main() {
 
 	common.LoadEnv()
 
-	common.SetupLogger()
+	logging.SetupLogger()
 	common.SysLog("New API " + common.Version + " started")
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
@@ -81,7 +81,7 @@ func main() {
 	}
 	if common.MemoryCacheEnabled {
 		common.SysLog("memory cache enabled")
-		common.SysError(fmt.Sprintf("sync frequency: %d seconds", common.SyncFrequency))
+		logging.SysError(fmt.Sprintf("sync frequency: %d seconds", common.SyncFrequency))
 		model.InitChannelCache()
 	}
 	if common.MemoryCacheEnabled {
@@ -129,10 +129,11 @@ func main() {
 	}
 
 	// Initialize Discord bot if enabled
-	if setting.EnableDiscordBot() {
+	if common.DiscordBotToken != "" {
+		discord.BotToken = common.DiscordBotToken
 		err := discord.Init()
 		if err != nil {
-			common.SysError("failed to initialize Discord bot: " + err.Error())
+			logging.SysError("failed to initialize Discord bot: " + err.Error())
 		} else {
 			common.SysLog("Discord bot initialized")
 			defer discord.Close()
@@ -144,7 +145,7 @@ func main() {
 	// Initialize HTTP server
 	server := gin.New()
 	server.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
-		common.SysError(fmt.Sprintf("panic detected: %v", err))
+		logging.SysError(fmt.Sprintf("panic detected: %v", err))
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": gin.H{
 				"message": fmt.Sprintf("Panic detected, error: %v. Please submit a issue here: https://github.com/Calcium-Ion/new-api", err),

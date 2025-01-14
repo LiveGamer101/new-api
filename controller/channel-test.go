@@ -26,7 +26,8 @@ import (
 	"github.com/bytedance/gopkg/util/gopool"
 
 	"github.com/gin-gonic/gin"
-)
+
+	"one-api/logging")
 
 func testChannel(channel *model.Channel, testModel string) (err error, openAIErrorWithStatusCode *dto.OpenAIErrorWithStatusCode) {
 	tik := time.Now()
@@ -276,7 +277,7 @@ func testAllChannels(notify bool) error {
 		if notify {
 			err := common.SendEmail("通道测试完成", common.RootUserEmail, "通道测试完成，如果没有收到禁用通知，说明所有通道都正常")
 			if err != nil {
-				common.SysError(fmt.Sprintf("failed to send email: %s", err.Error()))
+				logging.SysError(fmt.Sprintf("failed to send email: %s", err.Error()))
 			}
 		}
 	})
@@ -297,6 +298,11 @@ func TestAllChannels(c *gin.Context) {
 		"message": "",
 	})
 	return
+}
+
+// TestAllChannelsWithNotify is an exported wrapper around testAllChannels
+func TestAllChannelsWithNotify(notify bool) error {
+	return testAllChannels(notify)
 }
 
 func AutomaticallyTestChannels(frequency int) {

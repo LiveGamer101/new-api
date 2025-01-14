@@ -42,13 +42,8 @@ const HeaderBar = () => {
 
   let buttons = [
     {
-      text: t('首页'),
-      itemKey: 'home',
-      to: '/',
-    },
-    {
       text: t('控制台'),
-      itemKey: 'detail',
+      itemKey: 'home',
       to: '/',
     },
     {

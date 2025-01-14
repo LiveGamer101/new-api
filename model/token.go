@@ -6,6 +6,7 @@ import (
 	"github.com/bytedance/gopkg/util/gopool"
 	"gorm.io/gorm"
 	"one-api/common"
+	"one-api/logging"
 	relaycommon "one-api/relay/common"
 	"one-api/setting"
 	"strconv"
@@ -93,7 +94,7 @@ func ValidateUserToken(key string) (token *Token, err error) {
 				token.Status = common.TokenStatusExpired
 				err := token.SelectUpdate()
 				if err != nil {
-					common.SysError("failed to update token status" + err.Error())
+					logging.SysError("failed to update token status" + err.Error())
 				}
 			}
 			return token, errors.New("该令牌已过期")
@@ -104,7 +105,7 @@ func ValidateUserToken(key string) (token *Token, err error) {
 				token.Status = common.TokenStatusExhausted
 				err := token.SelectUpdate()
 				if err != nil {
-					common.SysError("failed to update token status" + err.Error())
+					logging.SysError("failed to update token status" + err.Error())
 				}
 			}
 			keyPrefix := key[:3]
@@ -136,7 +137,7 @@ func GetTokenById(id int) (*Token, error) {
 	if shouldUpdateRedis(true, err) {
 		gopool.Go(func() {
 			if err := cacheSetToken(token); err != nil {
-				common.SysError("failed to update user status cache: " + err.Error())
+				logging.SysError("failed to update user status cache: " + err.Error())
 			}
 		})
 	}
@@ -149,7 +150,7 @@ func GetTokenByKey(key string, fromDB bool) (token *Token, err error) {
 		if shouldUpdateRedis(fromDB, err) && token != nil {
 			gopool.Go(func() {
 				if err := cacheSetToken(*token); err != nil {
-					common.SysError("failed to update user status cache: " + err.Error())
+					logging.SysError("failed to update user status cache: " + err.Error())
 				}
 			})
 		}
@@ -180,7 +181,7 @@ func (token *Token) Update() (err error) {
 			gopool.Go(func() {
 				err := cacheSetToken(*token)
 				if err != nil {
-					common.SysError("failed to update token cache: " + err.Error())
+					logging.SysError("failed to update token cache: " + err.Error())
 				}
 			})
 		}
@@ -196,7 +197,7 @@ func (token *Token) SelectUpdate() (err error) {
 			gopool.Go(func() {
 				err := cacheSetToken(*token)
 				if err != nil {
-					common.SysError("failed to update token cache: " + err.Error())
+					logging.SysError("failed to update token cache: " + err.Error())
 				}
 			})
 		}
@@ -211,7 +212,7 @@ func (token *Token) Delete() (err error) {
 			gopool.Go(func() {
 				err := cacheDeleteToken(token.Key)
 				if err != nil {
-					common.SysError("failed to delete token cache: " + err.Error())
+					logging.SysError("failed to delete token cache: " + err.Error())
 				}
 			})
 		}
@@ -271,7 +272,7 @@ func IncreaseTokenQuota(id int, key string, quota int) (err error) {
 		gopool.Go(func() {
 			err := cacheIncrTokenQuota(key, int64(quota))
 			if err != nil {
-				common.SysError("failed to increase token quota: " + err.Error())
+				logging.SysError("failed to increase token quota: " + err.Error())
 			}
 		})
 	}
@@ -301,7 +302,7 @@ func DecreaseTokenQuota(id int, key string, quota int) (err error) {
 		gopool.Go(func() {
 			err := cacheDecrTokenQuota(key, int64(quota))
 			if err != nil {
-				common.SysError("failed to decrease token quota: " + err.Error())
+				logging.SysError("failed to decrease token quota: " + err.Error())
 			}
 		})
 	}
@@ -377,7 +378,7 @@ func PostConsumeQuota(relayInfo *relaycommon.RelayInfo, userQuota int, quota int
 				go func() {
 					email, err := GetUserEmail(relayInfo.UserId)
 					if err != nil {
-						common.SysError("failed to fetch user email: " + err.Error())
+						logging.SysError("failed to fetch user email: " + err.Error())
 					}
 					prompt := "您的额度即将用尽"
 					if noMoreQuota {
@@ -388,7 +389,7 @@ func PostConsumeQuota(relayInfo *relaycommon.RelayInfo, userQuota int, quota int
 						err = common.SendEmail(prompt, email,
 							fmt.Sprintf("%s，当前剩余额度为 %d，为了不影响您的使用，请及时充值。<br/>充值链接：<a href='%s'>%s</a>", prompt, userQuota, topUpLink, topUpLink))
 						if err != nil {
-							common.SysError("failed to send email" + err.Error())
+							logging.SysError("failed to send email" + err.Error())
 						}
 						common.SysLog("user quota is low, consumed quota: " + strconv.Itoa(quota) + ", user quota: " + strconv.Itoa(userQuota))
 					}

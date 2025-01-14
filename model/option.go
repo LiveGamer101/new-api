@@ -2,6 +2,7 @@ package model
 
 import (
 	"one-api/common"
+	"one-api/logging"
 	"one-api/setting"
 	"strconv"
 	"strings"
@@ -119,7 +120,7 @@ func loadOptionsFromDatabase() {
 	for _, option := range options {
 		err := updateOptionMap(option.Key, option.Value)
 		if err != nil {
-			common.SysError("failed to update option map: " + err.Error())
+			logging.SysError("failed to update option map: " + err.Error())
 		}
 	}
 }

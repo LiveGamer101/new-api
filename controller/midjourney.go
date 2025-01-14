@@ -16,7 +16,8 @@ import (
 	"one-api/setting"
 	"strconv"
 	"time"
-)
+
+	"one-api/logging")
 
 func UpdateMidjourneyTaskBulk() {
 	//imageModel := "midjourney"
@@ -29,7 +30,7 @@ func UpdateMidjourneyTaskBulk() {
 			continue
 		}
 
-		common.LogInfo(ctx, fmt.Sprintf("检测到未完成的任务数有: %v", len(tasks)))
+		logging.LogInfo(ctx, fmt.Sprintf("检测到未完成的任务数有: %v", len(tasks)))
 		taskChannelM := make(map[int][]string)
 		taskM := make(map[string]*model.Midjourney)
 		nullTaskIds := make([]int, 0)
@@ -48,9 +49,9 @@ func UpdateMidjourneyTaskBulk() {
 				"progress": "100%",
 			})
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("Fix null mj_id task error: %v", err))
+				logging.LogError(ctx, fmt.Sprintf("Fix null mj_id task error: %v", err))
 			} else {
-				common.LogInfo(ctx, fmt.Sprintf("Fix null mj_id task success: %v", nullTaskIds))
+				logging.LogInfo(ctx, fmt.Sprintf("Fix null mj_id task success: %v", nullTaskIds))
 			}
 		}
 		if len(taskChannelM) == 0 {
@@ -58,20 +59,20 @@ func UpdateMidjourneyTaskBulk() {
 		}
 
 		for channelId, taskIds := range taskChannelM {
-			common.LogInfo(ctx, fmt.Sprintf("渠道 #%d 未完成的任务有: %d", channelId, len(taskIds)))
+			logging.LogInfo(ctx, fmt.Sprintf("渠道 #%d 未完成的任务有: %d", channelId, len(taskIds)))
 			if len(taskIds) == 0 {
 				continue
 			}
 			midjourneyChannel, err := model.CacheGetChannel(channelId)
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("CacheGetChannel: %v", err))
+				logging.LogError(ctx, fmt.Sprintf("CacheGetChannel: %v", err))
 				err := model.MjBulkUpdate(taskIds, map[string]any{
 					"fail_reason": fmt.Sprintf("获取渠道信息失败，请联系管理员，渠道ID：%d", channelId),
 					"status":      "FAILURE",
 					"progress":    "100%",
 				})
 				if err != nil {
-					common.LogInfo(ctx, fmt.Sprintf("UpdateMidjourneyTask error: %v", err))
+					logging.LogInfo(ctx, fmt.Sprintf("UpdateMidjourneyTask error: %v", err))
 				}
 				continue
 			}
@@ -82,7 +83,7 @@ func UpdateMidjourneyTaskBulk() {
 			})
 			req, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(body))
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("Get Task error: %v", err))
+				logging.LogError(ctx, fmt.Sprintf("Get Task error: %v", err))
 				continue
 			}
 			// 设置超时时间
@@ -94,22 +95,22 @@ func UpdateMidjourneyTaskBulk() {
 			req.Header.Set("mj-api-secret", midjourneyChannel.Key)
 			resp, err := service.GetHttpClient().Do(req)
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("Get Task Do req error: %v", err))
+				logging.LogError(ctx, fmt.Sprintf("Get Task Do req error: %v", err))
 				continue
 			}
 			if resp.StatusCode != http.StatusOK {
-				common.LogError(ctx, fmt.Sprintf("Get Task status code: %d", resp.StatusCode))
+				logging.LogError(ctx, fmt.Sprintf("Get Task status code: %d", resp.StatusCode))
 				continue
 			}
 			responseBody, err := io.ReadAll(resp.Body)
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("Get Task parse body error: %v", err))
+				logging.LogError(ctx, fmt.Sprintf("Get Task parse body error: %v", err))
 				continue
 			}
 			var responseItems []dto.MidjourneyDto
 			err = json.Unmarshal(responseBody, &responseItems)
 			if err != nil {
-				common.LogError(ctx, fmt.Sprintf("Get Task parse body error2: %v, body: %s", err, string(responseBody)))
+				logging.LogError(ctx, fmt.Sprintf("Get Task parse body error2: %v, body: %s", err, string(responseBody)))
 				continue
 			}
 			resp.Body.Close()
@@ -148,7 +149,7 @@ func UpdateMidjourneyTaskBulk() {
 				}
 				shouldReturnQuota := false
 				if (task.Progress != "100%" && responseItem.FailReason != "") || (task.Progress == "100%" && task.Status == "FAILURE") {
-					common.LogInfo(ctx, task.MjId+" 构建失败，"+task.FailReason)
+					logging.LogInfo(ctx, task.MjId+" 构建失败，"+task.FailReason)
 					task.Progress = "100%"
 					if task.Quota != 0 {
 						shouldReturnQuota = true
@@ -156,12 +157,12 @@ func UpdateMidjourneyTaskBulk() {
 				}
 				err = task.Update()
 				if err != nil {
-					common.LogError(ctx, "UpdateMidjourneyTask task error: "+err.Error())
+					logging.LogError(ctx, "UpdateMidjourneyTask task error: "+err.Error())
 				} else {
 					if shouldReturnQuota {
 						err = model.IncreaseUserQuota(task.UserId, task.Quota)
 						if err != nil {
-							common.LogError(ctx, "fail to increase user quota: "+err.Error())
+							logging.LogError(ctx, "fail to increase user quota: "+err.Error())
 						}
 						logContent := fmt.Sprintf("构图失败 %s，补偿 %s", task.MjId, common.LogQuota(task.Quota))
 						model.RecordLog(task.UserId, model.LogTypeSystem, logContent)

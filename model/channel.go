@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"one-api/common"
+	"one-api/logging"
 	"strings"
 	"sync"
 	"time"
@@ -12,49 +13,10 @@ import (
 )
 
 const (
-	batchSize = 100
+	batchSize  = 100
 	maxRetries = 3
 	retryDelay = 100 * time.Millisecond
 )
-
-// Cache functions
-func getChannelCacheKey(id int) string {
-	return fmt.Sprintf("channel:%d", id)
-}
-
-func (channel *Channel) Cache() error {
-	if !common.RedisEnabled {
-		return nil
-	}
-	data, err := json.Marshal(channel)
-	if err != nil {
-		return err
-	}
-	return common.RedisSet(getChannelCacheKey(channel.Id), string(data), 5*time.Minute)
-}
-
-func GetChannelFromCache(id int) (*Channel, error) {
-	if !common.RedisEnabled {
-		return nil, fmt.Errorf("redis not enabled")
-	}
-	data, err := common.RedisGet(getChannelCacheKey(id))
-	if err != nil {
-		return nil, err
-	}
-	var channel Channel
-	err = json.Unmarshal([]byte(data), &channel)
-	if err != nil {
-		return nil, err
-	}
-	return &channel, nil
-}
-
-func InvalidateChannelCache(id int) error {
-	if !common.RedisEnabled {
-		return nil
-	}
-	return common.RedisDel(getChannelCacheKey(id))
-}
 
 type Channel struct {
 	Id                 int     `json:"id" gorm:"primaryKey;autoIncrement"`
@@ -77,18 +39,18 @@ type Channel struct {
 	UsedQuota          int64   `json:"used_quota" gorm:"bigint;default:0;index:idx_used_quota"`
 	ModelMapping       *string `json:"model_mapping" gorm:"type:varchar(1024);default:''"`
 	StatusCodeMapping  *string `json:"status_code_mapping" gorm:"type:varchar(1024);default:''"`
-	Priority          *int64  `json:"priority" gorm:"bigint;default:0;index:idx_priority"`
-	AutoBan           *int    `json:"auto_ban" gorm:"default:1"`
-	OtherInfo         string  `json:"other_info"`
-	Tag               *string `json:"tag" gorm:"index:idx_tag"`
-	Setting           string  `json:"setting" gorm:"type:text"`
+	Priority           *int64  `json:"priority" gorm:"bigint;default:0;index:idx_priority"`
+	AutoBan            *int    `json:"auto_ban" gorm:"default:1"`
+	OtherInfo          string  `json:"other_info"`
+	Tag                *string `json:"tag" gorm:"index:idx_tag"`
+	Setting            string  `json:"setting" gorm:"type:text"`
 }
 
 // Cache keys
 const (
-	channelCacheKeyPrefix = "channel:"
-	channelCacheExpiration = 5 * time.Minute
-	channelListCacheKey = "channel:list"
+	channelCacheKeyPrefix      = "channel:"
+	channelCacheExpiration     = 5 * time.Minute
+	channelListCacheKey        = "channel:list"
 	channelListCacheExpiration = 1 * time.Minute
 )
 
@@ -108,7 +70,7 @@ func GetChannelFromCache(id int) (*Channel, error) {
 	if !common.RedisEnabled {
 		return nil, fmt.Errorf("redis not enabled")
 	}
-	
+
 	channel := &Channel{}
 	err := common.RedisHGetObj(cacheKey(id), channel)
 	if err != nil {
@@ -136,7 +98,7 @@ func (channel *Channel) GetOtherInfo() map[string]interface{} {
 	if channel.OtherInfo != "" {
 		err := json.Unmarshal([]byte(channel.OtherInfo), &otherInfo)
 		if err != nil {
-			common.SysError("failed to unmarshal other info: " + err.Error())
+			logging.SysError("failed to unmarshal other info: " + err.Error())
 		}
 	}
 	return otherInfo
@@ -145,7 +107,7 @@ func (channel *Channel) GetOtherInfo() map[string]interface{} {
 func (channel *Channel) SetOtherInfo(otherInfo map[string]interface{}) {
 	otherInfoBytes, err := json.Marshal(otherInfo)
 	if err != nil {
-		common.SysError("failed to marshal other info: " + err.Error())
+		logging.SysError("failed to marshal other info: " + err.Error())
 		return
 	}
 	channel.OtherInfo = string(otherInfoBytes)
@@ -350,7 +312,7 @@ func (channel *Channel) UpdateResponseTime(responseTime int64) {
 		ResponseTime: int(responseTime),
 	}).Error
 	if err != nil {
-		common.SysError("failed to update response time: " + err.Error())
+		logging.SysError("failed to update response time: " + err.Error())
 	}
 }
 
@@ -360,7 +322,7 @@ func (channel *Channel) UpdateBalance(balance float64) {
 		Balance:            balance,
 	}).Error
 	if err != nil {
-		common.SysError("failed to update balance: " + err.Error())
+		logging.SysError("failed to update balance: " + err.Error())
 	}
 }
 
@@ -395,14 +357,14 @@ func UpdateChannelStatusById(id int, status int, reason string) {
 	}
 	err := UpdateAbilityStatus(id, status == common.ChannelStatusEnabled)
 	if err != nil {
-		common.SysError("failed to update ability status: " + err.Error())
+		logging.SysError("failed to update ability status: " + err.Error())
 	}
 	channel, err := GetChannelById(id, true)
 	if err != nil {
 		// find channel by id error, directly update status
 		err = DB.Model(&Channel{}).Where("id = ?", id).Update("status", status).Error
 		if err != nil {
-			common.SysError("failed to update channel status: " + err.Error())
+			logging.SysError("failed to update channel status: " + err.Error())
 		}
 	} else {
 		// find channel by id success, update status and other info
@@ -413,7 +375,7 @@ func UpdateChannelStatusById(id int, status int, reason string) {
 		channel.Status = status
 		err = channel.Save()
 		if err != nil {
-			common.SysError("failed to update channel status: " + err.Error())
+			logging.SysError("failed to update channel status: " + err.Error())
 		}
 	}
 
@@ -474,7 +436,7 @@ func EditChannelByTag(tag string, newTag *string, modelMapping *string, models *
 			for _, channel := range channels {
 				err = channel.UpdateAbilities(nil)
 				if err != nil {
-					common.SysError("failed to update abilities: " + err.Error())
+					logging.SysError("failed to update abilities: " + err.Error())
 				}
 			}
 		}
@@ -498,7 +460,7 @@ func UpdateChannelUsedQuota(id int, quota int) {
 func updateChannelUsedQuota(id int, quota int) {
 	err := DB.Model(&Channel{}).Where("id = ?", id).Update("used_quota", gorm.Expr("used_quota + ?", quota)).Error
 	if err != nil {
-		common.SysError("failed to update channel used quota: " + err.Error())
+		logging.SysError("failed to update channel used quota: " + err.Error())
 	}
 }
 
@@ -574,7 +536,7 @@ func (channel *Channel) GetSetting() map[string]interface{} {
 	if channel.Setting != "" {
 		err := json.Unmarshal([]byte(channel.Setting), &setting)
 		if err != nil {
-			common.SysError("failed to unmarshal setting: " + err.Error())
+			logging.SysError("failed to unmarshal setting: " + err.Error())
 		}
 	}
 	return setting
@@ -583,7 +545,7 @@ func (channel *Channel) GetSetting() map[string]interface{} {
 func (channel *Channel) SetSetting(setting map[string]interface{}) {
 	settingBytes, err := json.Marshal(setting)
 	if err != nil {
-		common.SysError("failed to marshal setting: " + err.Error())
+		logging.SysError("failed to marshal setting: " + err.Error())
 		return
 	}
 	channel.Setting = string(settingBytes)

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"one-api/common"
 	"one-api/dto"
+	"one-api/logging"
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
@@ -246,7 +247,7 @@ func RequestOpenAI2ClaudeMessage(textRequest dto.GeneralOpenAIRequest) (*ClaudeR
 					for _, toolCall := range message.ParseToolCalls() {
 						inputObj := make(map[string]any)
 						if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &inputObj); err != nil {
-							common.SysError("tool call function arguments is not a map[string]any: " + fmt.Sprintf("%v", toolCall.Function.Arguments))
+							logging.SysError("tool call function arguments is not a map[string]any: " + fmt.Sprintf("%v", toolCall.Function.Arguments))
 							continue
 						}
 						claudeMediaMessages = append(claudeMediaMessages, ClaudeMediaMessage{
@@ -418,7 +419,7 @@ func ClaudeStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 		var claudeResponse ClaudeResponse
 		err := json.Unmarshal([]byte(data), &claudeResponse)
 		if err != nil {
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			continue
 		}
 
@@ -453,7 +454,7 @@ func ClaudeStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 
 		err = service.ObjectData(c, response)
 		if err != nil {
-			common.LogError(c, "send_stream_response_failed: "+err.Error())
+			logging.LogError(c, "send_stream_response_failed: "+err.Error())
 		}
 	}
 
@@ -471,7 +472,7 @@ func ClaudeStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 		response := service.GenerateFinalUsageResponse(responseId, createdTime, info.UpstreamModelName, *usage)
 		err := service.ObjectData(c, response)
 		if err != nil {
-			common.SysError("send final response failed: " + err.Error())
+			logging.SysError("send final response failed: " + err.Error())
 		}
 	}
 	service.Done(c)

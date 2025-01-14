@@ -15,7 +15,8 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-)
+
+	"one-api/logging")
 
 type LoginRequest struct {
 	Username string `json:"username"`
@@ -164,7 +165,7 @@ func Register(c *gin.Context) {
 			"success": false,
 			"message": "数据库错误，请稍后重试",
 		})
-		common.SysError(fmt.Sprintf("CheckUserExistOrDeleted error: %v", err))
+		logging.SysError(fmt.Sprintf("CheckUserExistOrDeleted error: %v", err))
 		return
 	}
 	if exist {
@@ -210,7 +211,7 @@ func Register(c *gin.Context) {
 				"success": false,
 				"message": "生成默认令牌失败",
 			})
-			common.SysError("failed to generate token key: " + err.Error())
+			logging.SysError("failed to generate token key: " + err.Error())
 			return
 		}
 		// 生成默认令牌
@@ -355,7 +356,7 @@ func GenerateAccessToken(c *gin.Context) {
 			"success": false,
 			"message": "生成失败",
 		})
-		common.SysError("failed to generate key: " + err.Error())
+		logging.SysError("failed to generate key: " + err.Error())
 		return
 	}
 	user.SetAccessToken(key)

@@ -16,7 +16,8 @@ import (
 	"one-api/service"
 	"strings"
 	"time"
-)
+
+	"one-api/logging")
 
 type TaskAdaptor struct {
 	ChannelType int
@@ -135,7 +136,7 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any) (*http
 
 	req, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(byteBody))
 	if err != nil {
-		common.SysError(fmt.Sprintf("Get Task error: %v", err))
+		logging.SysError(fmt.Sprintf("Get Task error: %v", err))
 		return nil, err
 	}
 	defer req.Body.Close()

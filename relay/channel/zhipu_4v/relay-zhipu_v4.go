@@ -14,7 +14,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-)
+
+	"one-api/logging")
 
 // https://open.bigmodel.cn/doc/api#chatglm_std
 // chatglm_std, chatglm_lite
@@ -35,7 +36,7 @@ func getZhipuToken(apikey string) string {
 
 	split := strings.Split(apikey, ".")
 	if len(split) != 2 {
-		common.SysError("invalid zhipu key: " + apikey)
+		logging.SysError("invalid zhipu key: " + apikey)
 		return ""
 	}
 
@@ -211,7 +212,7 @@ func zhipuStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			var streamResponse ZhipuV4StreamResponse
 			err := json.Unmarshal([]byte(data), &streamResponse)
 			if err != nil {
-				common.SysError("error unmarshalling stream response: " + err.Error())
+				logging.SysError("error unmarshalling stream response: " + err.Error())
 			}
 			var response *dto.ChatCompletionsStreamResponse
 			if strings.Contains(data, "prompt_tokens") {
@@ -221,7 +222,7 @@ func zhipuStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWi
 			}
 			jsonResponse, err := json.Marshal(response)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			c.Render(-1, common.CustomEvent{Data: "data: " + string(jsonResponse)})

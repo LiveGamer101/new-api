@@ -10,7 +10,8 @@ import (
 	"one-api/constant"
 	"one-api/dto"
 	"one-api/service"
-)
+
+	"one-api/logging")
 
 // https://developers.generativeai.google/api/rest/generativelanguage/models/generateMessage#request-body
 // https://developers.generativeai.google/api/rest/generativelanguage/models/generateMessage#response-body
@@ -80,20 +81,20 @@ func palmStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWit
 	go func() {
 		responseBody, err := io.ReadAll(resp.Body)
 		if err != nil {
-			common.SysError("error reading stream response: " + err.Error())
+			logging.SysError("error reading stream response: " + err.Error())
 			stopChan <- true
 			return
 		}
 		err = resp.Body.Close()
 		if err != nil {
-			common.SysError("error closing stream response: " + err.Error())
+			logging.SysError("error closing stream response: " + err.Error())
 			stopChan <- true
 			return
 		}
 		var palmResponse PaLMChatResponse
 		err = json.Unmarshal(responseBody, &palmResponse)
 		if err != nil {
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			stopChan <- true
 			return
 		}
@@ -105,7 +106,7 @@ func palmStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWit
 		}
 		jsonResponse, err := json.Marshal(fullTextResponse)
 		if err != nil {
-			common.SysError("error marshalling stream response: " + err.Error())
+			logging.SysError("error marshalling stream response: " + err.Error())
 			stopChan <- true
 			return
 		}

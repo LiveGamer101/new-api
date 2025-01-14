@@ -20,7 +20,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
-)
+
+	"one-api/logging")
 
 func newAwsClient(c *gin.Context, info *relaycommon.RelayInfo) (*bedrockruntime.Client, error) {
 	awsSecret := strings.Split(info.ApiKey, "|")
@@ -163,7 +164,7 @@ func awsStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 			claudeResp := new(claude.ClaudeResponse)
 			err := json.NewDecoder(bytes.NewReader(v.Value.Bytes)).Decode(claudeResp)
 			if err != nil {
-				common.SysError("error unmarshalling stream response: " + err.Error())
+				logging.SysError("error unmarshalling stream response: " + err.Error())
 				return false
 			}
 
@@ -189,7 +190,7 @@ func awsStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 
 			jsonStr, err := json.Marshal(response)
 			if err != nil {
-				common.SysError("error marshalling stream response: " + err.Error())
+				logging.SysError("error marshalling stream response: " + err.Error())
 				return true
 			}
 			c.Render(-1, common.CustomEvent{Data: "data: " + string(jsonStr)})
@@ -206,7 +207,7 @@ func awsStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 		response := service.GenerateFinalUsageResponse(id, createdTime, info.UpstreamModelName, usage)
 		err := service.ObjectData(c, response)
 		if err != nil {
-			common.SysError("send final response failed: " + err.Error())
+			logging.SysError("send final response failed: " + err.Error())
 		}
 	}
 	service.Done(c)

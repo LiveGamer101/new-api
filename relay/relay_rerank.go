@@ -11,7 +11,8 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"one-api/setting"
-)
+
+	"one-api/logging")
 
 func getRerankPromptToken(rerankRequest dto.RerankRequest) int {
 	token, _ := service.CountTokenInput(rerankRequest.Query, rerankRequest.Model)
@@ -30,7 +31,7 @@ func RerankHelper(c *gin.Context, relayMode int) (openaiErr *dto.OpenAIErrorWith
 	var rerankRequest *dto.RerankRequest
 	err := common.UnmarshalBodyReusable(c, &rerankRequest)
 	if err != nil {
-		common.LogError(c, fmt.Sprintf("getAndValidateTextRequest failed: %s", err.Error()))
+		logging.LogError(c, fmt.Sprintf("getAndValidateTextRequest failed: %s", err.Error()))
 		return service.OpenAIErrorWrapperLocal(err, "invalid_text_request", http.StatusBadRequest)
 	}
 	if rerankRequest.Query == "" {

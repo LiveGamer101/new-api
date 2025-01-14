@@ -44,7 +44,7 @@ type OpenAIModelsResponse struct {
 
 const (
 	channelCacheKeyPrefix = "channel:"
-	channelCacheDuration = 5 * time.Minute
+	channelCacheDuration  = 5 * time.Minute
 )
 
 func GetAllChannels(c *gin.Context) {
@@ -87,7 +87,7 @@ func GetAllChannels(c *gin.Context) {
 	channelData := make([]*model.Channel, 0)
 	idSort, _ := strconv.ParseBool(c.Query("id_sort"))
 	enableTagMode, _ := strconv.ParseBool(c.Query("tag_mode"))
-	
+
 	if enableTagMode {
 		tags, err := model.GetPaginatedTags(p*pageSize, pageSize)
 		if err != nil {
@@ -97,7 +97,7 @@ func GetAllChannels(c *gin.Context) {
 			})
 			return
 		}
-		
+
 		// Use goroutines to fetch channels in parallel
 		var wg sync.WaitGroup
 		var mu sync.Mutex
@@ -290,8 +290,8 @@ func GetChannel(c *gin.Context) {
 }
 
 const (
-	maxKeyLength = 1000
-	maxBatchSize = 100
+	maxKeyLength        = 1000
+	maxBatchSize        = 100
 	addChannelRateLimit = 10 // requests per minute
 )
 
@@ -335,7 +335,7 @@ func AddChannel(c *gin.Context) {
 	}
 
 	channel.CreatedTime = common.GetTimestamp()
-	
+
 	// Split and validate keys
 	keys := strings.Split(channel.Key, "\n")
 	if len(keys) > maxBatchSize {
@@ -361,7 +361,7 @@ func AddChannel(c *gin.Context) {
 	// Process channels in batches
 	channels := make([]model.Channel, 0, len(keys))
 	processedCount := 0
-	
+
 	for _, key := range keys {
 		if key = strings.TrimSpace(key); key == "" {
 			continue
@@ -442,7 +442,7 @@ func validateVertexAIChannel(channel *model.Channel) error {
 	if channel.Other == "" {
 		return fmt.Errorf("deployment region cannot be empty")
 	}
-	
+
 	if common.IsJsonStr(channel.Other) {
 		regionMap := common.StrToMap(channel.Other)
 		if regionMap["default"] == nil {
@@ -465,7 +465,7 @@ func validateModels(channel *model.Channel) error {
 func processBatchWithRetry(channels []model.Channel) error {
 	maxRetries := 3
 	var lastErr error
-	
+
 	for i := 0; i < maxRetries; i++ {
 		if err := model.BatchInsertChannels(channels); err != nil {
 			lastErr = err
@@ -474,7 +474,7 @@ func processBatchWithRetry(channels []model.Channel) error {
 		}
 		return nil
 	}
-	
+
 	return fmt.Errorf("failed after %d retries: %v", maxRetries, lastErr)
 }
 

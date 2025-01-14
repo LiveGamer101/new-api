@@ -15,7 +15,8 @@ import (
 	"one-api/service"
 	"one-api/setting"
 	"strings"
-)
+
+	"one-api/logging")
 
 func getAndValidImageRequest(c *gin.Context, info *relaycommon.RelayInfo) (*dto.ImageRequest, error) {
 	imageRequest := &dto.ImageRequest{}
@@ -73,7 +74,7 @@ func ImageHelper(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode {
 
 	imageRequest, err := getAndValidImageRequest(c, relayInfo)
 	if err != nil {
-		common.LogError(c, fmt.Sprintf("getAndValidImageRequest failed: %s", err.Error()))
+		logging.LogError(c, fmt.Sprintf("getAndValidImageRequest failed: %s", err.Error()))
 		return service.OpenAIErrorWrapper(err, "invalid_image_request", http.StatusBadRequest)
 	}
 

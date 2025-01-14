@@ -6,14 +6,23 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
+	"one-api/constant/discord"
+	"one-api/logging"
 )
 
 var (
-	Port         = flag.Int("port", 3000, "the listening port")
-	PrintVersion = flag.Bool("version", false, "print version and exit")
-	PrintHelp    = flag.Bool("help", false, "print help and exit")
-	LogDir       = flag.String("log-dir", "./logs", "specify the log directory")
+	Port             = flag.Int("port", 3000, "the listening port")
+	PrintVersion     = flag.Bool("version", false, "print version and exit")
+	PrintHelp        = flag.Bool("help", false, "print help and exit")
+	logDir           = flag.String("log-dir", "./logs", "specify the log directory")
+	DiscordBotToken  = ""
+	DiscordAdminIds  = make(map[string]bool)
 )
+
+func init() {
+	logging.LogDir = logDir
+}
 
 func printHelp() {
 	fmt.Println("New API " + Version + " - All in one API service for OpenAI API.")
@@ -55,23 +64,23 @@ func LoadEnv() {
 	}
 
 	// Load Discord bot settings
-	if os.Getenv("DISCORD_BOT_TOKEN") != "" {
-		setting.DiscordBotToken = os.Getenv("DISCORD_BOT_TOKEN")
+	if os.Getenv(discord.BotTokenEnvKey) != "" {
+		DiscordBotToken = os.Getenv(discord.BotTokenEnvKey)
 	}
 	
 	// Load Discord admin IDs
-	adminIds := GetEnvAsStringSlice("DISCORD_ADMIN_IDS", ",")
+	adminIds := GetEnvAsStringSlice(discord.AdminIDsEnvKey, ",")
 	for _, id := range adminIds {
-		setting.AddDiscordAdmin(strings.TrimSpace(id))
+		DiscordAdminIds[strings.TrimSpace(id)] = true
 	}
-	if *LogDir != "" {
+	if *logDir != "" {
 		var err error
-		*LogDir, err = filepath.Abs(*LogDir)
+		*logDir, err = filepath.Abs(*logDir)
 		if err != nil {
 			log.Fatal(err)
 		}
-		if _, err := os.Stat(*LogDir); os.IsNotExist(err) {
-			err = os.Mkdir(*LogDir, 0777)
+		if _, err := os.Stat(*logDir); os.IsNotExist(err) {
+			err = os.Mkdir(*logDir, 0777)
 			if err != nil {
 				log.Fatal(err)
 			}

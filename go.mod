@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.7.4
+	github.com/bwmarrin/discordgo v0.28.1
 	github.com/bytedance/gopkg v0.0.0-20220118071334-3db87571198b
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/gzip v0.0.6

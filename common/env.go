@@ -47,4 +47,3 @@ func GetEnvAsStringSlice(env string, separator string) []string {
 	}
 	return strings.Split(value, separator)
 }
-}

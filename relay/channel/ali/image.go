@@ -7,13 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
-	"one-api/common"
 	"one-api/dto"
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
 	"time"
-)
+
+	"one-api/logging")
 
 func oaiImage2Ali(request dto.ImageRequest) *AliImageRequest {
 	var imageRequest AliImageRequest
@@ -41,7 +41,7 @@ func updateTask(info *relaycommon.RelayInfo, taskID string, key string) (*AliRes
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		common.SysError("updateTask client.Do err: " + err.Error())
+		logging.SysError("updateTask client.Do err: " + err.Error())
 		return &aliResponse, err, nil
 	}
 	defer resp.Body.Close()
@@ -51,7 +51,7 @@ func updateTask(info *relaycommon.RelayInfo, taskID string, key string) (*AliRes
 	var response AliResponse
 	err = json.Unmarshal(responseBody, &response)
 	if err != nil {
-		common.SysError("updateTask NewDecoder err: " + err.Error())
+		logging.SysError("updateTask NewDecoder err: " + err.Error())
 		return &aliResponse, err, nil
 	}
 
@@ -107,7 +107,7 @@ func responseAli2OpenAIImage(c *gin.Context, response *AliResponse, info *relayc
 		if responseFormat == "b64_json" {
 			_, b64, err := service.GetImageFromUrl(data.Url)
 			if err != nil {
-				common.LogError(c, "get_image_data_failed: "+err.Error())
+				logging.LogError(c, "get_image_data_failed: "+err.Error())
 				continue
 			}
 			b64Json = b64
@@ -144,7 +144,7 @@ func aliImageHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rela
 	}
 
 	if aliTaskResponse.Message != "" {
-		common.LogError(c, "ali_async_task_failed: "+aliTaskResponse.Message)
+		logging.LogError(c, "ali_async_task_failed: "+aliTaskResponse.Message)
 		return service.OpenAIErrorWrapper(errors.New(aliTaskResponse.Message), "ali_async_task_failed", http.StatusInternalServerError), nil
 	}
 

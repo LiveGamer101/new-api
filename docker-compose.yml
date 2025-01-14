@@ -7,46 +7,100 @@ services:
     restart: always
     command: --log-dir /app/logs
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Web interface port
     volumes:
-      - ./data:/data
-      - ./logs:/app/logs
+      - ./data:/data  # Persistent data storage
+      - ./logs:/app/logs  # Log files
     environment:
-      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service
+      # Database Configuration
+      - SQL_DSN=root:${MYSQL_ROOT_PASSWORD:-123456}@tcp(mysql:3306)/new-api
       - REDIS_CONN_STRING=redis://redis
-      - TZ=Asia/Shanghai
-    #      - SESSION_SECRET=random_string  # 多机部署时设置，必须修改这个随机字符串！！！！！！！
-    #      - NODE_TYPE=slave  # Uncomment for slave node in multi-node deployment
-    #      - SYNC_FREQUENCY=60  # Uncomment if regular database syncing is needed
-    #      - FRONTEND_BASE_URL=https://openai.justsong.cn  # Uncomment for multi-node deployment with front-end URL
-    #      - DISCORD_BOT_TOKEN=your_bot_token_here  # Uncomment and set your Discord bot token to enable Discord integration
-    #      - DISCORD_ADMIN_IDS=123456789,987654321  # Uncomment and set Discord admin user IDs (comma-separated)
+      
+      # System Settings
+      - TZ=UTC  # Timezone, change as needed (e.g., Asia/Shanghai)
+      - SESSION_SECRET=${SESSION_SECRET:-random_string}  # Change this in production!
+      - PORT=3000
+      
+      # Discord Bot Configuration (optional)
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_ADMIN_IDS=${DISCORD_ADMIN_IDS}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+      
+      # Performance Settings
+      - SQL_MAX_IDLE_CONNS=25
+      - SQL_MAX_OPEN_CONNS=100
+      - SQL_MAX_LIFETIME=60
+      - BATCH_UPDATE_ENABLED=true
+      - BATCH_UPDATE_INTERVAL=5
+      
+      # Cache Settings
+      - MEMORY_CACHE_ENABLED=true
+      - SYNC_FREQUENCY=60
+      
+      # Channel Management
+      - CHANNEL_UPDATE_FREQUENCY=30
+      - CHANNEL_TEST_FREQUENCY=300
+      - AUTOMATIC_DISABLE_CHANNEL_ENABLED=true
+      - AUTOMATIC_ENABLE_CHANNEL_ENABLED=true
+      
+      # Security Settings
+      - TURNSTILE_CHECK_ENABLED=${TURNSTILE_CHECK_ENABLED:-false}
+      - TURNSTILE_SITE_KEY=${TURNSTILE_SITE_KEY}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      
+      # Email Settings (optional)
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_ACCOUNT=${SMTP_ACCOUNT}
+      - SMTP_TOKEN=${SMTP_TOKEN}
+      
+      # Debug Settings (disable in production)
+      - DEBUG=${DEBUG:-false}
+      - ENABLE_PPROF=${ENABLE_PPROF:-false}
 
     depends_on:
       - redis
       - mysql
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'"]
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - new-api-network
 
   redis:
-    image: redis:latest
-    container_name: redis
+    image: redis:alpine  # Using Alpine for smaller image size
+    container_name: new-api-redis
     restart: always
+    command: redis-server --appendonly yes  # Enable persistence
+    volumes:
+      - redis_data:/data
+    networks:
+      - new-api-network
 
   mysql:
     image: mysql:8.2
-    container_name: mysql
+    container_name: new-api-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 123456  # Ensure this matches the password in SQL_DSN
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
       MYSQL_DATABASE: new-api
+      MYSQL_USER: ${MYSQL_USER:-new-api}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-new-api-password}
     volumes:
       - mysql_data:/var/lib/mysql
-    # ports:
-    #   - "3306:3306"  # If you want to access MySQL from outside Docker, uncomment
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - new-api-network
 
 volumes:
   mysql_data:
+    name: new-api-mysql-data
+  redis_data:
+    name: new-api-redis-data
+
+networks:
+  new-api-network:
+    name: new-api-network
+    driver: bridge

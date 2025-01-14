@@ -18,7 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-)
+
+	"one-api/logging")
 
 // https://cloud.tencent.com/document/product/1729/97732
 
@@ -105,7 +106,7 @@ func tencentStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIError
 		var tencentResponse TencentChatResponse
 		err := json.Unmarshal([]byte(data), &tencentResponse)
 		if err != nil {
-			common.SysError("error unmarshalling stream response: " + err.Error())
+			logging.SysError("error unmarshalling stream response: " + err.Error())
 			continue
 		}
 
@@ -116,12 +117,12 @@ func tencentStreamHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIError
 
 		err = service.ObjectData(c, response)
 		if err != nil {
-			common.SysError(err.Error())
+			logging.SysError(err.Error())
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		common.SysError("error reading stream: " + err.Error())
+		logging.SysError("error reading stream: " + err.Error())
 	}
 
 	service.Done(c)

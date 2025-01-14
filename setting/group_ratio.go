@@ -3,7 +3,7 @@ package setting
 import (
 	"encoding/json"
 	"errors"
-	"one-api/common"
+	"one-api/logging"
 )
 
 var groupRatio = map[string]float64{
@@ -28,7 +28,7 @@ func ContainsGroupRatio(name string) bool {
 func GroupRatio2JSONString() string {
 	jsonBytes, err := json.Marshal(groupRatio)
 	if err != nil {
-		common.SysError("error marshalling model ratio: " + err.Error())
+		logging.SysError("error marshalling model ratio: " + err.Error())
 	}
 	return string(jsonBytes)
 }
@@ -41,7 +41,7 @@ func UpdateGroupRatioByJSONString(jsonStr string) error {
 func GetGroupRatio(name string) float64 {
 	ratio, ok := groupRatio[name]
 	if !ok {
-		common.SysError("group ratio not found: " + name)
+		logging.SysError("group ratio not found: " + name)
 		return 1
 	}
 	return ratio

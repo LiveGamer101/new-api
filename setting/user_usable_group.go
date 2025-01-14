@@ -2,7 +2,7 @@ package setting
 
 import (
 	"encoding/json"
-	"one-api/common"
+	"one-api/logging"
 )
 
 var userUsableGroups = map[string]string{
@@ -21,7 +21,7 @@ func GetUserUsableGroupsCopy() map[string]string {
 func UserUsableGroups2JSONString() string {
 	jsonBytes, err := json.Marshal(userUsableGroups)
 	if err != nil {
-		common.SysError("error marshalling user groups: " + err.Error())
+		logging.SysError("error marshalling user groups: " + err.Error())
 	}
 	return string(jsonBytes)
 }

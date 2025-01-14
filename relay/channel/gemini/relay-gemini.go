@@ -15,7 +15,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
-)
+
+	"one-api/logging")
 
 // Setting safety to the lowest possible values since Gemini is already powerless enough
 func CovertGemini2OpenAI(textRequest dto.GeneralOpenAIRequest) (*GeminiChatRequest, error) {
@@ -519,7 +520,7 @@ func GeminiChatStreamHandler(c *gin.Context, resp *http.Response, info *relaycom
 		var geminiResponse GeminiChatResponse
 		err := json.Unmarshal([]byte(data), &geminiResponse)
 		if err != nil {
-			common.LogError(c, "error unmarshalling stream response: "+err.Error())
+			logging.LogError(c, "error unmarshalling stream response: "+err.Error())
 			continue
 		}
 
@@ -534,7 +535,7 @@ func GeminiChatStreamHandler(c *gin.Context, resp *http.Response, info *relaycom
 		}
 		err = service.ObjectData(c, response)
 		if err != nil {
-			common.LogError(c, err.Error())
+			logging.LogError(c, err.Error())
 		}
 		if is_stop {
 			response := service.GenerateStopResponse(id, createAt, info.UpstreamModelName, constant.FinishReasonStop)
@@ -552,7 +553,7 @@ func GeminiChatStreamHandler(c *gin.Context, resp *http.Response, info *relaycom
 		response = service.GenerateFinalUsageResponse(id, createAt, info.UpstreamModelName, *usage)
 		err := service.ObjectData(c, response)
 		if err != nil {
-			common.SysError("send final response failed: " + err.Error())
+			logging.SysError("send final response failed: " + err.Error())
 		}
 	}
 	service.Done(c)

@@ -2,7 +2,7 @@ package setting
 
 import (
 	"encoding/json"
-	"one-api/common"
+	"one-api/logging"
 )
 
 var Chats = []map[string]string{
@@ -28,7 +28,7 @@ func UpdateChatsByJsonString(jsonString string) error {
 func Chats2JsonString() string {
 	jsonBytes, err := json.Marshal(Chats)
 	if err != nil {
-		common.SysError("error marshalling chats: " + err.Error())
+		logging.SysError("error marshalling chats: " + err.Error())
 		return "[]"
 	}
 	return string(jsonBytes)

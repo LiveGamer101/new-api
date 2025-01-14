@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"one-api/common"
+	"one-api/logging"
 	"strings"
 
 	"github.com/samber/lo"
@@ -84,7 +85,7 @@ func getChannelQuery(group string, model string, retry int) *gorm.DB {
 	if retry != 0 {
 		priority, err := getPriority(group, model, retry)
 		if err != nil {
-			common.SysError(fmt.Sprintf("Get priority failed: %s", err.Error()))
+			logging.SysError(fmt.Sprintf("Get priority failed: %s", err.Error()))
 		} else {
 			channelQuery = DB.Where(groupCol+" = ? and model = ? and enabled = "+trueVal+" and priority = ?", group, model, priority)
 		}
@@ -258,13 +259,13 @@ func FixAbility() (int, error) {
 	// Find all channel ids from channel table
 	err := DB.Model(&Channel{}).Pluck("id", &channelIds).Error
 	if err != nil {
-		common.SysError(fmt.Sprintf("Get channel ids from channel table failed: %s", err.Error()))
+		logging.SysError(fmt.Sprintf("Get channel ids from channel table failed: %s", err.Error()))
 		return 0, err
 	}
 	// Delete abilities of channels that are not in channel table
 	err = DB.Where("channel_id NOT IN (?)", channelIds).Delete(&Ability{}).Error
 	if err != nil {
-		common.SysError(fmt.Sprintf("Delete abilities of channels that are not in channel table failed: %s", err.Error()))
+		logging.SysError(fmt.Sprintf("Delete abilities of channels that are not in channel table failed: %s", err.Error()))
 		return 0, err
 	}
 	common.SysLog(fmt.Sprintf("Delete abilities of channels that are not in channel table successfully, ids: %v", channelIds))
@@ -274,7 +275,7 @@ func FixAbility() (int, error) {
 	var abilityChannelIds []int
 	err = DB.Table("abilities").Distinct("channel_id").Pluck("channel_id", &abilityChannelIds).Error
 	if err != nil {
-		common.SysError(fmt.Sprintf("Get channel ids from abilities table failed: %s", err.Error()))
+		logging.SysError(fmt.Sprintf("Get channel ids from abilities table failed: %s", err.Error()))
 		return 0, err
 	}
 	var channels []Channel
@@ -289,7 +290,7 @@ func FixAbility() (int, error) {
 	for _, channel := range channels {
 		err := channel.UpdateAbilities(nil)
 		if err != nil {
-			common.SysError(fmt.Sprintf("Update abilities of channel %d failed: %s", channel.Id, err.Error()))
+			logging.SysError(fmt.Sprintf("Update abilities of channel %d failed: %s", channel.Id, err.Error()))
 		} else {
 			common.SysLog(fmt.Sprintf("Update abilities of channel %d successfully", channel.Id))
 			count++

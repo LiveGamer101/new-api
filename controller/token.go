@@ -6,7 +6,8 @@ import (
 	"one-api/common"
 	"one-api/model"
 	"strconv"
-)
+
+	"one-api/logging")
 
 func GetAllTokens(c *gin.Context) {
 	userId := c.GetInt("id")
@@ -129,7 +130,7 @@ func AddToken(c *gin.Context) {
 			"success": false,
 			"message": "生成令牌失败",
 		})
-		common.SysError("failed to generate token key: " + err.Error())
+		logging.SysError("failed to generate token key: " + err.Error())
 		return
 	}
 	cleanToken := model.Token{
