@@ -125,7 +125,7 @@ const EditTagModal = (props) => {
     }
     if (inputs.model_mapping !== null && inputs.model_mapping !== '') {
       if (inputs.model_mapping !== '' && !verifyJSON(inputs.model_mapping)) {
-        showInfo('模型映射必须是合法的 JSON 格式！');
+        showInfo('ModelMapping mustIsTogetherMethodThe JSON Format！');
         setLoading(false);
         return;
       }
@@ -140,7 +140,7 @@ const EditTagModal = (props) => {
     data.new_tag = inputs.new_tag;
     // check have any change
     if (data.model_mapping === undefined && data.groups === undefined && data.models === undefined && data.new_tag === undefined) {
-      showWarning('没有任何修改！');
+      showWarning('NoHaveAnyModify！');
       setLoading(false);
       return;
     }
@@ -152,7 +152,7 @@ const EditTagModal = (props) => {
     try {
       const res = await API.put('/api/channel/tag', data);
       if (res?.data?.success) {
-        showSuccess('标签更新成功！');
+        showSuccess('TagUpdateSuccess！');
         refresh();
         handleClose();
       }
@@ -186,7 +186,7 @@ const EditTagModal = (props) => {
 
   const addCustomModels = () => {
     if (customModel.trim() === '') return;
-    // 使用逗号分隔字符串，然后去除每个模型名称前后的空格
+    // UseUsePauseNumberSeparationString，HoweverAfterGoRemoveEachItemsModelNameFrontAfterTheEmptyStrict.
     const modelArray = customModel.split(',').map((model) => model.trim());
 
     let localModels = [...inputs.models];
@@ -194,24 +194,24 @@ const EditTagModal = (props) => {
     let hasError = false;
 
     modelArray.forEach((model) => {
-      // 检查模型是否已存在，且模型名称非空
+      // If it already existsModelIsNoAlreadyExistence，The name is not emptyModelNameNonEmpty
       if (model && !localModels.includes(model)) {
-        localModels.push(model); // 添加到模型列表
+        localModels.push(model); // AddThe path before.ModelIf it is in new creation mode
         localModelOptions.push({
-          // 添加到下拉选项
+          // AddThe path before.DownPullSelectItem
           key: model,
           text: model,
           value: model
         });
       } else if (model) {
-        showError('某些模型已存在！');
+        showError('SomeModelAlreadyExistence！');
         hasError = true;
       }
     });
 
-    if (hasError) return; // 如果有错误则终止操作
+    if (hasError) return; // IfHaveErrorThenTerminateOperation
 
-    // 更新状态值
+    // UpdateStatusAll
     setModelOptions(localModelOptions);
     setCustomModel('');
     handleInputChange('models', localModels);
@@ -220,14 +220,14 @@ const EditTagModal = (props) => {
 
   return (
     <SideSheet
-      title="编辑标签"
+      title="EditTag"
       visible={visible}
       onCancel={handleClose}
       footer={
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Space>
-            <Button onClick={handleClose}>取消</Button>
-            <Button type="primary" onClick={handleSave} loading={loading}>保存</Button>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="primary" onClick={handleSave} loading={loading}>Save</Button>
           </Space>
         </div>
       }
@@ -237,24 +237,24 @@ const EditTagModal = (props) => {
           type={'warning'}
           description={
             <>
-              所有编辑均为覆盖操作，留空则不更改
+              Are overwrite operationsEditAllForOverwriteOperation，Label name
             </>
           }
         ></Banner>
       </div>
       <Spin spinning={loading}>
         <TextInput
-          label="标签名，留空则解散标签"
+          label="TagName，LeaveEmptyThenDissolveTag"
           name="newTag"
           value={inputs.new_tag}
           onChange={(value) => setInputs({ ...inputs, new_tag: value })}
-          placeholder="请输入新标签"
+          placeholder="Please enterNewTag"
         />
         <div style={{ marginTop: 10 }}>
-          <Typography.Text strong>模型，留空则不更改：</Typography.Text>
+          <Typography.Text strong>Model，Label name：</Typography.Text>
         </div>
         <Select
-          placeholder={'请选择该渠道所支持的模型，留空则不更改'}
+          placeholder={'PleaseSelectThisChannelOfSupportTheModel，Label name'}
           name="models"
           required
           multiple
@@ -271,26 +271,26 @@ const EditTagModal = (props) => {
         <Input
           addonAfter={
             <Button type="primary" onClick={addCustomModels}>
-              填入
+              Used to support the system's email sending
             </Button>
           }
-          placeholder="输入自定义模型名称"
+          placeholder="InputCustomModelName"
           value={customModel}
           onChange={(value) => {
             setCustomModel(value.trim());
           }}
         />
         <div style={{ marginTop: 10 }}>
-          <Typography.Text strong>分组，留空则不更改：</Typography.Text>
+          <Typography.Text strong>Group，Label name：</Typography.Text>
         </div>
         <Select
-          placeholder={'请选择可以使用该渠道的分组，留空则不更改'}
+          placeholder={'PleaseSelectCanUsedUseUseThisChannelTheGroup，Label name'}
           name="groups"
           required
           multiple
           selection
           allowAdditions
-          additionLabel={'请在系统设置页面编辑分组倍率以添加新的分组：'}
+          additionLabel={'PleaseHandle filtering and pagination logic first.SystemSettingsRemoveEditGroupMultiplierUsedAddNewTheGroup：'}
           onChange={(value) => {
             handleInputChange('groups', value);
           }}
@@ -299,10 +299,10 @@ const EditTagModal = (props) => {
           optionList={groupOptions}
         />
         <div style={{ marginTop: 10 }}>
-          <Typography.Text strong>模型重定向：</Typography.Text>
+          <Typography.Text strong>ModelResetOrientation：</Typography.Text>
         </div>
         <TextArea
-          placeholder={`此项可选，用于修改请求体中的模型名称，为一个 JSON 字符串，键为请求中模型名称，值为要替换的模型名称，留空则不更改`}
+          placeholder={`ThisItemOptional，UseLess thanModifyPleaseRequestBodyUse predefined colorsTheModelName，ForOneItems JSON String，KeyForPleaseRequestUse predefined colorsModelName，AllForWantReplaceTheModelName，Label name`}
           name="model_mapping"
           onChange={(value) => {
             handleInputChange('model_mapping', value);
@@ -325,7 +325,7 @@ const EditTagModal = (props) => {
               );
             }}
           >
-            填入模板
+            Used to support the system's email sendingTemplate
           </Typography.Text>
           <Typography.Text
             style={{
@@ -340,7 +340,7 @@ const EditTagModal = (props) => {
               );
             }}
           >
-            清空重定向
+            No changes
           </Typography.Text>
           <Typography.Text
             style={{
@@ -355,7 +355,7 @@ const EditTagModal = (props) => {
               );
             }}
           >
-            不更改
+            Manage
           </Typography.Text>
         </Space>
       </Spin>

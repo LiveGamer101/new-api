@@ -66,17 +66,17 @@ const ModelPricing = () => {
       case 1:
         return (
           <Tag color='teal' size='large'>
-            {t('按次计费')}
+            {t('Pay-per-use')}
           </Tag>
         );
       case 0:
         return (
           <Tag color='violet' size='large'>
-            {t('按量计费')}
+            {t('Pay-as-you-go')}
           </Tag>
         );
       default:
-        return t('未知');
+        return t('Unknown');
     }
   }
   
@@ -84,7 +84,7 @@ const ModelPricing = () => {
     return (
       <Popover
         content={
-          <div style={{ padding: 8 }}>{t('您的分组可以使用该模型')}</div>
+          <div style={{ padding: 8 }}>{t('YouTheGroupCanUsedUseUseThisModel')}</div>
         }
         position='top'
         key={available}
@@ -103,7 +103,7 @@ const ModelPricing = () => {
 
   const columns = [
     {
-      title: t('可用性'),
+      title: t('CanUsePossibility'),
       dataIndex: 'available',
       render: (text, record, index) => {
          // if record.enable_groups contains selectedGroup, then available is true
@@ -112,7 +112,7 @@ const ModelPricing = () => {
       sorter: (a, b) => a.available - b.available,
     },
     {
-      title: t('模型名称'),
+      title: t('ModelName'),
       dataIndex: 'model_name',
       render: (text, record, index) => {
         return (
@@ -134,7 +134,7 @@ const ModelPricing = () => {
       filteredValue,
     },
     {
-      title: t('计费类型'),
+      title: t('BillingType'),
       dataIndex: 'quota_type',
       render: (text, record, index) => {
         return renderQuotaType(parseInt(text));
@@ -142,7 +142,7 @@ const ModelPricing = () => {
       sorter: (a, b) => a.quota_type - b.quota_type,
     },
     {
-      title: t('可用分组'),
+      title: t('CanUseGroup'),
       dataIndex: 'enable_groups',
       render: (text, record, index) => {
         
@@ -168,7 +168,7 @@ const ModelPricing = () => {
                       size='large'
                       onClick={() => {
                         setSelectedGroup(group);
-                        showInfo(t('当前查看的分组为：{{group}}，倍率为：{{ratio}}', {
+                        showInfo(t('CurrentViewTheGroupFor：{{group}}，MultiplierFor：{{ratio}}', {
                           group: group,
                           ratio: groupRatio[group]
                         }));
@@ -187,12 +187,12 @@ const ModelPricing = () => {
     {
       title: () => (
         <span style={{'display':'flex','alignItems':'center'}}>
-          {t('倍率')}
+          {t('Multiplier')}
           <Popover
             content={
               <div style={{ padding: 8 }}>
-                {t('倍率是为了方便换算不同价格的模型')}<br/>
-                {t('点击查看倍率说明')}
+                {t('MultiplierIsForFor convenient conversion of differentPriceTheModel')}<br/>
+                {t('ClickViewMultiplierExplanation')}
               </div>
             }
             position='top'
@@ -219,23 +219,23 @@ const ModelPricing = () => {
         let completionRatio = parseFloat(record.completion_ratio.toFixed(3));
         content = (
           <>
-            <Text>{t('模型倍率')}：{record.quota_type === 0 ? text : t('无')}</Text>
+            <Text>{t('ModelMultiplier')}：{record.quota_type === 0 ? text : t('None')}</Text>
             <br />
-            <Text>{t('补全倍率')}：{record.quota_type === 0 ? completionRatio : t('无')}</Text>
+            <Text>{t('CompleteMultiplier')}：{record.quota_type === 0 ? completionRatio : t('None')}</Text>
             <br />
-            <Text>{t('分组倍率')}：{groupRatio[selectedGroup]}</Text>
+            <Text>{t('GroupMultiplier')}：{groupRatio[selectedGroup]}</Text>
           </>
         );
         return <div>{content}</div>;
       },
     },
     {
-      title: t('模型价格'),
+      title: t('ModelPrice'),
       dataIndex: 'model_price',
       render: (text, record, index) => {
         let content = text;
         if (record.quota_type === 0) {
-          // 这里的 *2 是因为 1倍率=0.002刀，请勿删除
+          // Here *2 IsBecauseFor 1Multiplier=0.002Knife，Do notDelete
           let inputRatioPrice = record.model_ratio * 2 * groupRatio[selectedGroup];
           let completionRatioPrice =
             record.model_ratio *
@@ -243,14 +243,14 @@ const ModelPricing = () => {
             groupRatio[selectedGroup];
           content = (
             <>
-              <Text>{t('提示')} ${inputRatioPrice} / 1M tokens</Text>
+              <Text>{t('Prompt')} ${inputRatioPrice} / 1M tokens</Text>
               <br />
-              <Text>{t('补全')} ${completionRatioPrice} / 1M tokens</Text>
+              <Text>{t('Complete')} ${completionRatioPrice} / 1M tokens</Text>
             </>
           );
         } else {
           let price = parseFloat(text) * groupRatio[selectedGroup];
-          content = <>${t('模型价格')}：${price}</>;
+          content = <>${t('ModelPrice')}：${price}</>;
         }
         return <div>{content}</div>;
       },
@@ -314,10 +314,10 @@ const ModelPricing = () => {
 
   const copyText = async (text) => {
     if (await copy(text)) {
-      showSuccess('已复制：' + text);
+      showSuccess('AlreadyCopy：' + text);
     } else {
       // setSearchKeyword(text);
-      Modal.error({ title: '无法复制到剪贴板，请手动复制', content: text });
+      Modal.error({ title: 'NoneMethodCopyTo clipboard，PleaseManualCopy', content: text });
     }
   };
 
@@ -333,7 +333,7 @@ const ModelPricing = () => {
             type="success"
             fullMode={false}
             closeIcon="null"
-            description={t('您的默认分组为：{{group}}，分组倍率为：{{ratio}}', {
+            description={t('YouTheDefaultGroupFor：{{group}}，GroupMultiplierFor：{{ratio}}', {
               group: userState.user.group,
               ratio: groupRatio[userState.user.group]
             })}
@@ -343,7 +343,7 @@ const ModelPricing = () => {
             type='warning'
             fullMode={false}
             closeIcon="null"
-            description={t('您还未登陆，显示的价格为默认分组倍率: {{ratio}}', {
+            description={t('You are not logged in，DisplayThePriceForDefaultGroupMultiplier: {{ratio}}', {
               ratio: groupRatio['default']
             })}
           />
@@ -352,13 +352,13 @@ const ModelPricing = () => {
         <Banner 
             type="info"
             fullMode={false}
-            description={<div>{t('按量计费费用 = 分组倍率 × 模型倍率 × （提示token数 + 补全token数 × 补全倍率）/ 500000 （单位：美元）')}</div>}
+            description={<div>{t('Pay-as-you-goCostUse = GroupMultiplier × ModelMultiplier × （PrompttokenNumber + CompletetokenNumber × CompleteMultiplier）/ 500000 （Unit：Dollar）')}</div>}
             closeIcon="null"
         />
         <br/>
         <Space style={{ marginBottom: 16 }}>
           <Input
-            placeholder={t('模糊搜索模型名称')}
+            placeholder={t('BlurSearchModelName')}
             style={{ width: 200 }}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
@@ -374,7 +374,7 @@ const ModelPricing = () => {
             }}
             disabled={selectedRowKeys == ""}
           >
-            {t('复制选中模型')}
+            {t('CopySelectUse predefined colorsModel')}
           </Button>
         </Space>
         <Table
@@ -384,7 +384,7 @@ const ModelPricing = () => {
           loading={loading}
           pagination={{
             formatPageText: (page) =>
-              t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+              t('The {{start}} - {{end}} Item，Total {{total}} Item', {
                 start: page.currentStart,
                 end: page.currentEnd,
                 total: models.length

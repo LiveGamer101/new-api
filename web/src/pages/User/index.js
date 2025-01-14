@@ -8,11 +8,9 @@ const User = () => {
   return (
     <>
       <Layout>
-        <Layout.Header>
-        <h3>{t('管理用户')}</h3>
-      </Layout.Header>
-      <Layout.Content>
-        <UsersTable />
+        <Layout.Content>
+          <h3 style={{ marginBottom: '16px' }}>{t('RedirectingUseUser')}</h3>
+          <UsersTable />
         </Layout.Content>
       </Layout>
     </>

@@ -13,9 +13,9 @@ export default function DataDashboard(props) {
   const { t } = useTranslation();
   
   const optionsDataExportDefaultTime = [
-    { key: 'hour', label: t('小时'), value: 'hour' },
-    { key: 'day', label: t('天'), value: 'day' },
-    { key: 'week', label: t('周'), value: 'week' },
+    { key: 'hour', label: t('SmallWhen'), value: 'hour' },
+    { key: 'day', label: t('Week'), value: 'day' },
+    { key: 'week', label: t('Name'), value: 'week' },
   ];
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
@@ -28,7 +28,7 @@ export default function DataDashboard(props) {
 
   function onSubmit() {
     const updateArray = compareObjects(inputs, inputsRow);
-    if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+    if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
     const requestQueue = updateArray.map((item) => {
       let value = '';
       if (typeof inputs[item.key] === 'boolean') {
@@ -47,13 +47,13 @@ export default function DataDashboard(props) {
         if (requestQueue.length === 1) {
           if (res.includes(undefined)) return;
         } else if (requestQueue.length > 1) {
-          if (res.includes(undefined)) return showError(t('部分保存失败，请重试'));
+          if (res.includes(undefined)) return showError(t('Part.SaveFailed，PleaseRetry'));
         }
-        showSuccess(t('保存成功'));
+        showSuccess(t('SaveSuccess'));
         props.refresh();
       })
       .catch(() => {
-        showError(t('保存失败，请重试'));
+        showError(t('SaveFailed，PleaseRetry'));
       })
       .finally(() => {
         setLoading(false);
@@ -84,12 +84,12 @@ export default function DataDashboard(props) {
           getFormApi={(formAPI) => (refForm.current = formAPI)}
           style={{ marginBottom: 15 }}
         >
-          <Form.Section text={t('数据看板设置')}>
+          <Form.Section text={t('NumberDashboardSettings')}>
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Switch
                   field={'DataExportEnabled'}
-                  label={t('启用数据看板（实验性）')}
+                  label={t('EnableNumberDashboard（Experimental）')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -105,12 +105,12 @@ export default function DataDashboard(props) {
             <Row>
               <Col span={8}>
                 <Form.InputNumber
-                  label={t('数据看板更新间隔')}
+                  label={t('NumberDashboardUpdateInterval')}
                   step={1}
                   min={1}
-                  suffix={t('分钟')}
-                  extraText={t('设置过短会影响数据库性能')}
-                  placeholder={t('数据看板更新间隔')}
+                  suffix={t('Minute')}
+                  extraText={t('SettingsToo short will affectNumberDatabasePossibilityAble')}
+                  placeholder={t('NumberDashboardUpdateInterval')}
                   field={'DataExportInterval'}
                   onChange={(value) =>
                     setInputs({
@@ -122,11 +122,11 @@ export default function DataDashboard(props) {
               </Col>
               <Col span={8}>
                 <Form.Select
-                  label={t('数据看板默认时间粒度')}
+                  label={t('NumberDashboardDefaultTimeDay')}
                   optionList={optionsDataExportDefaultTime}
                   field={'DataExportDefaultTime'}
-                  extraText={t('仅修改展示粒度，统计精确到小时')}
-                  placeholder={t('数据看板默认时间粒度')}
+                  extraText={t('OnlyModifyDisplayDay，StatisticsPrecisionThe path before.SmallWhen')}
+                  placeholder={t('NumberDashboardDefaultTimeDay')}
                   style={{ width: 180 }}
                   onChange={(value) =>
                     setInputs({
@@ -139,7 +139,7 @@ export default function DataDashboard(props) {
             </Row>
             <Row>
               <Button size='default' onClick={onSubmit}>
-                {t('保存数据看板设置')}
+                {t('SaveNumberDashboardSettings')}
               </Button>
             </Row>
           </Form.Section>

@@ -76,26 +76,26 @@ const SiderBar = () => {
         icon: <IconCommentStroked />,
       },
       {
-        text: t('渠道'),
+        text: t('Channel'),
         itemKey: 'channel',
         to: '/channel',
         icon: <IconLayers />,
         className: isAdmin() ? 'semi-navigation-item-normal' : 'tableHiddle',
       },
       {
-        text: t('聊天'),
+        text: t('Chat'),
         itemKey: 'chat',
         items: chatItems,
         icon: <IconComment />,
       },
       {
-        text: t('令牌'),
+        text: t('Token'),
         itemKey: 'token',
         to: '/token',
         icon: <IconKey />,
       },
       {
-        text: t('数据看板'),
+        text: t('NumberDashboard'),
         itemKey: 'detail',
         to: '/detail',
         icon: <IconCalendarClock />,
@@ -105,33 +105,33 @@ const SiderBar = () => {
             : 'tableHiddle',
       },
       {
-        text: t('兑换码'),
+        text: t('Redemption code'),
         itemKey: 'redemption',
         to: '/redemption',
         icon: <IconGift />,
         className: isAdmin() ? 'semi-navigation-item-normal' : 'tableHiddle',
       },
       {
-        text: t('钱包'),
+        text: t('Wallet'),
         itemKey: 'topup',
         to: '/topup',
         icon: <IconCreditCard />,
       },
       {
-        text: t('用户管理'),
+        text: t('UseUserRedirecting'),
         itemKey: 'user',
         to: '/user',
         icon: <IconUser />,
         className: isAdmin() ? 'semi-navigation-item-normal' : 'tableHiddle',
       },
       {
-        text: t('日志'),
+        text: t('Logs'),
         itemKey: 'log',
         to: '/log',
         icon: <IconHistogram />,
       },
       {
-        text: t('绘图'),
+        text: t('Drawing'),
         itemKey: 'midjourney',
         to: '/midjourney',
         icon: <IconImage />,
@@ -141,7 +141,7 @@ const SiderBar = () => {
             : 'tableHiddle',
       },
       {
-        text: t('异步任务'),
+        text: t('AsynchronousTasks'),
         itemKey: 'task',
         to: '/task',
         icon: <IconChecklistStroked />,
@@ -151,7 +151,7 @@ const SiderBar = () => {
                 : 'tableHiddle',
       },
       {
-        text: t('设置'),
+        text: t('Settings'),
         itemKey: 'setting',
         to: '/setting',
         icon: <IconSetting />,
@@ -198,7 +198,7 @@ const SiderBar = () => {
                 }
             } catch (e) {
                 console.error(e);
-                showError('聊天数据解析失败')
+                showError('ChatNumberDataFirst declare the tool functions related to pagination.Failed')
             }
         }
     }

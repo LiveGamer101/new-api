@@ -57,7 +57,7 @@ const PageLayout = () => {
         linkElement.href = logo;
       }
     }
-    // 从localStorage获取上次使用的语言
+    // Retrieve the last used fromlocalStorageObtainUpNextUseUseTheLanguage
     const savedLang = localStorage.getItem('i18nextLng');
     if (savedLang) {
       i18n.changeLanguage(savedLang);

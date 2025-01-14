@@ -57,7 +57,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (searchParams.get('expired')) {
-      showError(t('未登录或登录已过期，请重新登录'));
+      showError(t('NotLoginOrLoginExpired，Please retryLogin'));
     }
     let status = localStorage.getItem('status');
     if (status) {
@@ -77,7 +77,7 @@ const LoginForm = () => {
 
   const onSubmitWeChatVerificationCode = async () => {
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+      showInfo('Please try again in a few seconds，Turnstile Checking user environment！');
       return;
     }
     const res = await API.get(
@@ -90,7 +90,7 @@ const LoginForm = () => {
       setUserData(data);
       updateAPI();
       navigate('/');
-      showSuccess('登录成功！');
+      showSuccess('LoginSuccess！');
       setShowWeChatLoginModal(false);
     } else {
       showError(message);
@@ -103,7 +103,7 @@ const LoginForm = () => {
 
   async function handleSubmit(e) {
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+      showInfo('Please try again in a few seconds，Turnstile Checking user environment！');
       return;
     }
     setSubmitted(true);
@@ -120,11 +120,11 @@ const LoginForm = () => {
         userDispatch({ type: 'login', payload: data });
         setUserData(data);
         updateAPI();
-        showSuccess('登录成功！');
+        showSuccess('LoginSuccess！');
         if (username === 'root' && password === '123456') {
           Modal.error({
-            title: '您正在使用默认密码！',
-            content: '请立刻修改默认密码！',
+            title: 'You are using the defaultPassword！',
+            content: 'Please modify the default immediatelyPassword！',
             centered: true,
           });
         }
@@ -133,11 +133,11 @@ const LoginForm = () => {
         showError(message);
       }
     } else {
-      showError('请输入用户名和密码！');
+      showError('Please enterUsernameAndPassword！');
     }
   }
 
-  // 添加Telegram登录处理函数
+  // AddTelegramLoginHandler function
   const onTelegramLoginClicked = async (response) => {
     const fields = [
       'id',
@@ -160,7 +160,7 @@ const LoginForm = () => {
     if (success) {
       userDispatch({ type: 'login', payload: data });
       localStorage.setItem('user', JSON.stringify(data));
-      showSuccess('登录成功！');
+      showSuccess('LoginSuccess！');
       setUserData(data);
       updateAPI();
       navigate('/');
@@ -172,7 +172,6 @@ const LoginForm = () => {
   return (
     <div>
       <Layout>
-        <Layout.Header></Layout.Header>
         <Layout.Content>
           <div
             style={{
@@ -184,20 +183,20 @@ const LoginForm = () => {
             <div style={{ width: 500 }}>
               <Card>
                 <Title heading={2} style={{ textAlign: 'center' }}>
-                  {t('用户登录')}
+                  {t('UserLogin')}
                 </Title>
                 <Form>
                   <Form.Input
                     field={'username'}
-                    label={t('用户名/邮箱')}
-                    placeholder={t('用户名/邮箱')}
+                    label={t('Username/Email')}
+                    placeholder={t('Username/Email')}
                     name='username'
                     onChange={(value) => handleChange('username', value)}
                   />
                   <Form.Input
                     field={'password'}
-                    label={t('密码')}
-                    placeholder={t('密码')}
+                    label={t('Password')}
+                    placeholder={t('Password')}
                     name='password'
                     type='password'
                     onChange={(value) => handleChange('password', value)}
@@ -211,7 +210,7 @@ const LoginForm = () => {
                     htmlType={'submit'}
                     onClick={handleSubmit}
                   >
-                    {t('登录')}
+                    {t('Login')}
                   </Button>
                 </Form>
                 <div
@@ -222,10 +221,10 @@ const LoginForm = () => {
                   }}
                 >
                   <Text>
-                    {t('没有账户？')} <Link to='/register'>{t('点击注册')}</Link>
+                    {t('No account？')} <Link to='/register'>{t('ClickRegister')}</Link>
                   </Text>
                   <Text>
-                    {t('忘记密码？')} <Link to='/reset'>{t('点击重置')}</Link>
+                    {t('ForgotPassword？')} <Link to='/reset'>{t('ClickReset')}</Link>
                   </Text>
                 </div>
                 {status.github_oauth ||
@@ -234,7 +233,7 @@ const LoginForm = () => {
                 status.linuxdo_oauth ? (
                   <>
                     <Divider margin='12px' align='center'>
-                      {t('第三方登录')}
+                      {t('Third partyLogin')}
                     </Divider>
                     <div
                       style={{
@@ -298,12 +297,12 @@ const LoginForm = () => {
                   <></>
                 )}
                 <Modal
-                  title={t('微信扫码登录')}
+                  title={t('Scan with WeChatLogin')}
                   visible={showWeChatLoginModal}
                   maskClosable={true}
                   onOk={onSubmitWeChatVerificationCode}
                   onCancel={() => setShowWeChatLoginModal(false)}
-                  okText={t('登录')}
+                  okText={t('Login')}
                   size={'small'}
                   centered={true}
                 >
@@ -318,14 +317,14 @@ const LoginForm = () => {
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <p>
-                      {t('微信扫码关注公众号，输入「验证码」获取验证码（三分钟内有效）')}
+                      {t('Scan with WeChatFollow the public account，Input「Verification Code」ObtainVerification Code（Valid for three minutes）')}
                     </p>
                   </div>
                   <Form size='large'>
                     <Form.Input
                       field={'wechat_verification_code'}
-                      placeholder={t('验证码')}
-                      label={t('验证码')}
+                      placeholder={t('Verification Code')}
+                      label={t('Verification Code')}
                       value={inputs.wechat_verification_code}
                       onChange={(value) =>
                         handleChange('wechat_verification_code', value)

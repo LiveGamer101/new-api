@@ -25,7 +25,7 @@ const FooterBar = () => {
       >
         New API {import.meta.env.VITE_REACT_APP_VERSION}{' '}
       </a>
-      {t('由')}{' '}
+      {t('By')}{' '}
       <a
         href='https://github.com/Calcium-Ion'
         target='_blank'
@@ -33,7 +33,7 @@ const FooterBar = () => {
       >
         Calcium-Ion
       </a>{' '}
-      {t('开发，基于')}{' '}
+      {t('Developed，Based on')}{' '}
       <a
         href='https://github.com/songquanpeng/one-api'
         target='_blank'

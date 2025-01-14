@@ -51,103 +51,103 @@ const LogsTable = () => {
       case 'IMAGINE':
         return (
           <Tag color='blue' size='large'>
-            {t('绘图')}
+            {t('Plot')}
           </Tag>
         );
       case 'UPSCALE':
         return (
           <Tag color='orange' size='large'>
-            {t('放大')}
+            {t('Zoom In')}
           </Tag>
         );
       case 'VARIATION':
         return (
           <Tag color='purple' size='large'>
-            {t('变换')}
+            {t('Transform')}
           </Tag>
         );
       case 'HIGH_VARIATION':
         return (
           <Tag color='purple' size='large'>
-            {t('强变换')}
+            {t('StrongTransform')}
           </Tag>
         );
       case 'LOW_VARIATION':
         return (
           <Tag color='purple' size='large'>
-            {t('弱变换')}
+            {t('WeakTransform')}
           </Tag>
         );
       case 'PAN':
         return (
           <Tag color='cyan' size='large'>
-            {t('平移')}
+            {t('Translate')}
           </Tag>
         );
       case 'DESCRIBE':
         return (
           <Tag color='yellow' size='large'>
-            {t('图生文')}
+            {t('Image-to-Text')}
           </Tag>
         );
       case 'BLEND':
         return (
           <Tag color='lime' size='large'>
-            {t('图混合')}
+            {t('Image Mix')}
           </Tag>
         );
       case 'UPLOAD':
         return (
             <Tag color='blue' size='large'>
-              上传文件
+              Upload File
             </Tag>
         );
       case 'SHORTEN':
         return (
           <Tag color='pink' size='large'>
-            {t('缩词')}
+            {t('Word Reduction')}
           </Tag>
         );
       case 'REROLL':
         return (
           <Tag color='indigo' size='large'>
-            {t('重绘')}
+            {t('Redraw')}
           </Tag>
         );
       case 'INPAINT':
         return (
           <Tag color='violet' size='large'>
-            {t('局部重绘-提交')}
+            {t('LocalRedraw-Submit')}
           </Tag>
         );
       case 'ZOOM':
         return (
           <Tag color='teal' size='large'>
-            {t('变焦')}
+            {t('Zoom')}
           </Tag>
         );
       case 'CUSTOM_ZOOM':
         return (
           <Tag color='teal' size='large'>
-            {t('自定义变焦-提交')}
+            {t('CustomZoom-Submit')}
           </Tag>
         );
       case 'MODAL':
         return (
           <Tag color='green' size='large'>
-            {t('窗口处理')}
+            {t('Window Handling')}
           </Tag>
         );
       case 'SWAP_FACE':
         return (
           <Tag color='light-green' size='large'>
-            {t('换脸')}
+            {t('Face Swap')}
           </Tag>
         );
       default:
         return (
           <Tag color='white' size='large'>
-            {t('未知')}
+            {t('Unknown')}
           </Tag>
         );
     }
@@ -159,31 +159,31 @@ const LogsTable = () => {
       case 1:
         return (
           <Tag color='green' size='large'>
-            {t('已提交')}
+            {t('DoneSubmit')}
           </Tag>
         );
       case 21:
         return (
           <Tag color='lime' size='large'>
-            {t('等待中')}
+            {t('Pending')}
           </Tag>
         );
       case 22:
         return (
           <Tag color='orange' size='large'>
-            {t('重复提交')}
+            {t('RepeatSubmit')}
           </Tag>
         );
       case 0:
         return (
           <Tag color='yellow' size='large'>
-            {t('未提交')}
+            {t('NotSubmit')}
           </Tag>
         );
       default:
         return (
           <Tag color='white' size='large'>
-            {t('未知')}
+            {t('Unknown')}
           </Tag>
         );
     }
@@ -195,61 +195,61 @@ const LogsTable = () => {
       case 'SUCCESS':
         return (
           <Tag color='green' size='large'>
-            {t('成功')}
+            {t('Success')}
           </Tag>
         );
       case 'NOT_START':
         return (
           <Tag color='grey' size='large'>
-            {t('未启动')}
+            {t('NotLaunch')}
           </Tag>
         );
       case 'SUBMITTED':
         return (
           <Tag color='yellow' size='large'>
-            {t('队列中')}
+            {t('In Queue')}
           </Tag>
         );
       case 'IN_PROGRESS':
         return (
           <Tag color='blue' size='large'>
-            {t('执行中')}
+            {t('Executing')}
           </Tag>
         );
       case 'FAILURE':
         return (
           <Tag color='red' size='large'>
-            {t('失败')}
+            {t('Failed')}
           </Tag>
         );
       case 'MODAL':
         return (
           <Tag color='yellow' size='large'>
-            {t('窗口等待')}
+            {t('Window Wait')}
           </Tag>
         );
       default:
         return (
           <Tag color='white' size='large'>
-            {t('未知')}
+            {t('Unknown')}
           </Tag>
         );
     }
   }
   
   const renderTimestamp = (timestampInSeconds) => {
-    const date = new Date(timestampInSeconds * 1000); // 从秒转换为毫秒
+    const date = new Date(timestampInSeconds * 1000); // Convert Seconds to Milliseconds
   
-    const year = date.getFullYear(); // 获取年份
-    const month = ('0' + (date.getMonth() + 1)).slice(-2); // 获取月份，从0开始需要+1，并保证两位数
-    const day = ('0' + date.getDate()).slice(-2); // 获取日期，并保证两位数
-    const hours = ('0' + date.getHours()).slice(-2); // 获取小时，并保证两位数
-    const minutes = ('0' + date.getMinutes()).slice(-2); // 获取分钟，并保证两位数
-    const seconds = ('0' + date.getSeconds()).slice(-2); // 获取秒钟，并保证两位数
+    const year = date.getFullYear(); // Get Year
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Get Month，From0Start requires+1，And ensure two digits
+    const day = ('0' + date.getDate()).slice(-2); // GetDate，And ensure two digits
+    const hours = ('0' + date.getHours()).slice(-2); // GetSmallWhen，And ensure two digits
+    const minutes = ('0' + date.getMinutes()).slice(-2); // GetMinute，And ensure two digits
+    const seconds = ('0' + date.getSeconds()).slice(-2); // GetSecondsClock，And ensure two digits
   
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // 格式化输出
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // Formatted output
   };
-  // 修改renderDuration函数以包含颜色逻辑
+  // ModifyrenderDurationFunction to include color logic
   function renderDuration(submit_time, finishTime) {
     
     if (!submit_time || !finishTime) return 'N/A';
@@ -262,29 +262,29 @@ const LogsTable = () => {
 
     return (
       <Tag color={color} size="large">
-        {durationSec} {t('秒')}
+        {durationSec} {t('Seconds')}
       </Tag>
     );
   }
   const columns = [
     {
-      title: t('提交时间'),
+      title: t('SubmitTime'),
       dataIndex: 'submit_time',
       render: (text, record, index) => {
         return <div>{renderTimestamp(text / 1000)}</div>;
       },
     },
     {
-      title: t('花费时间'),
-      dataIndex: 'finish_time', // 以finish_time作为dataIndex
+      title: t('SpentTime'),
+      dataIndex: 'finish_time', // Asfinish_timeAssumedataIndex
       key: 'finish_time',
       render: (finish, record) => {
-        // 假设record.start_time是存在的，并且finish是完成时间的时间戳
+        // Existsrecord.start_timeIsExistenceOf，AndfinishIsDoneTimeOfTimeTap
         return renderDuration(record.submit_time, finish);
       },
     },
     {
-      title: t('渠道'),
+      title: t('Channel'),
       dataIndex: 'channel_id',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
       render: (text, record, index) => {
@@ -294,7 +294,7 @@ const LogsTable = () => {
               color={colors[parseInt(text) % colors.length]}
               size='large'
               onClick={() => {
-                copyText(text); // 假设copyText是用于文本复制的函数
+                copyText(text); // ExistscopyTextIsUseLess thanTextCopyOfFunction
               }}
             >
               {' '}
@@ -305,21 +305,21 @@ const LogsTable = () => {
       },
     },
     {
-      title: t('类型'),
+      title: t('Type'),
       dataIndex: 'action',
       render: (text, record, index) => {
         return <div>{renderType(text)}</div>;
       },
     },
     {
-      title: t('任务ID'),
+      title: t('TasksID'),
       dataIndex: 'mj_id',
       render: (text, record, index) => {
         return <div>{text}</div>;
       },
     },
     {
-      title: t('提交结果'),
+      title: t('SubmitResult'),
       dataIndex: 'code',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
       render: (text, record, index) => {
@@ -327,7 +327,7 @@ const LogsTable = () => {
       },
     },
     {
-      title: t('任务状态'),
+      title: t('TasksStatus'),
       dataIndex: 'status',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
       render: (text, record, index) => {
@@ -335,13 +335,13 @@ const LogsTable = () => {
       },
     },
     {
-      title: t('进度'),
+      title: t('Progress'),
       dataIndex: 'progress',
       render: (text, record, index) => {
         return (
           <div>
             {
-              // 转换例如100%为数字100，如果text未定义，返回0
+              // Convert, for example100%To number100，IftextNotDefinition，Return0
               <Progress
                 stroke={
                   record.status === 'FAILURE'
@@ -358,20 +358,20 @@ const LogsTable = () => {
       },
     },
     {
-      title: t('结果图片'),
+      title: t('ResultImage'),
       dataIndex: 'image_url',
       render: (text, record, index) => {
         if (!text) {
-          return t('无');
+          return t('None');
         }
         return (
           <Button
             onClick={() => {
-              setModalImageUrl(text); // 更新图片URL状态
-              setIsModalOpenurl(true); // 打开模态框
+              setModalImageUrl(text); // Update ImageURLStatus
+              setIsModalOpenurl(true); // Open Modal
             }}
           >
-            {t('查看图片')}
+            {t('View Image')}
           </Button>
         );
       },
@@ -380,9 +380,9 @@ const LogsTable = () => {
       title: 'Prompt',
       dataIndex: 'prompt',
       render: (text, record, index) => {
-        // 如果text未定义，返回替代文本，例如空字符串''或其他
+        // IftextNotDefinition，ReturnAlternative text，such as an empty string''or others
         if (!text) {
-          return t('无');
+          return t('None');
         }
 
         return (
@@ -403,9 +403,9 @@ const LogsTable = () => {
       title: 'PromptEn',
       dataIndex: 'prompt_en',
       render: (text, record, index) => {
-        // 如果text未定义，返回替代文本，例如空字符串''或其他
+        // IftextNotDefinition，ReturnAlternative text，such as an empty string''or others
         if (!text) {
-          return t('无');
+          return t('None');
         }
 
         return (
@@ -423,12 +423,12 @@ const LogsTable = () => {
       },
     },
     {
-      title: t('失败原因'),
+      title: t('FailedReason'),
       dataIndex: 'fail_reason',
       render: (text, record, index) => {
-        // 如果text未定义，返回替代文本，例如空字符串''或其他
+        // IftextNotDefinition，ReturnAlternative text，such as an empty string''or others
         if (!text) {
-          return t('无');
+          return t('None');
         }
 
         return (
@@ -456,10 +456,10 @@ const LogsTable = () => {
   const [isModalOpenurl, setIsModalOpenurl] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
 
-  // 定义模态框图片URL的状态和更新函数
+  // Define modal box imageURLOfStatusAnd update function
   const [modalImageUrl, setModalImageUrl] = useState('');
   let now = new Date();
-  // 初始化start_timestamp为前一天
+  // Initializestart_timestampFor the previous day
   const [inputs, setInputs] = useState({
     channel_id: '',
     mj_id: '',
@@ -536,10 +536,10 @@ const LogsTable = () => {
 
   const copyText = async (text) => {
     if (await copy(text)) {
-      showSuccess('已复制：' + text);
+      showSuccess('DoneCopy：' + text);
     } else {
       // setSearchKeyword(text);
-      Modal.error({ title: '无法复制到剪贴板，请手动复制', content: text });
+      Modal.error({ title: 'NoneMethodCopyTo clipboard，Please copy manually', content: text });
     }
   };
 
@@ -560,7 +560,7 @@ const LogsTable = () => {
         {isAdminUser && showBanner ? (
           <Banner
             type='info'
-            description={t('当前未开启Midjourney回调，部分项目可能无法获得绘图结果，可在运营设置中开启。')}
+            description={t('CurrentNotEnableMidjourneyCallback，Some items mayNoneUnable to obtainPlotResult，Can be enabled in operationsSettingsUse predefined colorsEnable。')}
           />
         ) : (
           <></>
@@ -569,25 +569,25 @@ const LogsTable = () => {
           <>
             <Form.Input
               field='channel_id'
-              label={t('渠道 ID')}
+              label={t('Channel ID')}
               style={{ width: 176 }}
               value={channel_id}
-              placeholder={t('可选值')}
+              placeholder={t('Optional Value')}
               name='channel_id'
               onChange={(value) => handleInputChange(value, 'channel_id')}
             />
             <Form.Input
               field='mj_id'
-              label={t('任务 ID')}
+              label={t('Tasks ID')}
               style={{ width: 176 }}
               value={mj_id}
-              placeholder={t('可选值')}
+              placeholder={t('Optional Value')}
               name='mj_id'
               onChange={(value) => handleInputChange(value, 'mj_id')}
             />
             <Form.DatePicker
               field='start_timestamp'
-              label={t('起始时间')}
+              label={t('StartTime')}
               style={{ width: 272 }}
               initValue={start_timestamp}
               value={start_timestamp}
@@ -598,7 +598,7 @@ const LogsTable = () => {
             <Form.DatePicker
               field='end_timestamp'
               fluid
-              label={t('结束时间')}
+              label={t('EndTime')}
               style={{ width: 272 }}
               initValue={end_timestamp}
               value={end_timestamp}
@@ -609,13 +609,13 @@ const LogsTable = () => {
 
             <Form.Section>
               <Button
-                label={t('查询')}
+                label={t('Search')}
                 type='primary'
                 htmlType='submit'
                 className='btn-margin-right'
                 onClick={refresh}
               >
-                {t('查询')}
+                {t('Search')}
               </Button>
             </Form.Section>
           </>
@@ -631,7 +631,7 @@ const LogsTable = () => {
             pageSizeOpts: [10, 20, 50, 100],
             onPageChange: handlePageChange,
             formatPageText: (page) =>
-              t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+              t('No. {{start}} - {{end}} of，Total {{total}} of', {
                 start: page.currentStart,
                 end: page.currentEnd,
                 total: logCount
@@ -644,8 +644,8 @@ const LogsTable = () => {
           onOk={() => setIsModalOpen(false)}
           onCancel={() => setIsModalOpen(false)}
           closable={null}
-          bodyStyle={{ height: '400px', overflow: 'auto' }} // 设置模态框内容区域样式
-          width={800} // 设置模态框宽度
+          bodyStyle={{ height: '400px', overflow: 'auto' }} // SettingsModal content area style
+          width={800} // SettingsModal width
         >
           <p style={{ whiteSpace: 'pre-line' }}>{modalContent}</p>
         </Modal>

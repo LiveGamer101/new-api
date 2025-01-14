@@ -20,7 +20,7 @@ const About = () => {
       localStorage.setItem('about', aboutContent);
     } else {
       showError(message);
-      setAbout('加载关于内容失败...');
+      setAbout('Available inAboutAny webpage asFailed...');
     }
     setAboutLoaded(true);
   };
@@ -34,21 +34,19 @@ const About = () => {
       {aboutLoaded && about === '' ? (
         <>
           <Layout>
-            <Layout.Header>
-              <h3>关于</h3>
-            </Layout.Header>
             <Layout.Content>
-              <p>可在设置页面设置关于内容，支持 HTML & Markdown</p>
-              New-API项目仓库地址：
+              <h3 style={{ marginBottom: '16px' }}>About</h3>
+              <p>Project repositorySettingsRemoveSettingsAboutAny webpage as，Support HTML & Markdown</p>
+              New-APIBased onAddress：
               <a href='https://github.com/Calcium-Ion/new-api'>
                 https://github.com/Calcium-Ion/new-api
               </a>
               <p>
-                NewAPI © 2023 CalciumIon | 基于 One API v0.5.4 © 2023
+                NewAPI © 2023 CalciumIon | This project is licensed under One API v0.5.4 © 2023
                 JustSong。
               </p>
               <p>
-                本项目根据MIT许可证授权，需在遵守Apache-2.0协议的前提下使用。
+                This projectUseMITMust comply with，Use under the terms of the agreementApache-2.0ProtocolTheFrontMentionDownUseUse。
               </p>
             </Layout.Content>
           </Layout>
@@ -58,7 +56,11 @@ const About = () => {
           {about.startsWith('https://') ? (
             <iframe
               src={about}
-              style={{ width: '100%', height: '100vh', border: 'none' }}
+              style={{
+                width: '100%',
+                height: '100vh',
+                border: 'none'
+              }}
             />
           ) : (
             <div

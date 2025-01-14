@@ -8,11 +8,9 @@ const File = () => {
   return (
     <>
       <Layout>
-        <Layout.Header>
-        <h3>{t('管理渠道')}</h3>
-      </Layout.Header>
-      <Layout.Content>
-        <ChannelsTable />
+        <Layout.Content>
+          <h3 style={{ marginBottom: '16px' }}>{t('RedirectingChannel')}</h3>
+          <ChannelsTable />
         </Layout.Content>
       </Layout>
     </>

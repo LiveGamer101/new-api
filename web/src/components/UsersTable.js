@@ -21,23 +21,23 @@ const UsersTable = () => {
   function renderRole(role) {
     switch (role) {
       case 1:
-        return <Tag size='large'>{t('普通用户')}</Tag>;
+        return <Tag size='large'>{t('CommonThroughUseUser')}</Tag>;
       case 10:
         return (
           <Tag color='yellow' size='large'>
-            {t('管理员')}
+            {t('Administrator')}
           </Tag>
         );
       case 100:
         return (
           <Tag color='orange' size='large'>
-            {t('超级管理员')}
+            {t('SuperAdministrator')}
           </Tag>
         );
       default:
         return (
           <Tag color='red' size='large'>
-            {t('未知身份')}
+            {t('UnknownIdentity')}
           </Tag>
         );
     }
@@ -48,34 +48,34 @@ const UsersTable = () => {
       dataIndex: 'id',
     },
     {
-      title: t('用户名'),
+      title: t('Username'),
       dataIndex: 'username',
     },
     {
-      title: t('分组'),
+      title: t('Group'),
       dataIndex: 'group',
       render: (text, record, index) => {
         return <div>{renderGroup(text)}</div>;
       },
     },
     {
-      title: t('统计信息'),
+      title: t('StatisticsInfo'),
       dataIndex: 'info',
       render: (text, record, index) => {
         return (
           <div>
             <Space spacing={1}>
-              <Tooltip content={t('剩余额度')}>
+              <Tooltip content={t('RemainingQuota')}>
                 <Tag color='white' size='large'>
                   {renderQuota(record.quota)}
                 </Tag>
               </Tooltip>
-              <Tooltip content={t('已用额度')}>
+              <Tooltip content={t('AlreadyUseQuota')}>
                 <Tag color='white' size='large'>
                   {renderQuota(record.used_quota)}
                 </Tag>
               </Tooltip>
-              <Tooltip content={t('调用次数')}>
+              <Tooltip content={t('AdjustUseNextNumber')}>
                 <Tag color='white' size='large'>
                   {renderNumber(record.request_count)}
                 </Tag>
@@ -86,26 +86,26 @@ const UsersTable = () => {
       },
     },
     {
-      title: t('邀请信息'),
+      title: t('InviteInfo'),
       dataIndex: 'invite',
       render: (text, record, index) => {
         return (
           <div>
             <Space spacing={1}>
-              <Tooltip content={t('邀请人数')}>
+              <Tooltip content={t('InvitePersonNumber')}>
                 <Tag color='white' size='large'>
                   {renderNumber(record.aff_count)}
                 </Tag>
               </Tooltip>
-              <Tooltip content={t('邀请总收益')}>
+              <Tooltip content={t('InviteTotal Earnings')}>
                 <Tag color='white' size='large'>
                   {renderQuota(record.aff_history_quota)}
                 </Tag>
               </Tooltip>
-              <Tooltip content={t('邀请人ID')}>
+              <Tooltip content={t('InvitePersonID')}>
                 {record.inviter_id === 0 ? (
                   <Tag color='white' size='large'>
-                    {t('无')}
+                    {t('None')}
                   </Tag>
                 ) : (
                   <Tag color='white' size='large'>
@@ -119,20 +119,20 @@ const UsersTable = () => {
       },
     },
     {
-      title: t('角色'),
+      title: t('Role'),
       dataIndex: 'role',
       render: (text, record, index) => {
         return <div>{renderRole(text)}</div>;
       },
     },
     {
-      title: t('状态'),
+      title: t('Status'),
       dataIndex: 'status',
       render: (text, record, index) => {
         return (
           <div>
             {record.DeletedAt !== null ? (
-              <Tag color='red'>{t('已注销')}</Tag>
+              <Tag color='red'>{t('AlreadyDeactivate')}</Tag>
             ) : (
               renderStatus(text)
             )}
@@ -150,25 +150,25 @@ const UsersTable = () => {
           ) : (
             <>
               <Popconfirm
-                title={t('确定？')}
+                title={t('When passing through？')}
                 okType={'warning'}
                 onConfirm={() => {
                   manageUser(record.id, 'promote', record);
                 }}
               >
                 <Button theme='light' type='warning' style={{ marginRight: 1 }}>
-                  {t('提升')}
+                  {t('Promote')}
                 </Button>
               </Popconfirm>
               <Popconfirm
-                title={t('确定？')}
+                title={t('When passing through？')}
                 okType={'warning'}
                 onConfirm={() => {
                   manageUser(record.id, 'demote', record);
                 }}
               >
                 <Button theme='light' type='secondary' style={{ marginRight: 1 }}>
-                  {t('降级')}
+                  {t('Demote')}
                 </Button>
               </Popconfirm>
               {record.status === 1 ? (
@@ -180,7 +180,7 @@ const UsersTable = () => {
                     manageUser(record.id, 'disable', record);
                   }}
                 >
-                  {t('禁用')}
+                  {t('Disable')}
                 </Button>
               ) : (
                 <Button
@@ -192,7 +192,7 @@ const UsersTable = () => {
                   }}
                   disabled={record.status === 3}
                 >
-                  {t('启用')}
+                  {t('Enable')}
                 </Button>
               )}
               <Button
@@ -204,11 +204,11 @@ const UsersTable = () => {
                   setShowEditUser(true);
                 }}
               >
-                {t('编辑')}
+                {t('Edit')}
               </Button>
               <Popconfirm
-                title={t('确定是否要注销此用户？')}
-                content={t('相当于删除用户，此修改将不可逆')}
+                title={t('Confirm whether toDeactivateThisUseUser？')}
+                content={t('Equivalent toDeleteUseUser，ThisModification will be irreversible')}
                 okType={'danger'}
                 position={'left'}
                 onConfirm={() => {
@@ -218,7 +218,7 @@ const UsersTable = () => {
                 }}
               >
                 <Button theme='light' type='danger' style={{ marginRight: 1 }}>
-                  {t('注销')}
+                  {t('Deactivate')}
                 </Button>
               </Popconfirm>
             </>
@@ -294,7 +294,7 @@ const UsersTable = () => {
     });
     const { success, message } = res.data;
     if (success) {
-      showSuccess('操作成功完成！');
+      showSuccess('OperationSuccessDone！');
       let user = res.data.data;
       let newUsers = [...users];
       if (action === 'delete') {
@@ -311,17 +311,17 @@ const UsersTable = () => {
   const renderStatus = (status) => {
     switch (status) {
       case 1:
-        return <Tag size='large'>{t('已激活')}</Tag>;
+        return <Tag size='large'>{t('AlreadyActivate')}</Tag>;
       case 2:
         return (
           <Tag size='large' color='red'>
-            {t('已封禁')}
+            {t('AlreadyBan')}
           </Tag>
         );
       default:
         return (
           <Tag size='large' color='grey'>
-            {t('未知状态')}
+            {t('UnknownStatus')}
           </Tag>
         );
     }
@@ -431,13 +431,13 @@ const UsersTable = () => {
       >
         <div style={{ display: 'flex' }}>
           <Space>
-            <Tooltip content={t('支持搜索用户的 ID、用户名、显示名称和邮箱地址')}>
+            <Tooltip content={t('SupportSearchUseUserThe ID、Username、DisplayNameAndEmailAddress')}>
               <Form.Input
-                label={t('搜索关键字')}
+                label={t('SearchKeyword')}
                 icon='search'
                 field='keyword'
                 iconPosition='left'
-                placeholder={t('搜索关键字')}
+                placeholder={t('SearchKeyword')}
                 value={searchKeyword}
                 loading={searching}
                 onChange={(value) => handleKeywordChange(value)}
@@ -446,7 +446,7 @@ const UsersTable = () => {
             
             <Form.Select
               field='group'
-              label={t('分组')}
+              label={t('Group')}
               optionList={groupOptions}
               onChange={(value) => {
                 setSearchGroup(value);
@@ -454,12 +454,12 @@ const UsersTable = () => {
               }}
             />
             <Button
-              label={t('查询')}
+              label={t('Query')}
               type='primary'
               htmlType='submit'
               className='btn-margin-right'
             >
-              {t('查询')}
+              {t('Query')}
             </Button>
             <Button
               theme='light'
@@ -468,7 +468,7 @@ const UsersTable = () => {
                 setShowAddUser(true);
               }}
             >
-              {t('添加用户')}
+              {t('AddUseUser')}
             </Button>
           </Space>
         </div>
@@ -479,7 +479,7 @@ const UsersTable = () => {
         dataSource={users}
         pagination={{
           formatPageText: (page) =>
-            t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+            t('The {{start}} - {{end}} Item，Total {{total}} Item', {
               start: page.currentStart,
               end: page.currentEnd,
               total: users.length

@@ -41,23 +41,23 @@ const REGION_EXAMPLE = {
   'claude-3-5-sonnet-20240620': 'europe-west1'
 };
 
-const fetchButtonTips = '1. 新建渠道时，请求通过当前浏览器发出；2. 编辑已有渠道，请求通过后端服务器发出';
+const fetchButtonTips = '1. NewBuildChannelWhen，PleaseRequestVerification is requiredCurrentBrowserSend out；2. EditAlreadyHaveChannel，PleaseRequestVerification is requiredBackendServerSend out';
 
 function type2secretPrompt(type) {
-  // inputs.type === 15 ? '按照如下格式输入：APIKey|SecretKey' : (inputs.type === 18 ? '按照如下格式输入：APPID|APISecret|APIKey' : '请输入渠道对应的鉴权密钥')
+  // inputs.type === 15 ? 'PressAs followsFormatInput：APIKey|SecretKey' : (inputs.type === 18 ? 'PressAs followsFormatInput：APPID|APISecret|APIKey' : 'Please enterChannelCorrespondingTheAuthenticationKey')
   switch (type) {
     case 15:
-      return '按照如下格式输入：APIKey|SecretKey';
+      return 'PressAs followsFormatInput：APIKey|SecretKey';
     case 18:
-      return '按照如下格式输入：APPID|APISecret|APIKey';
+      return 'PressAs followsFormatInput：APPID|APISecret|APIKey';
     case 22:
-      return '按照如下格式输入：APIKey-AppId，例如：fastgpt-0sp2gtvfdgyi4k30jwlgwf1i-64f335d84283f05518e9e041';
+      return 'PressAs followsFormatInput：APIKey-AppId，For example：fastgpt-0sp2gtvfdgyi4k30jwlgwf1i-64f335d84283f05518e9e041';
     case 23:
-      return '按照如下格式输入：AppId|SecretId|SecretKey';
+      return 'PressAs followsFormatInput：AppId|SecretId|SecretKey';
     case 33:
-      return '按照如下格式输入：Ak|Sk|Region';
+      return 'PressAs followsFormatInput：Ak|Sk|Region';
     default:
-      return '请输入渠道对应的鉴权密钥';
+      return 'Please enterChannelCorrespondingTheAuthenticationKey';
   }
 }
 
@@ -194,7 +194,7 @@ const EditChannel = (props) => {
 
   const fetchUpstreamModelList = async (name) => {
     // if (inputs['type'] !== 1) {
-    //   showError(t('仅支持 OpenAI 接口格式'));
+    //   showError(t('OnlySupport OpenAI If it is'));
     //   return;
     // }
     setLoading(true);
@@ -202,7 +202,7 @@ const EditChannel = (props) => {
     let err = false;
 
     if (isEdit) {
-      // 如果是编辑模式，使用已有的channel id获取模型列表
+      // IfIsEditMode，UseUseAlreadyHaveThechannel idObtainModelIf it is in new creation mode
       const res = await API.get('/api/channel/fetch_models/' + channelId);
       if (res.data && res.data?.success) {
         models.push(...res.data.data);
@@ -210,9 +210,9 @@ const EditChannel = (props) => {
         err = true;
       }
     } else {
-      // 如果是新建模式，通过后端代理获取模型列表
+      // IfIsNewBuildMode，Verification is requiredBackendProxyObtainModelIf it is in new creation mode
       if (!inputs?.['key']) {
-        showError(t('请填写密钥'));
+        showError(t('PleaseFill inKey'));
         err = true;
       } else {
         try {
@@ -235,9 +235,9 @@ const EditChannel = (props) => {
 
     if (!err) {
       handleInputChange(name, Array.from(new Set(models)));
-      showSuccess(t('获取模型列表成功'));
+      showSuccess(t('ObtainModelIf it is in new creation modeSuccess'));
     } else {
-      showError(t('获取模型列表失败'));
+      showError(t('ObtainModelIf it is in new creation modeFailed'));
     }
     setLoading(false);
   };
@@ -308,15 +308,15 @@ const EditChannel = (props) => {
 
   const submit = async () => {
     if (!isEdit && (inputs.name === '' || inputs.key === '')) {
-      showInfo(t('请填写渠道名称和渠道密钥！'));
+      showInfo(t('PleaseFill inChannelNameAndChannelKey！'));
       return;
     }
     if (inputs.models.length === 0) {
-      showInfo(t('请至少选择一个模型！'));
+      showInfo(t('PleaseAt leastSelectOneItemsModel！'));
       return;
     }
     if (inputs.model_mapping !== '' && !verifyJSON(inputs.model_mapping)) {
-      showInfo(t('模型映射必须是合法的 JSON 格式！'));
+      showInfo(t('ModelMapping mustIsTogetherMethodThe JSON Format！'));
       return;
     }
     let localInputs = { ...inputs };
@@ -334,7 +334,7 @@ const EditChannel = (props) => {
     }
     let res;
     if (!Array.isArray(localInputs.models)) {
-      showError(t('提交失败，请勿重复提交！'));
+      showError(t('SubmitFailed，Do notResetReplySubmit！'));
       handleCancel();
       return;
     }
@@ -352,9 +352,9 @@ const EditChannel = (props) => {
     const { success, message } = res.data;
     if (success) {
       if (isEdit) {
-        showSuccess(t('渠道更新成功！'));
+        showSuccess(t('ChannelUpdateSuccess！'));
       } else {
-        showSuccess(t('渠道创建成功！'));
+        showSuccess(t('ChannelCreateSuccess！'));
         setInputs(originInputs);
       }
       props.refresh();
@@ -381,7 +381,7 @@ const EditChannel = (props) => {
           value: model
         });
       } else if (model) {
-        showError(t('某些模型已存在！'));
+        showError(t('SomeModelAlreadyExistence！'));
         hasError = true;
       }
     });
@@ -400,7 +400,7 @@ const EditChannel = (props) => {
         maskClosable={false}
         placement={isEdit ? 'right' : 'left'}
         title={
-          <Title level={3}>{isEdit ? t('更新渠道信息') : t('创建新的渠道')}</Title>
+          <Title level={3}>{isEdit ? t('UpdateChannelInfo') : t('CreateNewTheChannel')}</Title>
         }
         headerStyle={{ borderBottom: '1px solid var(--semi-color-border)' }}
         bodyStyle={{ borderBottom: '1px solid var(--semi-color-border)' }}
@@ -409,7 +409,7 @@ const EditChannel = (props) => {
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Space>
               <Button theme="solid" size={'large'} onClick={submit}>
-                {t('提交')}
+                {t('Submit')}
               </Button>
               <Button
                 theme="solid"
@@ -417,7 +417,7 @@ const EditChannel = (props) => {
                 type={'tertiary'}
                 onClick={handleCancel}
               >
-                {t('取消')}
+                {t('Cancel')}
               </Button>
             </Space>
           </div>
@@ -428,7 +428,7 @@ const EditChannel = (props) => {
       >
         <Spin spinning={loading}>
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('类型')}：</Typography.Text>
+            <Typography.Text strong>{t('Type')}：</Typography.Text>
           </div>
           <Select
             name="type"
@@ -443,7 +443,7 @@ const EditChannel = (props) => {
               <div style={{ marginTop: 10 }}>
                 <Banner
                   type={'warning'}
-                  description={t('注意，模型部署名称必须和模型名称保持一致，因为 One API 会把请求体中的 model 参数替换为你的部署名称（模型名称中的点会被剔除）')}
+                  description={t('Note，ModelDeployNameMustAndModelNameKeep consistent，BecauseFor One API Will putPleaseRequestBodyUse predefined colorsThe model ParameterNumberReplaceForYouTheDeployName（ModelNameUse predefined colorsThePoints will be removed）')}
                 ></Banner>
               </div>
               <div style={{ marginTop: 10 }}>
@@ -454,7 +454,7 @@ const EditChannel = (props) => {
               <Input
                 label="AZURE_OPENAI_ENDPOINT"
                 name="azure_base_url"
-                placeholder={t('请输入 AZURE_OPENAI_ENDPOINT，例如：https://docs-test-001.openai.azure.com')}
+                placeholder={t('Please enter AZURE_OPENAI_ENDPOINT，For example：https://docs-test-001.openai.azure.com')}
                 onChange={(value) => {
                   handleInputChange('base_url', value);
                 }}
@@ -462,12 +462,12 @@ const EditChannel = (props) => {
                 autoComplete="new-password"
               />
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>{t('默认 API 版本')}：</Typography.Text>
+                <Typography.Text strong>{t('Default API This configuration can be overridden by actual request query parameters')}：</Typography.Text>
               </div>
               <Input
-                label={t('默认 API 版本')}
+                label={t('Default API This configuration can be overridden by actual request query parameters')}
                 name="azure_other"
-                placeholder={t('请输入默认 API 版本，例如：2023-06-01-preview，该配置可以被实际的请求查询参数所覆盖')}
+                placeholder={t('Please enterDefault API This configuration can be overridden by actual request query parameters，For example：2023-06-01-preview，ThisConfigurationCanUsedActuallyThePleaseRequestQueryParameterNumberCovered by')}
                 onChange={(value) => {
                   handleInputChange('other', value);
                 }}
@@ -481,17 +481,17 @@ const EditChannel = (props) => {
               <div style={{ marginTop: 10 }}>
                 <Banner
                   type={'warning'}
-                  description={t('如果你对接的是上游One API或者New API等转发项目，请使用OpenAI类型，不要使用此类型，除非你知道你在做什么。')}
+                  description={t('IfYouDockingTheIsUpstreamOne APIToo many requestsPersonNew APIPlease use，PleaseUseUseOpenAIType，NotWantUseUseThisType，RemoveNonYouKnowYouHandle filtering and pagination logic first.Do what。')}
                 ></Banner>
               </div>
               <div style={{ marginTop: 10 }}>
                 <Typography.Text strong>
-                  {t('完整的 Base URL，支持变量{model}')}：
+                  {t('CompleteThe Base URL，SupportVariable{model}')}：
                 </Typography.Text>
               </div>
               <Input
                 name="base_url"
-                placeholder={t('请输入完整的URL，例如：https://api.openai.com/v1/chat/completions')}
+                placeholder={t('Please enterCompleteTheURL，For example：https://api.openai.com/v1/chat/completions')}
                 onChange={(value) => {
                   handleInputChange('base_url', value);
                 }}
@@ -503,12 +503,12 @@ const EditChannel = (props) => {
           {inputs.type !== 3 && inputs.type !== 8 && inputs.type !== 22 && inputs.type !== 36 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>{t('代理')}：</Typography.Text>
+                <Typography.Text strong>{t('Proxy')}：</Typography.Text>
               </div>
               <Input
-                label={t('代理')}
+                label={t('Proxy')}
                 name="base_url"
-                placeholder={t('此项可选，用于通过代理站来进行 API 调用')}
+                placeholder={t('ThisItemOptional，UseLess thanVerification is requiredProxySite toProceed API AdjustUse')}
                 onChange={(value) => {
                   handleInputChange('base_url', value);
                 }}
@@ -520,11 +520,11 @@ const EditChannel = (props) => {
           {inputs.type === 22 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>{t('私有部署地址')}：</Typography.Text>
+                <Typography.Text strong>{t('Note nonAddress')}：</Typography.Text>
               </div>
               <Input
                 name="base_url"
-                placeholder={t('请输入私有部署地址，格式为：https://fastgpt.run/api/openapi')}
+                placeholder={t('Please enterNote nonAddress，FormatFor：https://fastgpt.run/api/openapi')}
                 onChange={(value) => {
                   handleInputChange('base_url', value);
                 }}
@@ -537,12 +537,12 @@ const EditChannel = (props) => {
             <>
               <div style={{ marginTop: 10 }}>
                 <Typography.Text strong>
-                  {t('注意非Chat API，请务必填写正确的API地址，否则可能导致无法使用')}
+                  {t('NoteNonChat API，PleaseBe sureFill inCorrectTheAPIAddress，NoThenCanAbleCauseNoneMethodUseUse')}
                 </Typography.Text>
               </div>
               <Input
                 name="base_url"
-                placeholder={t('请输入到 /suno 前的路径，通常就是域名，例如：https://api.example.com')}
+                placeholder={t('Please enterThe path before. /suno FrontThePath，ThroughOftenThat isFill in，For example：https://api.example.com')}
                 onChange={(value) => {
                   handleInputChange('base_url', value);
                 }}
@@ -552,12 +552,12 @@ const EditChannel = (props) => {
             </>
           )}
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('名称')}：</Typography.Text>
+            <Typography.Text strong>{t('Name')}：</Typography.Text>
           </div>
           <Input
             required
             name="name"
-            placeholder={t('请为渠道命名')}
+            placeholder={t('PleaseForChannelPlease set the system.')}
             onChange={(value) => {
               handleInputChange('name', value);
             }}
@@ -565,16 +565,16 @@ const EditChannel = (props) => {
             autoComplete="new-password"
           />
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('分组')}：</Typography.Text>
+            <Typography.Text strong>{t('Group')}：</Typography.Text>
           </div>
           <Select
-            placeholder={t('请选择可以使用该渠道的分组')}
+            placeholder={t('PleaseSelectCanUsedUseUseThisChannelTheGroup')}
             name="groups"
             required
             multiple
             selection
             allowAdditions
-            additionLabel={t('请在系统设置页面编辑分组倍率以添加新的分组：')}
+            additionLabel={t('PleaseHandle filtering and pagination logic first.SystemSettingsRemoveEditGroupMultiplierUsedAddNewTheGroup：')}
             onChange={(value) => {
               handleInputChange('groups', value);
             }}
@@ -585,12 +585,12 @@ const EditChannel = (props) => {
           {inputs.type === 18 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>模型版本：</Typography.Text>
+                <Typography.Text strong>ModelThis configuration can be overridden by actual request query parameters：</Typography.Text>
               </div>
               <Input
                 name="other"
                 placeholder={
-                  '请输入星火大模型版本，注意是接口地址中的版本号，例如：v2.1'
+                  'Please enterSupports using.ModelThis configuration can be overridden by actual request query parameters，NoteIsInterfaceAddressUse predefined colorsTheThis configuration can be overridden by actual request query parametersNumber，For example：v2.1'
                 }
                 onChange={(value) => {
                   handleInputChange('other', value);
@@ -603,11 +603,11 @@ const EditChannel = (props) => {
           {inputs.type === 41 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>{t('部署地区')}：</Typography.Text>
+                <Typography.Text strong>{t('Knowledge base.')}：</Typography.Text>
               </div>
               <TextArea
                 name="other"
-                placeholder={t('请输入部署地区，例如：us-central1\n支持使用模型映射格式\n' +
+                placeholder={t('Please enterKnowledge base.，For example：us-central1\nSupportUseUseModelMappingFormat\n' +
                   '{\n' +
                   '    "default": "us-central1",\n' +
                   '    "claude-3-5-sonnet-20240620": "europe-west1"\n' +
@@ -632,19 +632,19 @@ const EditChannel = (props) => {
                   );
                 }}
               >
-                {t('填入模板')}
+                {t('Used to support the system's email sendingTemplate')}
               </Typography.Text>
             </>
           )}
           {inputs.type === 21 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>��识库 ID：</Typography.Text>
+                <Typography.Text strong>��Fill in all. ID：</Typography.Text>
               </div>
               <Input
-                label="知识库 ID"
+                label="Knowledge base ID"
                 name="other"
-                placeholder={'请输入知识库 ID，例如：123456'}
+                placeholder={'Please enterKnowledge base ID，For example：123456'}
                 onChange={(value) => {
                   handleInputChange('other', value);
                 }}
@@ -661,7 +661,7 @@ const EditChannel = (props) => {
               <Input
                 name="other"
                 placeholder={
-                  '请输入Account ID，例如：d6b5da8hk1awo8nap34ube6gh'
+                  'Please enterAccount ID，For example：d6b5da8hk1awo8nap34ube6gh'
                 }
                 onChange={(value) => {
                   handleInputChange('other', value);
@@ -672,10 +672,10 @@ const EditChannel = (props) => {
             </>
           )}
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('模型')}：</Typography.Text>
+            <Typography.Text strong>{t('Model')}：</Typography.Text>
           </div>
           <Select
-            placeholder={'请选择该渠道所支持的模型'}
+            placeholder={'PleaseSelectThisChannelOfSupportTheModel'}
             name="models"
             required
             multiple
@@ -697,7 +697,7 @@ const EditChannel = (props) => {
                   handleInputChange('models', basicModels);
                 }}
               >
-                {t('填入相关模型')}
+                {t('Used to support the system's email sendingRelatedModel')}
               </Button>
               <Button
                 type="secondary"
@@ -705,16 +705,16 @@ const EditChannel = (props) => {
                   handleInputChange('models', fullModels);
                 }}
               >
-                {t('填入所有模型')}
+                {t('Used to support the system's email sendingAre overwrite operationsModel')}
               </Button>
-              <Tooltip content={t('新建渠道时，请求通过当前浏览器发出；编辑已有渠道，请求通过后端服务器发出')}>
+              <Tooltip content={t('NewBuildChannelWhen，PleaseRequestVerification is requiredCurrentBrowserSend out；EditAlreadyHaveChannel，PleaseRequestVerification is requiredBackendServerSend out')}>
                 <Button
                   type="tertiary"
                   onClick={() => {
                     fetchUpstreamModelList('models');
                   }}
                 >
-                  {t('获取模型列表')}
+                  {t('ObtainModelIf it is in new creation mode')}
                 </Button>
               </Tooltip>
               <Button
@@ -723,16 +723,16 @@ const EditChannel = (props) => {
                   handleInputChange('models', []);
                 }}
               >
-                {t('清除所有模型')}
+                {t('Key is in the request.Model')}
               </Button>
             </Space>
             <Input
               addonAfter={
                 <Button type="primary" onClick={addCustomModels}>
-                  {t('填入')}
+                  {t('Used to support the system's email sending')}
                 </Button>
               }
-              placeholder={t('输入自定义模型名称')}
+              placeholder={t('InputCustomModelName')}
               value={customModel}
               onChange={(value) => {
                 setCustomModel(value.trim());
@@ -740,10 +740,10 @@ const EditChannel = (props) => {
             />
           </div>
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('模型重定向')}：</Typography.Text>
+            <Typography.Text strong>{t('ModelResetOrientation')}：</Typography.Text>
           </div>
           <TextArea
-            placeholder={t('此项可选，用于修改请求体中的模型名称，为一个 JSON 字符串，键为请求中模型名称，值为要替换的模型名称，例如：') + `\n${JSON.stringify(MODEL_MAPPING_EXAMPLE, null, 2)}`}
+            placeholder={t('ThisItemOptional，UseLess thanModifyPleaseRequestBodyUse predefined colorsTheModelName，ForOneItems JSON String，KeyForPleaseRequestUse predefined colorsModelName，AllForWantReplaceTheModelName，For example：') + `\n${JSON.stringify(MODEL_MAPPING_EXAMPLE, null, 2)}`}
             name="model_mapping"
             onChange={(value) => {
               handleInputChange('model_mapping', value);
@@ -765,17 +765,17 @@ const EditChannel = (props) => {
               );
             }}
           >
-            {t('填入模板')}
+            {t('Used to support the system's email sendingTemplate')}
           </Typography.Text>
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('密钥')}：</Typography.Text>
+            <Typography.Text strong>{t('Key')}：</Typography.Text>
           </div>
           {batch ? (
             <TextArea
-              label={t('密钥')}
+              label={t('Key')}
               name="key"
               required
-              placeholder={t('请输入密钥，一行一个')}
+              placeholder={t('Please enterKey，OneLineOneItems')}
               onChange={(value) => {
                 handleInputChange('key', value);
               }}
@@ -787,7 +787,7 @@ const EditChannel = (props) => {
             <>
               {inputs.type === 41 ? (
                 <TextArea
-                  label={t('鉴权json')}
+                  label={t('Authenticationjson')}
                   name="key"
                   required
                   placeholder={'{\n' +
@@ -812,7 +812,7 @@ const EditChannel = (props) => {
                 />
               ) : (
                 <Input
-                  label={t('密钥')}
+                  label={t('Key')}
                   name="key"
                   required
                   placeholder={t(type2secretPrompt(inputs.type))}
@@ -830,23 +830,23 @@ const EditChannel = (props) => {
               <Space>
                 <Checkbox
                   checked={batch}
-                  label={t('批量创建')}
+                  label={t('AllowedCreate')}
                   name="batch"
                   onChange={() => setBatch(!batch)}
                 />
-                <Typography.Text strong>{t('批量创建')}</Typography.Text>
+                <Typography.Text strong>{t('AllowedCreate')}</Typography.Text>
               </Space>
             </div>
           )}
           {inputs.type === 1 && (
             <>
               <div style={{ marginTop: 10 }}>
-                <Typography.Text strong>{t('组织')}：</Typography.Text>
+                <Typography.Text strong>{t('Organization')}：</Typography.Text>
               </div>
               <Input
-                label={t('组织，可选，不填则为默认组织')}
+                label={t('Organization，Optional，NotFillThenForDefaultOrganization')}
                 name="openai_organization"
-                placeholder={t('请输入组织org-xxx')}
+                placeholder={t('Please enterOrganizationorg-xxx')}
                 onChange={(value) => {
                   handleInputChange('openai_organization', value);
                 }}
@@ -855,11 +855,11 @@ const EditChannel = (props) => {
             </>
           )}
           <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>{t('默认测试模型')}：</Typography.Text>
+            <Typography.Text strong>{t('DefaultTestModel')}：</Typography.Text>
           </div>
           <Input
             name="test_model"
-            placeholder={t('不填则为模型列表第一个')}
+            placeholder={t('NotFillThenForModelIf it is in new creation modeTheOneItems')}
             onChange={(value) => {
               handleInputChange('test_model', value);
             }}
@@ -875,17 +875,17 @@ const EditChannel = (props) => {
                 }}
               />
               <Typography.Text strong>
-                {t('是否自动禁用（仅当自动禁用开启时有效），关闭后不会自动禁用该渠道：')}
+                {t('IsNoAutomaticDisable（Only effective when automationDisableEnableWhenConfirm reset.），CloseAfterNotMeetingAutomaticDisableThisChannel：')}
               </Typography.Text>
             </Space>
           </div>
           <div style={{ marginTop: 10 }}>
             <Typography.Text strong>
-              {t('状态码复写（仅影响本地判断，不修改返回到上游的状态码）')}：
+              {t('StatusCode override（Only affects local judgment，NotModifyReturnThe path before.UpstreamTheStatusCode）')}：
             </Typography.Text>
           </div>
           <TextArea
-            placeholder={t('此项可选，用于复写返回的状态码，比如将claude渠道的400错误复写为500（用于重试），请勿滥用该功能，例如：') + 
+            placeholder={t('ThisItemOptional，UseLess thanOverwriteReturnTheStatusCode，For example.ConvertclaudeChannelThe400ErrorOverwriteFor500（UseLess thanRetry），Do notAbuseUseThisFunction，For example：') + 
               '\n' + JSON.stringify(STATUS_CODE_MAPPING_EXAMPLE, null, 2)}
             name="status_code_mapping"
             onChange={(value) => {
@@ -908,17 +908,17 @@ const EditChannel = (props) => {
               );
             }}
           >
-            {t('填入模板')}
+            {t('Used to support the system's email sendingTemplate')}
           </Typography.Text>
           <div style={{ marginTop: 10 }}>
             <Typography.Text strong>
-              {t('渠道标签')}
+              {t('ChannelTag')}
             </Typography.Text>
           </div>
           <Input
-            label={t('渠道标签')}
+            label={t('ChannelTag')}
             name="tag"
-            placeholder={t('渠道标签')}
+            placeholder={t('ChannelTag')}
             onChange={(value) => {
               handleInputChange('tag', value);
             }}
@@ -927,13 +927,13 @@ const EditChannel = (props) => {
           />
           <div style={{ marginTop: 10 }}>
             <Typography.Text strong>
-              {t('渠道优先级')}
+              {t('ChannelPriority')}
             </Typography.Text>
           </div>
           <Input
-            label={t('渠道优先级')}
+            label={t('ChannelPriority')}
             name="priority"
-            placeholder={t('渠道优先级')}
+            placeholder={t('ChannelPriority')}
             onChange={(value) => {
               const number = parseInt(value);
               if (isNaN(number)) {
@@ -947,13 +947,13 @@ const EditChannel = (props) => {
           />
           <div style={{ marginTop: 10 }}>
             <Typography.Text strong>
-              {t('渠道权重')}
+              {t('ChannelWeight')}
             </Typography.Text>
           </div>
           <Input
-            label={t('渠道权重')}
+            label={t('ChannelWeight')}
             name="weight"
-            placeholder={t('渠道权重')}
+            placeholder={t('ChannelWeight')}
             onChange={(value) => {
               const number = parseInt(value);
               if (isNaN(number)) {
@@ -969,11 +969,11 @@ const EditChannel = (props) => {
           <>
             <div style={{ marginTop: 10 }}>
               <Typography.Text strong>
-                {t('渠道额外设置')}：
+                {t('ChannelExtraSettings')}：
               </Typography.Text>
             </div>
             <TextArea
-              placeholder={t('此项可选，用于配置渠道特定设置，为一个 JSON 字符串，例如：') + '\n{\n  "force_format": true\n}'}
+              placeholder={t('ThisItemOptional，UseLess thanConfigurationChannelSpecificSettings，ForOneItems JSON String，For example：') + '\n{\n  "force_format": true\n}'}
               name="setting"
               onChange={(value) => {
                 handleInputChange('setting', value);
@@ -997,7 +997,7 @@ const EditChannel = (props) => {
                 );
               }}
             >
-              {t('填入模板')}
+              {t('Used to support the system's email sendingTemplate')}
               </Typography.Text>
             </>
           )}  

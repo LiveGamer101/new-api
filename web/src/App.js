@@ -14,8 +14,6 @@ import NotFound from './pages/NotFound';
 import PasswordResetForm from './components/PasswordResetForm';
 import PasswordResetConfirm from './components/PasswordResetConfirm';
 import OAuth2Callback from "./components/OAuth2Callback.js";
-import HeaderBar from './components/HeaderBar';
-
 // Pages
 import User from './pages/User';
 import Setting from './pages/Setting';
@@ -59,22 +57,10 @@ function App() {
       background: 'var(--semi-color-bg-0)',
       transition: 'background-color 0.3s ease'
     }}>
-      <Layout.Header>
-        <div style={{ 
-          position: 'fixed',
-          top: 0,
-          width: '100%',
-          zIndex: 999,
-          background: 'var(--semi-color-bg-0)'
-        }}>
-          <HeaderBar />
-        </div>
-      </Layout.Header>
-      <Layout.Content style={{ 
-        padding: '24px',
-        maxWidth: '1200px',
+      <Layout.Content style={{
         width: '100%',
-        margin: '64px auto 0',
+        margin: '0',
+        padding: '0',
         transition: 'all 0.3s ease'
       }}>
         <Routes>
@@ -82,7 +68,7 @@ function App() {
             path='/'
             element={
               <Suspense fallback={<Loading />}>
-                <Home />
+                <Home key="home-component" />
               </Suspense>
             }
           />

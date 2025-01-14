@@ -18,7 +18,7 @@ const chat2page = () => {
 
   return (
     <div>
-        <h3>正在加载，请稍候...</h3>
+        <h3>In progressAvailable in，PleaseWait a moment...</h3>
     </div>
   );
 };

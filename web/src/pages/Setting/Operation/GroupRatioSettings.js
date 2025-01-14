@@ -24,7 +24,7 @@ export default function GroupRatioSettings(props) {
     try {
       await refForm.current.validate().then(() => {
         const updateArray = compareObjects(inputs, inputsRow);
-        if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+        if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
         
         const requestQueue = updateArray.map((item) => {
           const value = typeof inputs[item.key] === 'boolean' 
@@ -37,7 +37,7 @@ export default function GroupRatioSettings(props) {
         Promise.all(requestQueue)
           .then((res) => {
             if (res.includes(undefined)) {
-              return showError(requestQueue.length > 1 ? t('部分保存失败，请重试') : t('保存失败'));
+              return showError(requestQueue.length > 1 ? t('Part.SaveFailed，PleaseRetry') : t('SaveFailed'));
             }
             
             for (let i = 0; i < res.length; i++) {
@@ -46,21 +46,21 @@ export default function GroupRatioSettings(props) {
               }
             }
             
-            showSuccess(t('保存成功'));
+            showSuccess(t('SaveSuccess'));
             props.refresh();
           })
           .catch(error => {
             console.error('Unexpected error:', error);
-            showError(t('保存失败，请重试'));
+            showError(t('SaveFailed，PleaseRetry'));
           })
           .finally(() => {
             setLoading(false);
           });
       }).catch(() => {
-        showError(t('请检查输入'));
+        showError(t('Please checkInput'));
       });
     } catch (error) {
-      showError(t('请检查输入'));
+      showError(t('Please checkInput'));
       console.error(error);
     }
   }
@@ -84,12 +84,12 @@ export default function GroupRatioSettings(props) {
         getFormApi={(formAPI) => (refForm.current = formAPI)}
         style={{ marginBottom: 15 }}
       >
-        <Form.Section text={t('分组设置')}>
+        <Form.Section text={t('GroupSettings')}>
           <Row gutter={16}>
             <Col span={16}>
               <Form.TextArea
-                label={t('分组倍率')}
-                placeholder={t('为一个 JSON 文本，键为分组名称，值为倍率')}
+                label={t('GroupMultiplier')}
+                placeholder={t('ForOneItems JSON Text，KeyForGroupName，AllForMultiplier')}
                 field={'GroupRatio'}
                 autosize={{ minRows: 6, maxRows: 12 }}
                 trigger='blur'
@@ -97,7 +97,7 @@ export default function GroupRatioSettings(props) {
                 rules={[
                   {
                     validator: (rule, value) => verifyJSON(value),
-                    message: t('不是合法的 JSON 字符串')
+                    message: t('NotIsTogetherMethodThe JSON String')
                   }
                 ]}
                 onChange={(value) => setInputs({ ...inputs, GroupRatio: value })}
@@ -107,8 +107,8 @@ export default function GroupRatioSettings(props) {
           <Row gutter={16}>
             <Col span={16}>
               <Form.TextArea
-                label={t('用户可选分组')}
-                placeholder={t('为一个 JSON 文本，键为分组名称，值为分组描述')}
+                label={t('UseUserOptionalGroup')}
+                placeholder={t('ForOneItems JSON Text，KeyForGroupName，AllForGroupDescription')}
                 field={'UserUsableGroups'}
                 autosize={{ minRows: 6, maxRows: 12 }}
                 trigger='blur'
@@ -116,7 +116,7 @@ export default function GroupRatioSettings(props) {
                 rules={[
                   {
                     validator: (rule, value) => verifyJSON(value),
-                    message: t('不是合法的 JSON 字符串')
+                    message: t('NotIsTogetherMethodThe JSON String')
                   }
                 ]}
                 onChange={(value) => setInputs({ ...inputs, UserUsableGroups: value })}
@@ -125,7 +125,7 @@ export default function GroupRatioSettings(props) {
           </Row>
         </Form.Section>
       </Form>
-      <Button onClick={onSubmit}>{t('保存分组倍率设置')}</Button>
+      <Button onClick={onSubmit}>{t('SaveGroupMultiplierSettings')}</Button>
     </Spin>
   );
 } 

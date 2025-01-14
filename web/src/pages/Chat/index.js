@@ -34,19 +34,24 @@ const ChatPage = () => {
   return !isLoading && iframeSrc ? (
     <iframe
       src={iframeSrc}
-      style={{ width: '100%', height: '100%', border: 'none' }}
+      style={{
+        width: '100%',
+        height: '100vh',
+        border: 'none'
+      }}
       title="Token Frame"
       allow="camera;microphone"
     />
   ) : (
     <div>
       <Layout>
-        <Layout.Header>
+        <Layout.Content>
           <Banner
-              description={"正在跳转......"}
+              description={"In progressJump......"}
               type={"warning"}
+              style={{ marginBottom: '16px' }}
           />
-        </Layout.Header>
+        </Layout.Content>
       </Layout>
     </div>
   );

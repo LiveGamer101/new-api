@@ -50,7 +50,7 @@ export async function copy(text) {
     await navigator.clipboard.writeText(text);
   } catch (e) {
     try {
-      // 构建input 执行 复制命令
+      // Copy commandinput Or CopyCommand
       var _input = window.document.createElement("input");
       _input.value = text;
       window.document.body.appendChild(_input);
@@ -95,26 +95,26 @@ export function showError(error) {
     if (error.name === 'AxiosError') {
       switch (error.response.status) {
         case 401:
-          // toast.error('错误：未登录或登录已过期，请重新登录！', showErrorOptions);
+          // toast.error('Error：Not YetLoginToo many requestsLoginAlreadyExpired，PleaseResetNewLogin！', showErrorOptions);
           window.location.href = '/login?expired=true';
           break;
         case 429:
-          Toast.error('错误：请求次数过多，请稍后再试！');
+          Toast.error('Error：PleaseRequest timesNumberToo much，PleaseTry again later！');
           break;
         case 500:
-          Toast.error('错误：服务器内部错误，请联系管理员！');
+          Toast.error('Error：ServerWithinDepartmentError，PleaseContactAdministrator！');
           break;
         case 405:
-          Toast.info('本站仅作演示之用，无服务端！');
+          Toast.info('This siteOnlyOperateDemonstration ofUse，NoneServer-side！');
           break;
         default:
-          Toast.error('错误：' + error.message);
+          Toast.error('Error：' + error.message);
       }
       return;
     }
-    Toast.error('错误：' + error.message);
+    Toast.error('Error：' + error.message);
   } else {
-    Toast.error('错误：' + error);
+    Toast.error('Error：' + error);
   }
 }
 
@@ -243,7 +243,7 @@ export function verifyJSONPromise(value) {
     JSON.parse(value);
     return Promise.resolve();
   } catch (e) {
-    return Promise.reject('不是合法的 JSON 字符串');
+    return Promise.reject('NotIsTogetherMethodThe JSON String');
   }
 }
 
@@ -258,15 +258,15 @@ export function setPromptShown(id) {
 }
 
 /**
- * 比较两个对象的属性，找出有变化的属性，并返回包含变化属性信息的数组
- * @param {Object} oldObject - 旧对象
- * @param {Object} newObject - 新对象
- * @return {Array} 包含变化属性信息的数组，每个元素是一个对象，包含 key, oldValue 和 newValue
+ * Compare twoItemsObjectTheAttribute，Find outHaveChangeTheAttribute，AndReturnLoadChangeAttributeInfoTheNumberGroup
+ * @param {Object} oldObject - OldObject
+ * @param {Object} newObject - NewObject
+ * @return {Array} LoadChangeAttributeInfoTheNumberGroup，EachItemsYuanElementIsOneItemsObject，Load key, oldValue And newValue
  */
 export function compareObjects(oldObject, newObject) {
   const changedProperties = [];
 
-  // 比较两个对象的属性
+  // Compare twoItemsObjectTheAttribute
   for (const key in oldObject) {
     if (oldObject.hasOwnProperty(key) && newObject.hasOwnProperty(key)) {
       if (oldObject[key] !== newObject[key]) {

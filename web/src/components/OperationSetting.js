@@ -33,7 +33,7 @@ const OperationSetting = () => {
     UserUsableGroups: '',
     TopUpLink: '',
     ChatLink: '',
-    ChatLink2: '', // 添加的新状态变量
+    ChatLink2: '', // AddNewStatusVariable
     QuotaPerUnit: 0,
     AutomaticDisableChannelEnabled: false,
     AutomaticEnableChannelEnabled: false,
@@ -55,7 +55,7 @@ const OperationSetting = () => {
     DataExportEnabled: false,
     DataExportDefaultTime: 'hour',
     DataExportInterval: 5,
-    DefaultCollapseSidebar: false, // 默认折叠侧边栏
+    DefaultCollapseSidebar: false, // Default Collapsed Sidebar
     RetryTimes: 0,
     Chats: "[]",
   });
@@ -96,9 +96,9 @@ const OperationSetting = () => {
     try {
       setLoading(true);
       await getOptions();
-      // showSuccess('刷新成功');
+      // showSuccess('RefreshSuccess');
     } catch (error) {
-      showError('刷新失败');
+      showError('RefreshFailed');
     } finally {
       setLoading(false);
     }
@@ -111,49 +111,49 @@ const OperationSetting = () => {
   return (
     <>
       <Spin spinning={loading} size='large'>
-        {/* 通用设置 */}
+        {/* ThroughUseSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsGeneral options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 绘图设置 */}
+        {/* DrawingSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsDrawing options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 屏蔽词过滤设置 */}
+        {/* Blocked Word FilterSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsSensitiveWords options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 日志设置 */}
+        {/* LogsSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsLog options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 数据看板 */}
+        {/* NumberDashboard */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsDataDashboard options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 监控设置 */}
+        {/* MonitoringSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsMonitoring options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 额度设置 */}
+        {/* QuotaSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsCreditLimit options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 聊天设置 */}
+        {/* ChatSettings */}
         <Card style={{ marginTop: '10px' }}>
           <SettingsChats options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 分组倍率设置 */}
+        {/* GroupMultiplierSettings */}
         <Card style={{ marginTop: '10px' }}>
           <GroupRatioSettings options={inputs} refresh={onRefresh} />
         </Card>
-        {/* 合并模型倍率设置和可视化倍率设置 */}
+        {/* MergeModelMultiplierSettingsAndCanVisualizationMultiplierSettings */}
         <Card style={{ marginTop: '10px' }}>
           <Tabs type="line">
-            <Tabs.TabPane tab={t('模型倍率设置')} itemKey="model">
+            <Tabs.TabPane tab={t('ModelMultiplierSettings')} itemKey="model">
               <ModelRatioSettings options={inputs} refresh={onRefresh} />
             </Tabs.TabPane>
-            <Tabs.TabPane tab={t('可视化倍率设置')} itemKey="visual">
+            <Tabs.TabPane tab={t('CanVisualizationMultiplierSettings')} itemKey="visual">
               <ModelSettingsVisualEditor options={inputs} refresh={onRefresh} />
             </Tabs.TabPane>
           </Tabs>

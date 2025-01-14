@@ -33,25 +33,25 @@ const RedemptionsTable = () => {
       case 1:
         return (
           <Tag color='green' size='large'>
-            {t('未使用')}
+            {t('Not YetUseUse')}
           </Tag>
         );
       case 2:
         return (
           <Tag color='red' size='large'>
-            {t('已禁用')}
+            {t('AlreadyDisable')}
           </Tag>
         );
       case 3:
         return (
           <Tag color='grey' size='large'>
-            {t('已使用')}
+            {t('AlreadyUseUse')}
           </Tag>
         );
       default:
         return (
           <Tag color='black' size='large'>
-            {t('未知状态')}
+            {t('UnknownStatus')}
           </Tag>
         );
     }
@@ -63,11 +63,11 @@ const RedemptionsTable = () => {
       dataIndex: 'id',
     },
     {
-      title: t('名称'),
+      title: t('Name'),
       dataIndex: 'name',
     },
     {
-      title: t('状态'),
+      title: t('Status'),
       dataIndex: 'status',
       key: 'status',
       render: (text, record, index) => {
@@ -75,24 +75,24 @@ const RedemptionsTable = () => {
       },
     },
     {
-      title: t('额度'),
+      title: t('Quota'),
       dataIndex: 'quota',
       render: (text, record, index) => {
         return <div>{renderQuota(parseInt(text))}</div>;
       },
     },
     {
-      title: t('创建时间'),
+      title: t('CreateTime'),
       dataIndex: 'created_time',
       render: (text, record, index) => {
         return <div>{renderTimestamp(text)}</div>;
       },
     },
     {
-      title: t('兑换人ID'),
+      title: t('RedeemerID'),
       dataIndex: 'used_user_id',
       render: (text, record, index) => {
-        return <div>{text === 0 ? t('无') : text}</div>;
+        return <div>{text === 0 ? t('None') : text}</div>;
       },
     },
     {
@@ -102,7 +102,7 @@ const RedemptionsTable = () => {
         <div>
           <Popover content={record.key} style={{ padding: 20 }} position='top'>
             <Button theme='light' type='tertiary' style={{ marginRight: 1 }}>
-              {t('查看')}
+              {t('View')}
             </Button>
           </Popover>
           <Button
@@ -113,11 +113,11 @@ const RedemptionsTable = () => {
               await copyText(record.key);
             }}
           >
-            {t('复制')}
+            {t('Copy')}
           </Button>
           <Popconfirm
-            title={t('确定是否要删除此兑换码？')}
-            content={t('此修改将不可逆')}
+            title={t('Confirm whether toDeleteThis redemption code？')}
+            content={t('ThisModification will be irreversible')}
             okType={'danger'}
             position={'left'}
             onConfirm={() => {
@@ -127,7 +127,7 @@ const RedemptionsTable = () => {
             }}
           >
             <Button theme='light' type='danger' style={{ marginRight: 1 }}>
-              {t('删除')}
+              {t('Delete')}
             </Button>
           </Popconfirm>
           {record.status === 1 ? (
@@ -139,7 +139,7 @@ const RedemptionsTable = () => {
                 manageRedemption(record.id, 'disable', record);
               }}
             >
-              {t('禁用')}
+              {t('Disable')}
             </Button>
           ) : (
             <Button
@@ -151,7 +151,7 @@ const RedemptionsTable = () => {
               }}
               disabled={record.status === 3}
             >
-              {t('启用')}
+              {t('Enable')}
             </Button>
           )}
           <Button
@@ -164,7 +164,7 @@ const RedemptionsTable = () => {
             }}
             disabled={record.status !== 1}
           >
-            {t('编辑')}
+            {t('Edit')}
           </Button>
         </div>
       ),
@@ -220,10 +220,10 @@ const RedemptionsTable = () => {
 
   const copyText = async (text) => {
     if (await copy(text)) {
-      showSuccess(t('已复制到剪贴板！'));
+      showSuccess(t('AlreadyCopyTo clipboard！'));
     } else {
       // setSearchKeyword(text);
-      Modal.error({ title: t('无法复制到剪贴板，请手动复制'), content: text });
+      Modal.error({ title: t('NoneMethodCopyTo clipboard，PleaseManualCopy'), content: text });
     }
   };
 
@@ -266,7 +266,7 @@ const RedemptionsTable = () => {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess(t('操作成功完成！'));
+      showSuccess(t('OperationSuccessDone！'));
       let redemption = res.data.data;
       let newRedemptions = [...redemptions];
       // let realIdx = (activePage - 1) * ITEMS_PER_PAGE + idx;
@@ -359,11 +359,11 @@ const RedemptionsTable = () => {
         searchRedemptions(searchKeyword, activePage, pageSize).then();
       }}>
         <Form.Input
-          label={t('搜索关键字')}
+          label={t('SearchKeyword')}
           field='keyword'
           icon='search'
           iconPosition='left'
-          placeholder={t('关键字(id或者名称)')}
+          placeholder={t('Keyword(idToo many requestsPersonName)')}
           value={searchKeyword}
           loading={searching}
           onChange={handleKeywordChange}
@@ -382,14 +382,14 @@ const RedemptionsTable = () => {
               setShowEdit(true);
             }}
         >
-          {t('添加兑换码')}
+          {t('AddRedemption code')}
         </Button>
         <Button
-            label={t('复制所选兑换码')}
+            label={t('CopySelectedRedemption code')}
             type='warning'
             onClick={async () => {
               if (selectedKeys.length === 0) {
-                showError(t('请至少选择一个兑换码！'));
+                showError(t('PleaseAt leastSelectOneItemsRedemption code！'));
                 return;
               }
               let keys = '';
@@ -399,7 +399,7 @@ const RedemptionsTable = () => {
               await copyText(keys);
             }}
         >
-          {t('复制所选兑换码到剪贴板')}
+          {t('CopySelectedRedemption codeTo clipboard')}
         </Button>
       </div>
 
@@ -414,7 +414,7 @@ const RedemptionsTable = () => {
           showSizeChanger: true,
           pageSizeOpts: [10, 20, 50, 100],
           formatPageText: (page) =>
-            t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+            t('The {{start}} - {{end}} Item，Total {{total}} Item', {
               start: page.currentStart,
               end: page.currentEnd,
               total: tokenCount

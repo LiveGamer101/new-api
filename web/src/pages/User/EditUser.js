@@ -102,7 +102,7 @@ const EditUser = (props) => {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('用户信息更新成功！');
+      showSuccess('UseUserInfoUpdateSuccess！');
       props.refresh();
       props.handleClose();
     } else {
@@ -127,7 +127,7 @@ const EditUser = (props) => {
     <>
       <SideSheet
         placement={'right'}
-        title={<Title level={3}>{t('编辑用户')}</Title>}
+        title={<Title level={3}>{t('EditUseUser')}</Title>}
         headerStyle={{ borderBottom: '1px solid var(--semi-color-border)' }}
         bodyStyle={{ borderBottom: '1px solid var(--semi-color-border)' }}
         visible={props.visible}
@@ -135,7 +135,7 @@ const EditUser = (props) => {
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Space>
               <Button theme='solid' size={'large'} onClick={submit}>
-                {t('提交')}
+                {t('Submit')}
               </Button>
               <Button
                 theme='solid'
@@ -143,7 +143,7 @@ const EditUser = (props) => {
                 type={'tertiary'}
                 onClick={handleCancel}
               >
-                {t('取消')}
+                {t('Cancel')}
               </Button>
             </Space>
           </div>
@@ -154,35 +154,35 @@ const EditUser = (props) => {
       >
         <Spin spinning={loading}>
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('用户名')}</Typography.Text>
+            <Typography.Text>{t('Username')}</Typography.Text>
           </div>
           <Input
-            label={t('用户名')}
+            label={t('Username')}
             name='username'
-            placeholder={t('请输入新的用户名')}
+            placeholder={t('Please enterNewTheUsername')}
             onChange={(value) => handleInputChange('username', value)}
             value={username}
             autoComplete='new-password'
           />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('密码')}</Typography.Text>
+            <Typography.Text>{t('Password')}</Typography.Text>
           </div>
           <Input
-            label={t('密码')}
+            label={t('Password')}
             name='password'
             type={'password'}
-            placeholder={t('请输入新的密码，最短 8 位')}
+            placeholder={t('Please enterNewThePassword，Shortest 8 Digits')}
             onChange={(value) => handleInputChange('password', value)}
             value={password}
             autoComplete='new-password'
           />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('显示名称')}</Typography.Text>
+            <Typography.Text>{t('DisplayName')}</Typography.Text>
           </div>
           <Input
-            label={t('显示名称')}
+            label={t('DisplayName')}
             name='display_name'
-            placeholder={t('请输入新的显示名称')}
+            placeholder={t('Please enterNewTheDisplayName')}
             onChange={(value) => handleInputChange('display_name', value)}
             value={display_name}
             autoComplete='new-password'
@@ -190,76 +190,76 @@ const EditUser = (props) => {
           {userId && (
             <>
               <div style={{ marginTop: 20 }}>
-                <Typography.Text>{t('分组')}</Typography.Text>
+                <Typography.Text>{t('Group')}</Typography.Text>
               </div>
               <Select
-                placeholder={t('请选择分组')}
+                placeholder={t('PleaseSelectGroup')}
                 name='group'
                 fluid
                 search
                 selection
                 allowAdditions
-                additionLabel={t('请在系统设置页面编辑分组倍率以添加新的分组：')}
+                additionLabel={t('PleaseHandle filtering and pagination logic first.SystemSettingsRemoveEditGroupMultiplierUsedAddNewTheGroup：')}
                 onChange={(value) => handleInputChange('group', value)}
                 value={inputs.group}
                 autoComplete='new-password'
                 optionList={groupOptions}
               />
               <div style={{ marginTop: 20 }}>
-                <Typography.Text>{`${t('剩余额度')}${renderQuotaWithPrompt(quota)}`}</Typography.Text>
+                <Typography.Text>{`${t('RemainingQuota')}${renderQuotaWithPrompt(quota)}`}</Typography.Text>
               </div>
               <Space>
                 <Input
                   name='quota'
-                  placeholder={t('请输入新的剩余额度')}
+                  placeholder={t('Please enterNewTheRemainingQuota')}
                   onChange={(value) => handleInputChange('quota', value)}
                   value={quota}
                   type={'number'}
                   autoComplete='new-password'
                 />
-                <Button onClick={openAddQuotaModal}>{t('添加额度')}</Button>
+                <Button onClick={openAddQuotaModal}>{t('AddQuota')}</Button>
               </Space>
             </>
           )}
-          <Divider style={{ marginTop: 20 }}>{t('以下信息不可修改')}</Divider>
+          <Divider style={{ marginTop: 20 }}>{t('UsedDownInfoNotCanModify')}</Divider>
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('已绑定的 GitHub 账户')}</Typography.Text>
+            <Typography.Text>{t('AlreadyBindThe GitHub Allow new users')}</Typography.Text>
           </div>
           <Input
             name='github_id'
             value={github_id}
             autoComplete='new-password'
-            placeholder={t('此项只读，需要用户通过个人设置页面的相关绑定按钮进行绑定，不可直接修改')}
+            placeholder={t('ThisItemOnlyRead，Quota neededUseUserVerification is requiredItemsPersonSettingsRemoveTheRelatedBindPressButtonProceedBind，NotCanDirectModify')}
             readonly
           />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('已绑定的微信账户')}</Typography.Text>
+            <Typography.Text>{t('AlreadyBindTheWeChatAllow new users')}</Typography.Text>
           </div>
           <Input
             name='wechat_id'
             value={wechat_id}
             autoComplete='new-password'
-            placeholder={t('此项只读，需要用户通过个人设置页面的相关绑定按钮进行绑定，不可直接修改')}
+            placeholder={t('ThisItemOnlyRead，Quota neededUseUserVerification is requiredItemsPersonSettingsRemoveTheRelatedBindPressButtonProceedBind，NotCanDirectModify')}
             readonly
           />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('已绑定的邮箱账户')}</Typography.Text>
+            <Typography.Text>{t('AlreadyBindTheEmailAllow new users')}</Typography.Text>
           </div>
           <Input
             name='email'
             value={email}
             autoComplete='new-password'
-            placeholder={t('此项只读，需要用户通过个人设置页面的相关绑定按钮进行绑定，不可直接修改')}
+            placeholder={t('ThisItemOnlyRead，Quota neededUseUserVerification is requiredItemsPersonSettingsRemoveTheRelatedBindPressButtonProceedBind，NotCanDirectModify')}
             readonly
           />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('已绑定的Telegram账户')}</Typography.Text>
+            <Typography.Text>{t('AlreadyBindTheTelegramAllow new users')}</Typography.Text>
           </div>
           <Input
             name='telegram_id'
             value={telegram_id}
             autoComplete='new-password'
-            placeholder={t('此项只读，需要用户通过个人设置页面的相关绑定按钮进行绑定，不可直接修改')}
+            placeholder={t('ThisItemOnlyRead，Quota neededUseUserVerification is requiredItemsPersonSettingsRemoveTheRelatedBindPressButtonProceedBind，NotCanDirectModify')}
             readonly
           />
         </Spin>
@@ -275,11 +275,11 @@ const EditUser = (props) => {
         closable={null}
       >
         <div style={{ marginTop: 20 }}>
-          <Typography.Text>{`${t('新额度')}${renderQuota(quota)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(quota + parseInt(addQuotaLocal))}`}</Typography.Text>
+          <Typography.Text>{`${t('NewQuota')}${renderQuota(quota)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(quota + parseInt(addQuotaLocal))}`}</Typography.Text>
         </div>
         <Input
           name='addQuotaLocal'
-          placeholder={t('需要添加的额度（支持负数）')}
+          placeholder={t('Quota neededAddTheQuota（SupportNegativeNumber）')}
           onChange={(value) => {
             setAddQuotaLocal(value);
           }}

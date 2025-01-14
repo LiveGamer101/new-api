@@ -16,7 +16,7 @@ const Setting = () => {
   const [tabActiveKey, setTabActiveKey] = useState('1');
   let panes = [
     {
-      tab: t('个人设置'),
+      tab: t('ItemsPersonSettings'),
       content: <PersonalSetting />,
       itemKey: 'personal',
     },
@@ -24,17 +24,17 @@ const Setting = () => {
 
   if (isRoot()) {
     panes.push({
-      tab: t('运营设置'),
+      tab: t('OperationSettings'),
       content: <OperationSetting />,
       itemKey: 'operation',
     });
     panes.push({
-      tab: t('系统设置'),
+      tab: t('SystemSettings'),
       content: <SystemSetting />,
       itemKey: 'system',
     });
     panes.push({
-      tab: t('其他设置'),
+      tab: t('A new oneSettings'),
       content: <OtherSetting />,
       itemKey: 'other',
     });

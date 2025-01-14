@@ -37,13 +37,13 @@ const Playground = () => {
       role: 'user',
       id: '2',
       createAt: 1715676751919,
-      content: t('你好'),
+      content: t('Hello'),
     },
     {
       role: 'assistant',
       id: '3',
       createAt: 1715676751919,
-      content: t('你好，请问有什么可以帮助您的吗？'),
+      content: t('Hello，PleaseAskHaveWhatCanUsedHelpYouThe?？'),
     }
   ];
 
@@ -69,7 +69,7 @@ const Playground = () => {
 
   useEffect(() => {
     if (searchParams.get('expired')) {
-      showError(t('未登录或登录已过期，请重新登录！'));
+      showError(t('Not YetLoginToo many requestsLoginAlreadyExpired，PleaseResetNewLogin！'));
     }
     let status = localStorage.getItem('status');
     if (status) {
@@ -106,7 +106,7 @@ const Playground = () => {
 
       if (localGroupOptions.length === 0) {
         localGroupOptions = [{
-          label: t('用户分组'),
+          label: t('UseUserGroup'),
           value: '',
           ratio: 1
         }];
@@ -203,7 +203,7 @@ const Playground = () => {
         }
       ];
 
-      // 将 getPayload 移到这里
+      // Convert getPayload MoveThe path before.Here
       const getPayload = () => {
         let systemMessage = getSystemMessage();
         let messages = newMessage.map((item) => {
@@ -225,7 +225,7 @@ const Playground = () => {
         };
       };
 
-      // 使用更新后的消息状态调用 handleSSE
+      // UseUseUpdateAfterTheMessageStatusAdjustUse handleSSE
       handleSSE(getPayload());
       newMessage.push({
         role: 'assistant',
@@ -317,10 +317,10 @@ const Playground = () => {
         <Layout.Sider style={{ display: styleState.isMobile ? 'block' : 'initial' }}>
           <Card style={commonOuterStyle}>
             <div style={{ marginTop: 10 }}>
-              <Typography.Text strong>{t('分组')}：</Typography.Text>
+              <Typography.Text strong>{t('Group')}：</Typography.Text>
             </div>
             <Select
-              placeholder={t('请选择分组')}
+              placeholder={t('PleaseSelectGroup')}
               name='group'
               required
               selection
@@ -334,10 +334,10 @@ const Playground = () => {
               style={{ width: '100%' }}
             />
             <div style={{ marginTop: 10 }}>
-              <Typography.Text strong>{t('模型')}：</Typography.Text>
+              <Typography.Text strong>{t('Model')}：</Typography.Text>
             </div>
             <Select
-              placeholder={t('请选择模型')}
+              placeholder={t('PleaseSelectModel')}
               name='model'
               required
               selection

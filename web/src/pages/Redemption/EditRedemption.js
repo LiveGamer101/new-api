@@ -92,11 +92,11 @@ const EditRedemption = (props) => {
     const { success, message, data } = res.data;
     if (success) {
       if (isEdit) {
-        showSuccess(t('兑换码更新成功！'));
+        showSuccess(t('Redemption codeUpdateSuccess！'));
         props.refresh();
         props.handleClose();
       } else {
-        showSuccess(t('兑换码创建成功！'));
+        showSuccess(t('Redemption codeCreateSuccess！'));
         setInputs(originInputs);
         props.refresh();
         props.handleClose();
@@ -110,11 +110,11 @@ const EditRedemption = (props) => {
         text += data[i] + '\n';
       }
       Modal.confirm({
-        title: t('兑换码创建成功'),
+        title: t('Redemption codeCreateSuccess'),
         content: (
           <div>
-            <p>{t('兑换码创建成功，是否下载兑换码？')}</p>
-            <p>{t('兑换码将以文本文件的形式下载，文件名为兑换码的名称。')}</p>
+            <p>{t('Redemption codeCreateSuccess，IsNoDownLoadRedemption code？')}</p>
+            <p>{t('Redemption codeConvertUsedTextFileTheDownload in format，FileNameForRedemption codeTheName。')}</p>
           </div>
         ),
         onOk: () => {
@@ -131,7 +131,7 @@ const EditRedemption = (props) => {
         placement={isEdit ? 'right' : 'left'}
         title={
           <Title level={3}>
-            {isEdit ? t('更新兑换码信息') : t('创建新的兑换码')}
+            {isEdit ? t('UpdateRedemption codeInfo') : t('CreateNewTheRedemption code')}
           </Title>
         }
         headerStyle={{ borderBottom: '1px solid var(--semi-color-border)' }}
@@ -141,7 +141,7 @@ const EditRedemption = (props) => {
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Space>
               <Button theme='solid' size={'large'} onClick={submit}>
-                {t('提交')}
+                {t('Submit')}
               </Button>
               <Button
                 theme='solid'
@@ -149,7 +149,7 @@ const EditRedemption = (props) => {
                 type={'tertiary'}
                 onClick={handleCancel}
               >
-                {t('取消')}
+                {t('Cancel')}
               </Button>
             </Space>
           </div>
@@ -161,9 +161,9 @@ const EditRedemption = (props) => {
         <Spin spinning={loading}>
           <Input
             style={{ marginTop: 20 }}
-            label={t('名称')}
+            label={t('Name')}
             name='name'
-            placeholder={t('请输入名称')}
+            placeholder={t('Please enterName')}
             onChange={(value) => handleInputChange('name', value)}
             value={name}
             autoComplete='new-password'
@@ -171,12 +171,12 @@ const EditRedemption = (props) => {
           />
           <Divider />
           <div style={{ marginTop: 20 }}>
-            <Typography.Text>{t('额度') + renderQuotaWithPrompt(quota)}</Typography.Text>
+            <Typography.Text>{t('Quota') + renderQuotaWithPrompt(quota)}</Typography.Text>
           </div>
           <AutoComplete
             style={{ marginTop: 8 }}
             name='quota'
-            placeholder={t('请输入额度')}
+            placeholder={t('Please enterQuota')}
             onChange={(value) => handleInputChange('quota', value)}
             value={quota}
             autoComplete='new-password'
@@ -194,12 +194,12 @@ const EditRedemption = (props) => {
           {!isEdit && (
             <>
               <Divider />
-              <Typography.Text>{t('生成数量')}</Typography.Text>
+              <Typography.Text>{t('GenerateNumberQuantity')}</Typography.Text>
               <Input
                 style={{ marginTop: 8 }}
-                label={t('生成数量')}
+                label={t('GenerateNumberQuantity')}
                 name='count'
-                placeholder={t('请输入生成数量')}
+                placeholder={t('Please enterGenerateNumberQuantity')}
                 onChange={(value) => handleInputChange('count', value)}
                 value={count}
                 autoComplete='new-password'

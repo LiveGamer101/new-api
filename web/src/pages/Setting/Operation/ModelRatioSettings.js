@@ -25,7 +25,7 @@ export default function ModelRatioSettings(props) {
     try {
       await refForm.current.validate().then(() => {
         const updateArray = compareObjects(inputs, inputsRow);
-        if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+        if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
         
         const requestQueue = updateArray.map((item) => {
           const value = typeof inputs[item.key] === 'boolean' 
@@ -38,7 +38,7 @@ export default function ModelRatioSettings(props) {
         Promise.all(requestQueue)
           .then((res) => {
             if (res.includes(undefined)) {
-              return showError(requestQueue.length > 1 ? t('部分保存失败，请重试') : t('保存失败'));
+              return showError(requestQueue.length > 1 ? t('Part.SaveFailed，PleaseRetry') : t('SaveFailed'));
             }
             
             for (let i = 0; i < res.length; i++) {
@@ -47,21 +47,21 @@ export default function ModelRatioSettings(props) {
               }
             }
             
-            showSuccess(t('保存成功'));
+            showSuccess(t('SaveSuccess'));
             props.refresh();
           })
           .catch(error => {
             console.error('Unexpected error:', error);
-            showError(t('保存失败，请重试'));
+            showError(t('SaveFailed，PleaseRetry'));
           })
           .finally(() => {
             setLoading(false);
           });
       }).catch(() => {
-        showError(t('请检查输入'));
+        showError(t('Please checkInput'));
       });
     } catch (error) {
-      showError(t('请检查输入'));
+      showError(t('Please checkInput'));
       console.error(error);
     }
   }
@@ -103,9 +103,9 @@ export default function ModelRatioSettings(props) {
           <Row gutter={16}>
             <Col span={16}>
               <Form.TextArea
-                label={t('模型固定价格')}
-                extraText={t('一次调用消耗多少刀，优先级大于模型倍率')}
-                placeholder={t('为一个 JSON 文本，键为模型名称，值为一次调用消耗多少刀，比如 "gpt-4-gizmo-*": 0.1，一次消耗0.1刀')}
+                label={t('ModelSolid.PricingStrict.')}
+                extraText={t('OneNextAdjustUseHow much consumptionKnife，PriorityGreater thanModelMultiplier')}
+                placeholder={t('ForOneItems JSON Text，KeyForModelName，AllForOneNextAdjustUseHow much consumptionKnife，For example. "gpt-4-gizmo-*": 0.1，One-time consumption.0.1Knife')}
                 field={'ModelPrice'}
                 autosize={{ minRows: 6, maxRows: 12 }}
                 trigger='blur'
@@ -113,7 +113,7 @@ export default function ModelRatioSettings(props) {
                 rules={[
                   {
                     validator: (rule, value) => verifyJSON(value),
-                    message: '不是合法的 JSON 字符串'
+                    message: 'NotIsTogetherMethodThe JSON String'
                   }
                 ]}
                 onChange={(value) => setInputs({ ...inputs, ModelPrice: value })}
@@ -123,8 +123,8 @@ export default function ModelRatioSettings(props) {
           <Row gutter={16}>
             <Col span={16}>
               <Form.TextArea
-                label={t('模型倍率')}
-                placeholder={t('为一个 JSON 文本，键为模型名称，值为倍率')}
+                label={t('ModelMultiplier')}
+                placeholder={t('ForOneItems JSON Text，KeyForModelName，AllForMultiplier')}
                 field={'ModelRatio'}
                 autosize={{ minRows: 6, maxRows: 12 }}
                 trigger='blur'
@@ -132,7 +132,7 @@ export default function ModelRatioSettings(props) {
                 rules={[
                   {
                     validator: (rule, value) => verifyJSON(value),
-                    message: '不是合法的 JSON 字符串'
+                    message: 'NotIsTogetherMethodThe JSON String'
                   }
                 ]}
                 onChange={(value) => setInputs({ ...inputs, ModelRatio: value })}
@@ -142,9 +142,9 @@ export default function ModelRatioSettings(props) {
           <Row gutter={16}>
             <Col span={16}>
               <Form.TextArea
-                label={t('模型补全倍率（仅对自定义模型有效）')}
-                extraText={t('仅对自定义模型有效')}
-                placeholder={t('为一个 JSON 文本，键为模型名称，值为倍率')}
+                label={t('ModelCompleteMultiplier（OnlyCorrectCustomModelConfirm reset.）')}
+                extraText={t('OnlyCorrectCustomModelConfirm reset.')}
+                placeholder={t('ForOneItems JSON Text，KeyForModelName，AllForMultiplier')}
                 field={'CompletionRatio'}
                 autosize={{ minRows: 6, maxRows: 12 }}
                 trigger='blur'
@@ -152,7 +152,7 @@ export default function ModelRatioSettings(props) {
                 rules={[
                   {
                     validator: (rule, value) => verifyJSON(value),
-                    message: '不是合法的 JSON 字符串'
+                    message: 'NotIsTogetherMethodThe JSON String'
                   }
                 ]}
                 onChange={(value) => setInputs({ ...inputs, CompletionRatio: value })}
@@ -162,15 +162,15 @@ export default function ModelRatioSettings(props) {
         </Form.Section>
       </Form>
       <Space>
-        <Button onClick={onSubmit}>{t('保存模型倍率设置')}</Button>
+        <Button onClick={onSubmit}>{t('SaveModelMultiplierSettings')}</Button>
         <Popconfirm
-          title={t('确定重置模型倍率吗？')}
-          content={t('此修改将不可逆')}
+          title={t('When passing throughResetModelMultiplier?？')}
+          content={t('ThisModification will be irreversible')}
           okType={'danger'}
           position={'top'}
           onConfirm={resetModelRatio}
         >
-          <Button type={'danger'}>{t('重置模型倍率')}</Button>
+          <Button type={'danger'}>{t('ResetModelMultiplier')}</Button>
         </Popconfirm>
       </Space>
     </Spin>

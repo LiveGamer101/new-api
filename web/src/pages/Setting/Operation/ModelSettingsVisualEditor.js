@@ -22,7 +22,7 @@ export default function ModelSettingsVisualEditor(props) {
       const modelRatio = JSON.parse(props.options.ModelRatio || '{}');
       const completionRatio = JSON.parse(props.options.CompletionRatio || '{}');
 
-      // 合并所有模型名称
+      // MergeAre overwrite operationsModelName
       const modelNames = new Set([
         ...Object.keys(modelPrice),
         ...Object.keys(modelRatio),
@@ -38,23 +38,23 @@ export default function ModelSettingsVisualEditor(props) {
 
       setModels(modelData);
     } catch (error) {
-      console.error('JSON解析错误:', error);
+      console.error('JSONFirst declare the tool functions related to pagination.Error:', error);
     }
   }, [props.options]);
 
-  // 首先声明分页相关的工具函数
+  // First declarePaginationRelatedTheToolsFunction
   const getPagedData = (data, currentPage, pageSize) => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     return data.slice(start, end);
   };
 
-  // 在 return 语句之前，先处理过滤和分页逻辑
+  // Handle filtering and pagination logic first. return Then calculate pagination data based on the filtered data.，FirstPlaceRational filteringAndPagination logic
   const filteredModels = models.filter(model =>
     searchText ? model.name.toLowerCase().includes(searchText.toLowerCase()) : true
   );
 
-  // 然后基于过滤后的数据计算分页数据
+  // HoweverAfterThis project is licensed underFilterAfterTheNumberDataCalculatePaginationNumberData
   const pagedData = getPagedData(filteredModels, currentPage, pageSize);
 
   const SubmitData = async () => {
@@ -67,11 +67,11 @@ export default function ModelSettingsVisualEditor(props) {
     let currentConvertModelName = '';
 
     try {
-      // 数据转换
+      // NumberDataConvert
       models.forEach(model => {
         currentConvertModelName = model.name;
         if (model.price !== '') {
-          // 如果价格不为空，则转换为浮点数，忽略倍率参数
+          // IfPriceNotForEmpty，ThenConvertForFloatPointNumber，IgnoreMultiplierParameterNumber
           output.ModelPrice[model.name] = parseFloat(model.price)
         } else {
           if (model.ratio !== '') output.ModelRatio[model.name] = parseFloat(model.ratio);
@@ -79,7 +79,7 @@ export default function ModelSettingsVisualEditor(props) {
         }
       });
 
-      // 准备API请求数组
+      // PrepareAPIPleaseRequestNumberGroup
       const finalOutput = {
         ModelPrice: JSON.stringify(output.ModelPrice, null, 2),
         ModelRatio: JSON.stringify(output.ModelRatio, null, 2),
@@ -93,31 +93,31 @@ export default function ModelSettingsVisualEditor(props) {
         });
       });
 
-      // 批量处理请求
+      // AllowedPlaceReasonPleaseRequest
       const results = await Promise.all(requestQueue);
 
-      // 验证结果
+      // Allow through WeChatResult
       if (requestQueue.length === 1) {
         if (results.includes(undefined)) return;
       } else if (requestQueue.length > 1) {
         if (results.includes(undefined)) {
-          return showError('部分保存失败，请重试');
+          return showError('Part.SaveFailed，PleaseRetry');
         }
       }
 
-      // 检查每个请求的结果
+      // If it already existsEachItemsPleaseRequestTheResult
       for (const res of results) {
         if (!res.data.success) {
           return showError(res.data.message);
         }
       }
 
-      showSuccess('保存成功');
+      showSuccess('SaveSuccess');
       props.refresh();
 
     } catch (error) {
-      console.error('保存失败:', error);
-      showError('保存失败，请重试');
+      console.error('SaveFailed:', error);
+      showError('SaveFailed，PleaseRetry');
     } finally {
       setLoading(false);
     }
@@ -125,50 +125,50 @@ export default function ModelSettingsVisualEditor(props) {
 
   const columns = [
     {
-      title: t('模型名称'),
+      title: t('ModelName'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: t('模型固定价格'),
+      title: t('ModelSolid.PricingStrict.'),
       dataIndex: 'price',
       key: 'price',
       render: (text, record) => (
         <Input
           value={text}
-          placeholder={t('按量计费')}
+          placeholder={t('Pay-as-you-go')}
           onChange={value => updateModel(record.name, 'price', value)}
         />
       )
     },
     {
-      title: t('模型倍率'),
+      title: t('ModelMultiplier'),
       dataIndex: 'ratio',
       key: 'ratio',
       render: (text, record) => (
         <Input
           value={text}
-          placeholder={record.price !== '' ? t('模型倍率') : t('默认补全倍率')}
+          placeholder={record.price !== '' ? t('ModelMultiplier') : t('DefaultCompleteMultiplier')}
           disabled={record.price !== ''}
           onChange={value => updateModel(record.name, 'ratio', value)}
         />
       )
     },
     {
-      title: t('补全倍率'),
+      title: t('CompleteMultiplier'),
       dataIndex: 'completionRatio',
       key: 'completionRatio',
       render: (text, record) => (
         <Input
           value={text}
-          placeholder={record.price !== '' ? t('补全倍率') : t('默认补全倍率')}
+          placeholder={record.price !== '' ? t('CompleteMultiplier') : t('DefaultCompleteMultiplier')}
           disabled={record.price !== ''}
           onChange={value => updateModel(record.name, 'completionRatio', value)}
         />
       )
     },
     {
-      title: t('操作'),
+      title: t('Operation'),
       key: 'action',
       render: (_, record) => (
         <Button
@@ -182,7 +182,7 @@ export default function ModelSettingsVisualEditor(props) {
 
   const updateModel = (name, field, value) => {
     if (isNaN(value)) {
-      showError('请输入数字');
+      showError('Please enterNumberWord');
       return;
     }
     setModels(prev =>
@@ -198,9 +198,9 @@ export default function ModelSettingsVisualEditor(props) {
     setModels(prev => prev.filter(model => model.name !== name));
   };
   const addModel = (values) => {
-    // 检查模型名称是否存在, 如果存在则拒绝添加
+    // If it already existsModelNameIsNoExistence, IfExistenceThenRejectAdd
     if (models.some(model => model.name === values.name)) {
-      showError('模型名称已存在');
+      showError('ModelNameAlreadyExistence');
       return;
     }
     setModels(prev => [{
@@ -210,7 +210,7 @@ export default function ModelSettingsVisualEditor(props) {
       completionRatio: values.completionRatio || ''
     }, ...prev]);
     setVisible(false);
-    showSuccess('添加成功');
+    showSuccess('AddSuccess');
   };
 
 
@@ -219,14 +219,14 @@ export default function ModelSettingsVisualEditor(props) {
       <Space vertical align="start" style={{ width: '100%' }}>
         <Space>
           <Button icon={<IconPlus />} onClick={() => setVisible(true)}>
-            {t('添加模型')}
+            {t('AddModel')}
           </Button>
           <Button type="primary" icon={<IconSave />} onClick={SubmitData}>
-            {t('应用更改')}
+            {t('ShouldUseChange')}
           </Button>
           <Input
             prefix={<IconSearch />}
-            placeholder={t('搜索模型名称')}
+            placeholder={t('SearchModelName')}
             value={searchText}
             onChange={value => {
               setSearchText(value)
@@ -244,7 +244,7 @@ export default function ModelSettingsVisualEditor(props) {
             total: filteredModels.length,
             onPageChange: page => setCurrentPage(page),
             formatPageText: (page) =>
-              t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+              t('The {{start}} - {{end}} Item，Total {{total}} Item', {
                 start: page.currentStart,
                 end: page.currentEnd,
                 total: filteredModels.length
@@ -256,7 +256,7 @@ export default function ModelSettingsVisualEditor(props) {
       </Space>
 
       <Modal
-        title={t('添加模型')}
+        title={t('AddModel')}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={() => {
@@ -266,14 +266,14 @@ export default function ModelSettingsVisualEditor(props) {
         <Form>
           <Form.Input
             field="name"
-            label={t('模型名称')}
+            label={t('ModelName')}
             placeholder="strawberry"
             required
             onChange={value => setCurrentModel(prev => ({ ...prev, name: value }))}
           />
           <Form.Switch
             field="priceMode"
-            label={<>{t('定价模式')}：{currentModel?.priceMode ? t("固定价格") : t("倍率模式")}</>}
+            label={<>{t('PricingMode')}：{currentModel?.priceMode ? t("Solid.PricingStrict.") : t("MultiplierMode")}</>}
             onChange={checked => {
               setCurrentModel(prev => ({
                 ...prev,
@@ -287,22 +287,22 @@ export default function ModelSettingsVisualEditor(props) {
           {currentModel?.priceMode ? (
             <Form.Input
               field="price"
-              label={t('固定价格(每次)')}
-              placeholder={t('输入每次价格')}
+              label={t('Solid.PricingStrict.(Each time)')}
+              placeholder={t('InputEach timePrice')}
               onChange={value => setCurrentModel(prev => ({ ...prev, price: value }))}
             />
           ) : (
             <>
               <Form.Input
                 field="ratio"
-                label={t('模型倍率')}
-                placeholder={t('输入模型倍率')}
+                label={t('ModelMultiplier')}
+                placeholder={t('InputModelMultiplier')}
                 onChange={value => setCurrentModel(prev => ({ ...prev, ratio: value }))}
               />
               <Form.Input
                 field="completionRatio"
-                label={t('补全倍率')}
-                placeholder={t('输入补全价格')}
+                label={t('CompleteMultiplier')}
+                placeholder={t('InputCompletePrice')}
                 onChange={value => setCurrentModel(prev => ({ ...prev, completionRatio: value }))}
               />
             </>

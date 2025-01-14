@@ -25,7 +25,7 @@ export default function SettingsDrawing(props) {
 
   function onSubmit() {
     const updateArray = compareObjects(inputs, inputsRow);
-    if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+    if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
     const requestQueue = updateArray.map((item) => {
       let value = '';
       if (typeof inputs[item.key] === 'boolean') {
@@ -44,13 +44,13 @@ export default function SettingsDrawing(props) {
         if (requestQueue.length === 1) {
           if (res.includes(undefined)) return;
         } else if (requestQueue.length > 1) {
-          if (res.includes(undefined)) return showError(t('部分保存失败，请重试'));
+          if (res.includes(undefined)) return showError(t('Part.SaveFailed，PleaseRetry'));
         }
-        showSuccess(t('保存成功'));
+        showSuccess(t('SaveSuccess'));
         props.refresh();
       })
       .catch(() => {
-        showError(t('保存失败，请重试'));
+        showError(t('SaveFailed，PleaseRetry'));
       })
       .finally(() => {
         setLoading(false);
@@ -78,12 +78,12 @@ export default function SettingsDrawing(props) {
           getFormApi={(formAPI) => (refForm.current = formAPI)}
           style={{ marginBottom: 15 }}
         >
-          <Form.Section text={t('绘图设置')}>
+          <Form.Section text={t('DrawingSettings')}>
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Switch
                   field={'DrawingEnabled'}
-                  label={t('启用绘图功能')}
+                  label={t('EnableDrawingFunction')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -98,7 +98,7 @@ export default function SettingsDrawing(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'MjNotifyEnabled'}
-                  label={t('允许回调（会泄露服务器 IP 地址）')}
+                  label={t('AllowCallback（Will leakServer IP Address）')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -113,7 +113,7 @@ export default function SettingsDrawing(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'MjAccountFilterEnabled'}
-                  label={t('允许 AccountFilter 参数')}
+                  label={t('Allow AccountFilter ParameterNumber')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -128,7 +128,7 @@ export default function SettingsDrawing(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'MjForwardUrlEnabled'}
-                  label={t('开启之后将上游地址替换为服务器地址')}
+                  label={t('EnableOfAfterConvertUpstreamAddressReplaceForServerAddress')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -145,8 +145,8 @@ export default function SettingsDrawing(props) {
                   field={'MjModeClearEnabled'}
                   label={
                     <>
-                      {t('开启之后会清除用户提示词中的')} <Tag>--fast</Tag> 、
-                      <Tag>--relax</Tag> {t('以及')} <Tag>--turbo</Tag> {t('参数')}
+                      {t('EnableOfAfterWill clearRemoveUseUserPromptWordUse predefined colorsThe')} <Tag>--fast</Tag> 、
+                      <Tag>--relax</Tag> {t('UsedAnd')} <Tag>--turbo</Tag> {t('ParameterNumber')}
                     </>
                   }
                   size='default'
@@ -163,7 +163,7 @@ export default function SettingsDrawing(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'MjActionCheckSuccessEnabled'}
-                  label={t('检测必须等待绘图成功才能进行放大等操作')}
+                  label={t('DetectionMustWaitDrawingSuccessToProceedReleaseBigWaitOperation')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -178,7 +178,7 @@ export default function SettingsDrawing(props) {
             </Row>
             <Row>
               <Button size='default' onClick={onSubmit}>
-                {t('保存绘图设置')}
+                {t('SaveDrawingSettings')}
               </Button>
             </Row>
           </Form.Section>

@@ -36,31 +36,26 @@ const HeaderBar = () => {
   const systemName = getSystemName();
   const logo = getLogo();
   const currentDate = new Date();
-  // enable fireworks on new year(1.1 and 2.9-2.24)
-  const isNewYear =
-    (currentDate.getMonth() === 0 && currentDate.getDate() === 1);
+  const isNewYear = (currentDate.getMonth() === 0 && currentDate.getDate() === 1);
 
-  let buttons = [
+  const navItems = [
     {
-      text: t('控制台'),
       itemKey: 'home',
-      to: '/',
+      text: t('Home'),
     },
     {
-      text: t('定价'),
       itemKey: 'pricing',
-      to: '/pricing',
+      text: t('Pricing'),
     },
     {
-      text: t('关于'),
       itemKey: 'about',
-      to: '/about',
-    },
+      text: t('About'),
+    }
   ];
 
   async function logout() {
     await API.get('/api/user/logout');
-    showSuccess(t('注销成功!'));
+    showSuccess(t('Logged out successfully!'));
     userDispatch({ type: 'logout' });
     localStorage.removeItem('user');
     navigate('/login');
@@ -86,14 +81,9 @@ const HeaderBar = () => {
     } else {
       document.body.removeAttribute('theme-mode');
     }
-    // 发送当前主题模式给子页面
     const iframe = document.querySelector('iframe');
     if (iframe) {
       iframe.contentWindow.postMessage({ themeMode: theme }, '*');
-    }
-
-    if (isNewYear) {
-      console.log('Happy New Year!');
     }
   }, [theme]);
 
@@ -107,7 +97,6 @@ const HeaderBar = () => {
     };
 
     i18n.on('languageChanged', handleLanguageChanged);
-
     return () => {
       i18n.off('languageChanged', handleLanguageChanged);
     };
@@ -118,207 +107,149 @@ const HeaderBar = () => {
   };
 
   return (
-    <>
-      <Layout>
-        <div style={{ width: '100%' }}>
-          <Nav
-            className={'topnav'}
-            mode={'horizontal'}
-            renderWrapper={({ itemElement, isSubNav, isInSubNav, props }) => {
-              const routerMap = {
-                about: '/about',
-                login: '/login',
-                register: '/register',
-                pricing: '/pricing',
-                detail: '/detail',
-                home: '/',
-                chat: '/chat',
-              };
-              return (
-                <div onClick={(e) => {
-                  if (props.itemKey === 'home') {
-                    styleDispatch({ type: 'SET_INNER_PADDING', payload: false });
-                    styleDispatch({ type: 'SET_SIDER', payload: false });
-                  } else {
-                    styleDispatch({ type: 'SET_INNER_PADDING', payload: true });
-                    if (!styleState.isMobile) {
-                      styleDispatch({ type: 'SET_SIDER', payload: true });
-                    }
-                  }
-                }}>
-                  <Link
-                    className="header-bar-text"
-                    style={{ textDecoration: 'none' }}
-                    to={routerMap[props.itemKey]}
-                  >
-                    {itemElement}
-                  </Link>
-                </div>
-              );
+    <div style={{ width: '100%' }}>
+      <Nav
+        className={'topnav'}
+        mode={'horizontal'}
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
+        <Nav.Header style={{ marginRight: '24px' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <img src={logo} alt={systemName} style={{ height: '32px' }} />
+          </Link>
+        </Nav.Header>
+        
+        {navItems.map(item => (
+          <Nav.Item
+            key={item.itemKey}
+            itemKey={item.itemKey}
+          >
+            <Link
+              to={item.itemKey === 'home' ? '/' : `/${item.itemKey}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              {item.text}
+            </Link>
+          </Nav.Item>
+        ))}
+
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+          {isNewYear && (
+            <Dropdown
+              position='bottomRight'
+              render={
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleNewYearClick}>
+                    Happy New Year!!!
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              }
+            >
+              <Nav.Item itemKey={'new-year'} text={'🎉'} />
+            </Dropdown>
+          )}
+          <Switch
+            checkedText='🌞'
+            size={styleState.isMobile ? 'default' : 'large'}
+            checked={theme === 'dark'}
+            uncheckedText='🌙'
+            onChange={(checked) => {
+              setTheme(checked ? 'dark' : 'light');
             }}
-            selectedKeys={[]}
-            // items={headerButtons}
-            onSelect={(key) => {}}
-            header={{
-              logo: styleState.isMobile ? (
-                <>
-                  {!styleState.showSider ? (
-                    <Button
-                      icon={<IconMenu />}
-                      theme="borderless"
-                      style={{ color: 'var(--semi-color-text-0)' }}
-                      aria-label={t('展开侧边栏')}
-                      onClick={() => styleDispatch({ type: 'SET_SIDER', payload: true })}
-                    />
-                  ) : (
-                    <Button
-                      icon={<IconIndentLeft />}
-                      theme="borderless"
-                      style={{ color: 'var(--semi-color-text-0)' }}
-                      aria-label={t('闭侧边栏')}
-                      onClick={() => styleDispatch({ type: 'SET_SIDER', payload: false })}
-                    />
-                  )}
-                </>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img src={logo} alt={systemName} style={{ height: '32px' }} />
-                </div>
-              ),
+            style={{
+              marginRight: '12px',
+              marginLeft: '12px',
+              backgroundColor: theme === 'dark' ? 'var(--semi-color-primary)' : 'var(--semi-color-tertiary)',
             }}
-            items={buttons}
-            footer={
-              <>
-                {isNewYear && (
-                  // happy new year
-                  <Dropdown
-                    position='bottomRight'
-                    render={
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={handleNewYearClick}>
-                          Happy New Year!!!
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    }
-                  >
-                    <Nav.Item itemKey={'new-year'} text={'🎉'} />
-                  </Dropdown>
-                )}
-                {/* <Nav.Item itemKey={'about'} icon={<IconHelpCircle />} /> */}
-                <>
-                  <Switch
-                    checkedText='🌞'
-                    size={styleState.isMobile ? 'default' : 'large'}
-                    checked={theme === 'dark'}
-                    uncheckedText='🌙'
-                    onChange={(checked) => {
-                      setTheme(checked ? 'dark' : 'light');
-                    }}
-                    style={{
-                      marginRight: '12px',
-                      marginLeft: '12px',
-                      backgroundColor: theme === 'dark' ? 'var(--semi-color-primary)' : 'var(--semi-color-tertiary)',
-                    }}
-                  />
-                </>
-                <Dropdown
-                  position='bottomRight'
-                  render={
-                    <Dropdown.Menu>
-                      <Dropdown.Item
-                        onClick={() => handleLanguageChange('zh')}
-                        type={currentLang === 'zh' ? 'primary' : 'tertiary'}
-                      >
-                        中文
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => handleLanguageChange('en')}
-                        type={currentLang === 'en' ? 'primary' : 'tertiary'}
-                      >
-                        English
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  }
+          />
+          <Dropdown
+            position='bottomRight'
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => handleLanguageChange('zh')}
+                  type={currentLang === 'zh' ? 'primary' : 'tertiary'}
                 >
-                  <Nav.Item
-                    itemKey={'language'}
-                    icon={<IconLanguage />}
-                  />
-                </Dropdown>
-                {userState.user ? (
-                  <>
-                    <Dropdown
-                      position='bottomRight'
-                      trigger="hover"
-                      render={
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            icon={<IconUser />}
-                            onClick={() => navigate('/setting/personal')}
-                          >
-                            {t('个人中心')}
-                          </Dropdown.Item>
-                          <Dropdown.Divider />
-                          <Dropdown.Item
-                            icon={<IconClose />}
-                            type="danger"
-                            onClick={logout}
-                          >
-                            {t('退出')}
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      }
-                    >
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        ':hover': {
-                          background: 'var(--semi-color-fill-0)'
-                        }
-                      }}>
-                        <Avatar
-                          size='small'
-                          color={stringToColor(userState.user.username)}
-                        >
-                          {userState.user.username[0]}
-                        </Avatar>
-                        {!styleState.isMobile && (
-                          <Text strong style={{ color: 'var(--semi-color-text-0)' }}>
-                            {userState.user.username}
-                          </Text>
-                        )}
-                      </div>
-                    </Dropdown>
-                  </>
-                ) : (
-                  <>
-                    <Nav.Item
-                      itemKey={'login'}
-                      text={!styleState.isMobile?t('登录'):null}
-                      icon={<IconUser />}
-                    />
-                    {
-                      !styleState.isMobile && (
-                        <Nav.Item
-                          itemKey={'register'}
-                          text={t('注册')}
-                          icon={<IconKey />}
-                        />
-                      )
-                    }
-                  </>
-                )}
-              </>
+                  Chinese
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => handleLanguageChange('en')}
+                  type={currentLang === 'en' ? 'primary' : 'tertiary'}
+                >
+                  English
+                </Dropdown.Item>
+              </Dropdown.Menu>
             }
-          ></Nav>
+          >
+            <Nav.Item
+              itemKey={'language'}
+              icon={<IconLanguage />}
+            />
+          </Dropdown>
+          {userState.user ? (
+            <Dropdown
+              position='bottomRight'
+              trigger="hover"
+              render={
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    icon={<IconUser />}
+                    onClick={() => navigate('/setting/personal')}
+                  >
+                    {t('Profile')}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item
+                    icon={<IconClose />}
+                    type="danger"
+                    onClick={logout}
+                  >
+                    {t('Logout')}
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              }
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}>
+                <Avatar
+                  size='small'
+                  color={stringToColor(userState.user.username)}
+                >
+                  {userState.user.username[0]}
+                </Avatar>
+                {!styleState.isMobile && (
+                  <Text strong style={{ color: 'var(--semi-color-text-0)' }}>
+                    {userState.user.username}
+                  </Text>
+                )}
+              </div>
+            </Dropdown>
+          ) : (
+            <>
+              <Nav.Item
+                itemKey={'login'}
+                text={!styleState.isMobile ? t('Login') : null}
+                icon={<IconUser />}
+              />
+              {!styleState.isMobile && (
+                <Nav.Item
+                  itemKey={'register'}
+                  text={t('Register')}
+                  icon={<IconKey />}
+                />
+              )}
+            </>
+          )}
         </div>
-      </Layout>
-    </>
+      </Nav>
+    </div>
   );
 };
 

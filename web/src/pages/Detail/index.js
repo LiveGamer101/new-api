@@ -87,8 +87,8 @@ const Detail = (props) => {
     },
     title: {
       visible: true,
-      text: t('模型调用次数占比'),
-      subtext: `${t('总计')}：${renderNumber(times)}`,
+      text: t('ModelAdjustUseNextNumberProportion'),
+      subtext: `${t('Consumption distribution')}：${renderNumber(times)}`,
     },
     legends: {
       visible: true,
@@ -127,8 +127,8 @@ const Detail = (props) => {
     },
     title: {
       visible: true,
-      text: t('模型消耗分布'),
-      subtext: `${t('总计')}：${renderQuota(consumeQuota, 2)}`,
+      text: t('ModelOthers'),
+      subtext: `${t('Consumption distribution')}：${renderQuota(consumeQuota, 2)}`,
     },
     bar: {
       state: {
@@ -158,7 +158,7 @@ const Detail = (props) => {
           array.sort((a, b) => b.value - a.value);
           let sum = 0;
           for (let i = 0; i < array.length; i++) {
-            if (array[i].key == "其他") {
+            if (array[i].key == "A new one") {
               continue;
             }
             let value = parseFloat(array[i].value);
@@ -171,7 +171,7 @@ const Detail = (props) => {
             array[i].value = renderQuota(value, 4);
           }
           array.unshift({
-            key: t('总计'),
+            key: t('Consumption distribution'),
             value: renderQuota(sum, 4),
           });
           return array;
@@ -183,7 +183,7 @@ const Detail = (props) => {
     },
   });
 
-  // 添加一个新的状态来存储模型-颜色映射
+  // AddOneItemsNewTheStatusTo storeModel-ColorMapping
   const [modelColors, setModelColors] = useState({});
 
   const handleInputChange = (value, name) => {
@@ -212,7 +212,7 @@ const Detail = (props) => {
         if (data.length === 0) {
           data.push({
             count: 0,
-            model_name: '无数据',
+            model_name: 'NoneNumberData',
             quota: 0,
             created_at: now.getTime() / 1000,
           });
@@ -244,7 +244,7 @@ const Detail = (props) => {
     let uniqueModels = new Set();
     let totalTokens = 0;
 
-    // 收集所有唯一的模型名称
+    // CollectAre overwrite operationsOnlyOneTheModelName
     data.forEach(item => {
       uniqueModels.add(item.model_name);
       totalTokens += item.token_used;
@@ -252,7 +252,7 @@ const Detail = (props) => {
       totalTimes += item.count;
     });
 
-    // 处理颜色映射
+    // PlaceReasonColorMapping
     const newModelColors = {};
     Array.from(uniqueModels).forEach((modelName) => {
       newModelColors[modelName] = modelColorMap[modelName] || 
@@ -261,7 +261,7 @@ const Detail = (props) => {
     });
     setModelColors(newModelColors);
 
-    // 按时间和模型聚合数据
+    // PressTimeAndModelAggregateNumberData
     let aggregatedData = new Map();
     data.forEach(item => {
       const timeKey = timestamp2string1(item.created_at, dataExportDefaultTime);
@@ -282,7 +282,7 @@ const Detail = (props) => {
       existing.count += item.count;
     });
 
-    // 处理饼图数据
+    // PlacePie ChartNumberData
     let modelTotals = new Map();
     for (let [_, value] of aggregatedData) {
       if (!modelTotals.has(value.model)) {
@@ -296,7 +296,7 @@ const Detail = (props) => {
       value: count
     }));
 
-    // 生成时间点序列
+    // GenerateTimePoint sequence
     let timePoints = Array.from(new Set([...aggregatedData.values()].map(d => d.time)));
     if (timePoints.length < 7) {
       const lastTime = Math.max(...data.map(item => item.created_at));
@@ -309,9 +309,9 @@ const Detail = (props) => {
       );
     }
 
-    // 生成柱状图数据
+    // GenerateBar chartNumberData
     timePoints.forEach(time => {
-      // 为每个时间点收集所有模型的数据
+      // ForEachItemsTimePointCollectAre overwrite operationsModelTheNumberData
       let timeData = Array.from(uniqueModels).map(model => {
         const key = `${time}-${model}`;
         const aggregated = aggregatedData.get(key);
@@ -323,33 +323,33 @@ const Detail = (props) => {
         };
       });
       
-      // 计算该时间点的总计
+      // CalculateThisTimePointTheConsumption distribution
       const timeSum = timeData.reduce((sum, item) => sum + item.rawQuota, 0);
       
-      // 按照 rawQuota 从大到小排序
+      // PressPhoto rawQuota Retrieve the last used fromBigThe path before.SmallUpdate chart configuration and data
       timeData.sort((a, b) => b.rawQuota - a.rawQuota);
       
-      // 为每个数据点添加该时间的总计
+      // ForEachItemsNumberDataPointAddThisTimeTheConsumption distribution
       timeData = timeData.map(item => ({
         ...item,
         TimeSum: timeSum
       }));
       
-      // 将排序后的数据添加到 newLineData
+      // ConvertUpdate chart configuration and dataAfterTheNumberDataAddThe path before. newLineData
       newLineData.push(...timeData);
     });
 
-    // 排序
+    // Update chart configuration and data
     newPieData.sort((a, b) => b.value - a.value);
     newLineData.sort((a, b) => a.Time.localeCompare(b.Time));
 
-    // 更新图表配置和数据
+    // UpdateChartConfigurationAndNumberData
     setSpecPie(prev => ({
       ...prev,
       data: [{ id: 'id0', values: newPieData }],
       title: {
         ...prev.title,
-        subtext: `${t('总计')}：${renderNumber(totalTimes)}`
+        subtext: `${t('Consumption distribution')}：${renderNumber(totalTimes)}`
       },
       color: {
         specified: newModelColors
@@ -361,7 +361,7 @@ const Detail = (props) => {
       data: [{ id: 'barData', values: newLineData }],
       title: {
         ...prev.title,
-        subtext: `${t('总计')}：${renderQuota(totalQuota, 2)}`
+        subtext: `${t('Consumption distribution')}：${renderQuota(totalQuota, 2)}`
       },
       color: {
         specified: newModelColors
@@ -400,14 +400,14 @@ const Detail = (props) => {
     <>
       <Layout>
         <Layout.Header>
-          <h3>{t('数据看板')}</h3>
+          <h3>{t('NumberDashboard')}</h3>
         </Layout.Header>
         <Layout.Content>
           <Form ref={formRef} layout='horizontal' style={{ marginTop: 10 }}>
             <>
               <Form.DatePicker
                 field='start_timestamp'
-                label={t('起始时间')}
+                label={t('StartTime')}
                 style={{ width: 272 }}
                 initValue={start_timestamp}
                 value={start_timestamp}
@@ -420,7 +420,7 @@ const Detail = (props) => {
               <Form.DatePicker
                 field='end_timestamp'
                 fluid
-                label={t('结束时间')}
+                label={t('EndTime')}
                 style={{ width: 272 }}
                 initValue={end_timestamp}
                 value={end_timestamp}
@@ -430,15 +430,15 @@ const Detail = (props) => {
               />
               <Form.Select
                 field='data_export_default_time'
-                label={t('时间粒度')}
+                label={t('TimeDay')}
                 style={{ width: 176 }}
                 initValue={dataExportDefaultTime}
-                placeholder={t('时间粒度')}
+                placeholder={t('TimeDay')}
                 name='data_export_default_time'
                 optionList={[
-                  { label: t('小时'), value: 'hour' },
-                  { label: t('天'), value: 'day' },
-                  { label: t('周'), value: 'week' },
+                  { label: t('SmallWhen'), value: 'hour' },
+                  { label: t('Week'), value: 'day' },
+                  { label: t('Name'), value: 'week' },
                 ]}
                 onChange={(value) =>
                   handleInputChange(value, 'data_export_default_time')
@@ -448,17 +448,17 @@ const Detail = (props) => {
                 <>
                   <Form.Input
                     field='username'
-                    label={t('用户名称')}
+                    label={t('UsernameCount')}
                     style={{ width: 176 }}
                     value={username}
-                    placeholder={t('可选值')}
+                    placeholder={t('Optional values')}
                     name='username'
                     onChange={(value) => handleInputChange(value, 'username')}
                   />
                 </>
               )}
               <Button
-                label={t('查询')}
+                label={t('Query')}
                 type='primary'
                 htmlType='submit'
                 className='btn-margin-right'
@@ -466,7 +466,7 @@ const Detail = (props) => {
                 loading={loading}
                 style={{ marginTop: 24 }}
               >
-                {t('查询')}
+                {t('Query')}
               </Button>
               <Form.Section>
               </Form.Section>
@@ -477,13 +477,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile?24:8}>
                 <Card className='panel-desc-card'>
                   <Descriptions row size="small">
-                    <Descriptions.Item itemKey={t('当前余额')}>
+                    <Descriptions.Item itemKey={t('CurrentBalance')}>
                       {renderQuota(userState?.user?.quota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey={t('历史消耗')}>
+                    <Descriptions.Item itemKey={t('Historical Consumption')}>
                       {renderQuota(userState?.user?.used_quota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey={t('请求次数')}>
+                    <Descriptions.Item itemKey={t('PleaseRequest timesNumber')}>
                       {userState.user?.request_count}
                     </Descriptions.Item>
                   </Descriptions>
@@ -492,13 +492,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile?24:8}>
                 <Card>
                   <Descriptions row size="small">
-                    <Descriptions.Item itemKey={t('统计额度')}>
+                    <Descriptions.Item itemKey={t('StatisticsQuota')}>
                       {renderQuota(consumeQuota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey={t('统计Tokens')}>
+                    <Descriptions.Item itemKey={t('StatisticsTokens')}>
                       {consumeTokens}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey={t('统计次数')}>
+                    <Descriptions.Item itemKey={t('StatisticsNextNumber')}>
                       {times}
                     </Descriptions.Item>
                   </Descriptions>
@@ -507,13 +507,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile ? 24 : 8}>
                 <Card>
                   <Descriptions row size='small'>
-                    <Descriptions.Item itemKey={t('平均RPM')}>
+                    <Descriptions.Item itemKey={t('Call frequency distributionRPM')}>
                       {(times /
                         ((Date.parse(end_timestamp) -
                           Date.parse(start_timestamp)) /
                           60000)).toFixed(3)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey={t('平均TPM')}>
+                    <Descriptions.Item itemKey={t('Call frequency distributionTPM')}>
                       {(consumeTokens /
                         ((Date.parse(end_timestamp) -
                           Date.parse(start_timestamp)) /
@@ -525,7 +525,7 @@ const Detail = (props) => {
             </Row>
             <Card style={{marginTop: 20}}>
               <Tabs type="line" defaultActiveKey="1">
-                <Tabs.TabPane tab={t('消耗分布')} itemKey="1">
+                <Tabs.TabPane tab={t('Others')} itemKey="1">
                   <div style={{ height: 500 }}>
                     <VChart
                       spec={spec_line}
@@ -533,7 +533,7 @@ const Detail = (props) => {
                     />
                   </div>
                 </Tabs.TabPane>
-                <Tabs.TabPane tab={t('调用次数分布')} itemKey="2">
+                <Tabs.TabPane tab={t('AdjustUseNextNumberDistribution')} itemKey="2">
                   <div style={{ height: 500 }}>
                     <VChart
                       spec={spec_pie}

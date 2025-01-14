@@ -7,14 +7,13 @@ const Token = () => {
   return (
     <>
       <Layout>
-        <Layout.Header>
-        <Banner
-          type='warning'
-          description={t('令牌无法精确控制使用额度，只允许自用，请勿直接将令牌分发给他人。')}
-        />
-      </Layout.Header>
-      <Layout.Content>
-        <TokensTable />
+        <Layout.Content>
+          <Banner
+            type='warning'
+            description={t('TokenNoneMethodPrecisionControlControlUseUseQuota，OnlyAllowSelfUse，Do notDirectConvertTokenDistributeToHePerson。')}
+            style={{ marginBottom: '16px' }}
+          />
+          <TokensTable />
         </Layout.Content>
       </Layout>
     </>

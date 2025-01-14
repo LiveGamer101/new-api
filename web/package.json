@@ -33,7 +33,8 @@
     "build": "vite build",
     "lint": "prettier . --check",
     "lint:fix": "prettier . --write",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "translate": "node scripts/translate.js"
   },
   "eslintConfig": {
     "extends": [

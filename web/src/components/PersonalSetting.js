@@ -66,7 +66,7 @@ const PersonalSetting = () => {
     const [openTransfer, setOpenTransfer] = useState(false);
     const [transferAmount, setTransferAmount] = useState(0);
     const [isModelsExpanded, setIsModelsExpanded] = useState(false);
-    const MODELS_DISPLAY_COUNT = 10;  // 默认显示的模型数量
+    const MODELS_DISPLAY_COUNT = 10;  // DefaultDisplayTheModelNumberQuantity
 
     useEffect(() => {
         // let user = localStorage.getItem('user');
@@ -115,7 +115,7 @@ const PersonalSetting = () => {
         if (success) {
             setSystemToken(data);
             await copy(data);
-            showSuccess(t('令牌已重置并已复制到剪贴板'));
+            showSuccess(t('TokenAlreadyResetAndAlreadyCopyTo clipboard'));
         } else {
             showError(message);
         }
@@ -157,18 +157,18 @@ const PersonalSetting = () => {
     const handleAffLinkClick = async (e) => {
         e.target.select();
         await copy(e.target.value);
-        showSuccess(t('邀请链接已复制到剪切板'));
+        showSuccess(t('Invitation LinkAlreadyCopyThe path before.Clipboard'));
     };
 
     const handleSystemTokenClick = async (e) => {
         e.target.select();
         await copy(e.target.value);
-        showSuccess(t('系统令牌已复制到剪切板'));
+        showSuccess(t('SystemTokenAlreadyCopyThe path before.Clipboard'));
     };
 
     const deleteAccount = async () => {
         if (inputs.self_account_deletion_confirmation !== userState.user.username) {
-            showError(t('请输入你的账户名以确认删除！'));
+            showError(t('Please enterYouTheAllow new usersNameUsedConfirmDelete！'));
             return;
         }
 
@@ -176,7 +176,7 @@ const PersonalSetting = () => {
         const {success, message} = res.data;
 
         if (success) {
-            showSuccess(t('账户已删除！'));
+            showSuccess(t('Account hasDelete！'));
             await API.get('/api/user/logout');
             userDispatch({type: 'logout'});
             localStorage.removeItem('user');
@@ -193,7 +193,7 @@ const PersonalSetting = () => {
         );
         const {success, message} = res.data;
         if (success) {
-            showSuccess(t('微信账户绑定成功！'));
+            showSuccess(t('WeChatAllow new usersBindSuccess！'));
             setShowWeChatBindModal(false);
         } else {
             showError(message);
@@ -202,7 +202,7 @@ const PersonalSetting = () => {
 
     const changePassword = async () => {
         if (inputs.set_new_password !== inputs.set_new_password_confirmation) {
-            showError(t('两次输入的密码不一致！'));
+            showError(t('TwiceInputThePasswordInconsistent！'));
             return;
         }
         const res = await API.put(`/api/user/self`, {
@@ -210,7 +210,7 @@ const PersonalSetting = () => {
         });
         const {success, message} = res.data;
         if (success) {
-            showSuccess(t('密码修改成功！'));
+            showSuccess(t('PasswordModifySuccess！'));
             setShowWeChatBindModal(false);
         } else {
             showError(message);
@@ -220,7 +220,7 @@ const PersonalSetting = () => {
 
     const transfer = async () => {
         if (transferAmount < getQuotaPerUnit()) {
-            showError(t('划转金额最低为') + ' ' + renderQuota(getQuotaPerUnit()));
+            showError(t('TransferAmountMinimumFor') + ' ' + renderQuota(getQuotaPerUnit()));
             return;
         }
         const res = await API.post(`/api/user/aff_transfer`, {
@@ -238,12 +238,12 @@ const PersonalSetting = () => {
 
     const sendVerificationCode = async () => {
         if (inputs.email === '') {
-            showError(t('请输入邮箱！'));
+            showError(t('Please enterEmail！'));
             return;
         }
         setDisableButton(true);
         if (turnstileEnabled && turnstileToken === '') {
-            showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+            showInfo('Please try again in a few seconds，Turnstile In progressIf it already existsUseUser environment！');
             return;
         }
         setLoading(true);
@@ -252,7 +252,7 @@ const PersonalSetting = () => {
         );
         const {success, message} = res.data;
         if (success) {
-            showSuccess(t('验证码发送成功，请检查邮箱！'));
+            showSuccess(t('Verification code sentSuccess，Please checkEmail！'));
         } else {
             showError(message);
         }
@@ -261,7 +261,7 @@ const PersonalSetting = () => {
 
     const bindEmail = async () => {
         if (inputs.email_verification_code === '') {
-            showError(t('请输入邮箱验证码！'));
+            showError(t('Please enterEmailVerification code！'));
             return;
         }
         setLoading(true);
@@ -270,7 +270,7 @@ const PersonalSetting = () => {
         );
         const {success, message} = res.data;
         if (success) {
-            showSuccess(t('邮箱账户绑定成功！'));
+            showSuccess(t('EmailAllow new usersBindSuccess！'));
             setShowEmailBindModal(false);
             userState.user.email = inputs.email;
         } else {
@@ -293,10 +293,10 @@ const PersonalSetting = () => {
 
     const copyText = async (text) => {
         if (await copy(text)) {
-            showSuccess(t('已复制：') + text);
+            showSuccess(t('AlreadyCopy：') + text);
         } else {
             // setSearchKeyword(text);
-            Modal.error({title: t('无法复制到剪贴板，请手动复制'), content: text});
+            Modal.error({title: t('NoneMethodCopyTo clipboard，PleaseManualCopy'), content: text});
         }
     };
 
@@ -305,7 +305,7 @@ const PersonalSetting = () => {
             <Layout>
                 <Layout.Content>
                     <Modal
-                        title={t('请输入要划转的数量')}
+                        title={t('Please enterWantTransferTheNumberQuantity')}
                         visible={openTransfer}
                         onOk={transfer}
                         onCancel={handleCancel}
@@ -314,7 +314,7 @@ const PersonalSetting = () => {
                         centered={true}
                     >
                         <div style={{marginTop: 20}}>
-                            <Typography.Text>{t('可用额度')}{renderQuotaWithPrompt(userState?.user?.aff_quota)}</Typography.Text>
+                            <Typography.Text>{t('CanUseQuota')}{renderQuotaWithPrompt(userState?.user?.aff_quota)}</Typography.Text>
                             <Input
                                 style={{marginTop: 5}}
                                 value={userState?.user?.aff_quota}
@@ -323,7 +323,7 @@ const PersonalSetting = () => {
                         </div>
                         <div style={{marginTop: 20}}>
                             <Typography.Text>
-                                {t('划转额度')}{renderQuotaWithPrompt(transferAmount)} {t('最低') + renderQuota(getQuotaPerUnit())}
+                                {t('TransferQuota')}{renderQuotaWithPrompt(transferAmount)} {t('Minimum') + renderQuota(getQuotaPerUnit())}
                             </Typography.Text>
                             <div>
                                 <InputNumber
@@ -353,9 +353,9 @@ const PersonalSetting = () => {
                                     title={<Typography.Text>{getUsername()}</Typography.Text>}
                                     description={
                                         isRoot() ? (
-                                            <Tag color='red'>{t('管理员')}</Tag>
+                                            <Tag color='red'>{t('Administrator')}</Tag>
                                         ) : (
-                                            <Tag color='blue'>{t('普通用户')}</Tag>
+                                            <Tag color='blue'>{t('CommonThroughUseUser')}</Tag>
                                         )
                                     }
                                 ></Card.Meta>
@@ -371,7 +371,7 @@ const PersonalSetting = () => {
                             footer={
                             <>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <Typography.Title heading={6}>{t('可用模型')}</Typography.Title>
+                                    <Typography.Title heading={6}>{t('CanUseModel')}</Typography.Title>
                                 </div>
                                 <div style={{marginTop: 10}}>
                                     {models.length <= MODELS_DISPLAY_COUNT ? (
@@ -409,7 +409,7 @@ const PersonalSetting = () => {
                                                         style={{ cursor: 'pointer' }}
                                                         onClick={() => setIsModelsExpanded(false)}
                                                     >
-                                                        {t('收起')}
+                                                        {t('Collapse')}
                                                     </Tag>
                                                 </Space>
                                             </Collapsible>
@@ -432,7 +432,7 @@ const PersonalSetting = () => {
                                                         style={{ cursor: 'pointer' }}
                                                         onClick={() => setIsModelsExpanded(true)}
                                                     >
-                                                        {t('更多')} {models.length - MODELS_DISPLAY_COUNT} {t('个模型')}
+                                                        {t('More')} {models.length - MODELS_DISPLAY_COUNT} {t('ItemsModel')}
                                                     </Tag>
                                                 </Space>
                                             )}
@@ -444,13 +444,13 @@ const PersonalSetting = () => {
                             }
                         >
                             <Descriptions row>
-                                <Descriptions.Item itemKey={t('当前余额')}>
+                                <Descriptions.Item itemKey={t('CurrentBalance')}>
                                     {renderQuota(userState?.user?.quota)}
                                 </Descriptions.Item>
-                                <Descriptions.Item itemKey={t('历史消耗')}>
+                                <Descriptions.Item itemKey={t('Historical Consumption')}>
                                     {renderQuota(userState?.user?.used_quota)}
                                 </Descriptions.Item>
-                                <Descriptions.Item itemKey={t('请求次数')}>
+                                <Descriptions.Item itemKey={t('PleaseRequest timesNumber')}>
                                     {userState.user?.request_count}
                                 </Descriptions.Item>
                             </Descriptions>
@@ -459,7 +459,7 @@ const PersonalSetting = () => {
                             style={{marginTop: 10}}
                             footer={
                                 <div>
-                                    <Typography.Text>{t('邀请链接')}</Typography.Text>
+                                    <Typography.Text>{t('Invitation Link')}</Typography.Text>
                                     <Input
                                         style={{marginTop: 10}}
                                         value={affLink}
@@ -469,10 +469,10 @@ const PersonalSetting = () => {
                                 </div>
                             }
                         >
-                            <Typography.Title heading={6}>{t('邀请信息')}</Typography.Title>
+                            <Typography.Title heading={6}>{t('InviteInfo')}</Typography.Title>
                             <div style={{marginTop: 10}}>
                                 <Descriptions row>
-                                    <Descriptions.Item itemKey={t('待使用收益')}>
+                                    <Descriptions.Item itemKey={t('WaitUseUseEarnings')}>
                                         <span style={{color: 'rgba(var(--semi-red-5), 1)'}}>
                                             {renderQuota(userState?.user?.aff_quota)}
                                         </span>
@@ -482,22 +482,22 @@ const PersonalSetting = () => {
                                             size={'small'}
                                             style={{marginLeft: 10}}
                                         >
-                                            {t('划转')}
+                                            {t('Transfer')}
                                         </Button>
                                     </Descriptions.Item>
-                                    <Descriptions.Item itemKey={t('总收益')}>
+                                    <Descriptions.Item itemKey={t('Total Earnings')}>
                                         {renderQuota(userState?.user?.aff_history_quota)}
                                     </Descriptions.Item>
-                                    <Descriptions.Item itemKey={t('邀请人数')}>
+                                    <Descriptions.Item itemKey={t('InvitePersonNumber')}>
                                         {userState?.user?.aff_count}
                                     </Descriptions.Item>
                                 </Descriptions>
                             </div>
                         </Card>
                         <Card style={{marginTop: 10}}>
-                            <Typography.Title heading={6}>{t('个人信息')}</Typography.Title>
+                            <Typography.Title heading={6}>{t('ItemsPersonInfo')}</Typography.Title>
                             <div style={{marginTop: 20}}>
-                                <Typography.Text strong>{t('邮箱')}</Typography.Text>
+                                <Typography.Text strong>{t('Email')}</Typography.Text>
                                 <div
                                     style={{display: 'flex', justifyContent: 'space-between'}}
                                 >
@@ -506,7 +506,7 @@ const PersonalSetting = () => {
                                             value={
                                                 userState.user && userState.user.email !== ''
                                                     ? userState.user.email
-                                                    : t('未绑定')
+                                                    : t('Not YetBind')
                                             }
                                             readonly={true}
                                         ></Input>
@@ -518,14 +518,14 @@ const PersonalSetting = () => {
                                             }}
                                         >
                                             {userState.user && userState.user.email !== ''
-                                                ? t('修改绑定')
-                                                : t('绑定邮箱')}
+                                                ? t('ModifyBind')
+                                                : t('BindEmail')}
                                         </Button>
                                     </div>
                                 </div>
                             </div>
                             <div style={{marginTop: 10}}>
-                                <Typography.Text strong>{t('微信')}</Typography.Text>
+                                <Typography.Text strong>{t('WeChat')}</Typography.Text>
                                 <div
                                     style={{display: 'flex', justifyContent: 'space-between'}}
                                 >
@@ -533,8 +533,8 @@ const PersonalSetting = () => {
                                         <Input
                                             value={
                                                 userState.user && userState.user.wechat_id !== ''
-                                                    ? t('已绑定')
-                                                    : t('未绑定')
+                                                    ? t('AlreadyBind')
+                                                    : t('Not YetBind')
                                             }
                                             readonly={true}
                                         ></Input>
@@ -546,7 +546,7 @@ const PersonalSetting = () => {
                                                 !status.wechat_login
                                             }
                                         >
-                                            {status.wechat_login ? t('绑定') : t('未启用')}
+                                            {status.wechat_login ? t('Bind') : t('Not YetEnable')}
                                         </Button>
                                     </div>
                                 </div>
@@ -561,7 +561,7 @@ const PersonalSetting = () => {
                                             value={
                                                 userState.user && userState.user.github_id !== ''
                                                     ? userState.user.github_id
-                                                    : t('未绑定')
+                                                    : t('Not YetBind')
                                             }
                                             readonly={true}
                                         ></Input>
@@ -576,7 +576,7 @@ const PersonalSetting = () => {
                                                 !status.github_oauth
                                             }
                                         >
-                                            {status.github_oauth ? t('绑定') : t('未启用')}
+                                            {status.github_oauth ? t('Bind') : t('Not YetEnable')}
                                         </Button>
                                     </div>
                                 </div>
@@ -591,7 +591,7 @@ const PersonalSetting = () => {
                                             value={
                                                 userState.user && userState.user.telegram_id !== ''
                                                     ? userState.user.telegram_id
-                                                    : t('未绑定')
+                                                    : t('Not YetBind')
                                             }
                                             readonly={true}
                                         ></Input>
@@ -599,7 +599,7 @@ const PersonalSetting = () => {
                                     <div>
                                         {status.telegram_oauth ? (
                                             userState.user.telegram_id !== '' ? (
-                                                <Button disabled={true}>{t('已绑定')}</Button>
+                                                <Button disabled={true}>{t('AlreadyBind')}</Button>
                                             ) : (
                                                 <TelegramLoginButton
                                                     dataAuthUrl='/api/oauth/telegram/bind'
@@ -607,7 +607,7 @@ const PersonalSetting = () => {
                                                 />
                                             )
                                         ) : (
-                                            <Button disabled={true}>{t('未启用')}</Button>
+                                            <Button disabled={true}>{t('Not YetEnable')}</Button>
                                         )}
                                     </div>
                                 </div>
@@ -622,7 +622,7 @@ const PersonalSetting = () => {
                                             value={
                                                 userState.user && userState.user.linux_do_id !== ''
                                                     ? userState.user.linux_do_id
-                                                    : t('未绑定')
+                                                    : t('Not YetBind')
                                             }
                                             readonly={true}
                                         ></Input>
@@ -637,7 +637,7 @@ const PersonalSetting = () => {
                                                 !status.linuxdo_oauth
                                             }
                                         >
-                                            {status.linuxdo_oauth ? t('绑定') : t('未启用')}
+                                            {status.linuxdo_oauth ? t('Bind') : t('Not YetEnable')}
                                         </Button>
                                     </div>
                                 </div>
@@ -645,14 +645,14 @@ const PersonalSetting = () => {
                             <div style={{marginTop: 10}}>
                                 <Space>
                                     <Button onClick={generateAccessToken}>
-                                        {t('生成系统访问令牌')}
+                                        {t('GenerateSystemVisitToken')}
                                     </Button>
                                     <Button
                                         onClick={() => {
                                             setShowChangePasswordModal(true);
                                         }}
                                     >
-                                        {t('修改密码')}
+                                        {t('ModifyPassword')}
                                     </Button>
                                     <Button
                                         type={'danger'}
@@ -660,7 +660,7 @@ const PersonalSetting = () => {
                                             setShowAccountDeleteModal(true);
                                         }}
                                     >
-                                        {t('删除个人账户')}
+                                        {t('DeleteItemsPersonAllow new users')}
                                     </Button>
                                 </Space>
 
@@ -678,7 +678,7 @@ const PersonalSetting = () => {
                                             setShowWeChatBindModal(true);
                                         }}
                                     >
-                                        {t('绑定微信账号')}
+                                        {t('BindWeChatAccount')}
                                     </Button>
                                 )}
                                 <Modal
@@ -690,11 +690,11 @@ const PersonalSetting = () => {
                                     <Image src={status.wechat_qrcode}/>
                                     <div style={{textAlign: 'center'}}>
                                         <p>
-                                            微信扫码关注公众号，输入「验证码」获取验证码（三分钟内有效）
+                                            WeChatScanCodeFollow the public account，Input「Verification code」ObtainVerification code（ThreeMinuteWithinConfirm reset.）
                                         </p>
                                     </div>
                                     <Input
-                                        placeholder='验证码'
+                                        placeholder='Verification code'
                                         name='wechat_verification_code'
                                         value={inputs.wechat_verification_code}
                                         onChange={(v) =>
@@ -702,7 +702,7 @@ const PersonalSetting = () => {
                                         }
                                     />
                                     <Button color='' fluid size='large' onClick={bindWeChat}>
-                                        {t('绑定')}
+                                        {t('Bind')}
                                     </Button>
                                 </Modal>
                             </div>
@@ -716,7 +716,7 @@ const PersonalSetting = () => {
                             centered={true}
                             maskClosable={false}
                         >
-                            <Typography.Title heading={6}>{t('绑定邮箱地址')}</Typography.Title>
+                            <Typography.Title heading={6}>{t('BindEmailAddress')}</Typography.Title>
                             <div
                                 style={{
                                     marginTop: 20,
@@ -726,7 +726,7 @@ const PersonalSetting = () => {
                             >
                                 <Input
                                     fluid
-                                    placeholder='输入邮箱地址'
+                                    placeholder='InputEmailAddress'
                                     onChange={(value) => handleInputChange('email', value)}
                                     name='email'
                                     type='email'
@@ -735,13 +735,13 @@ const PersonalSetting = () => {
                                     onClick={sendVerificationCode}
                                     disabled={disableButton || loading}
                                 >
-                                    {disableButton ? `重新发送 (${countdown})` : '获取验证码'}
+                                    {disableButton ? `ResetNewSend (${countdown})` : 'ObtainVerification code'}
                                 </Button>
                             </div>
                             <div style={{marginTop: 10}}>
                                 <Input
                                     fluid
-                                    placeholder='验证码'
+                                    placeholder='Verification code'
                                     name='email_verification_code'
                                     value={inputs.email_verification_code}
                                     onChange={(value) =>
@@ -770,13 +770,13 @@ const PersonalSetting = () => {
                             <div style={{marginTop: 20}}>
                                 <Banner
                                     type='danger'
-                                    description='您正在删除自己的帐户，将清空所有数据且不可恢复'
+                                    description='You AreDeleteSelfTheAccountUser，ConvertClearAre overwrite operationsNumberDataThe name is not emptyNotCanRecover'
                                     closeIcon={null}
                                 />
                             </div>
                             <div style={{marginTop: 20}}>
                                 <Input
-                                    placeholder={`输入你的账户名 ${userState?.user?.username} 以确认删除`}
+                                    placeholder={`InputYouTheAllow new usersName ${userState?.user?.username} UsedConfirmDelete`}
                                     name='self_account_deletion_confirmation'
                                     value={inputs.self_account_deletion_confirmation}
                                     onChange={(value) =>
@@ -808,7 +808,7 @@ const PersonalSetting = () => {
                             <div style={{marginTop: 20}}>
                                 <Input
                                     name='set_new_password'
-                                    placeholder={t('新密码')}
+                                    placeholder={t('NewPassword')}
                                     value={inputs.set_new_password}
                                     onChange={(value) =>
                                         handleInputChange('set_new_password', value)
@@ -817,7 +817,7 @@ const PersonalSetting = () => {
                                 <Input
                                     style={{marginTop: 20}}
                                     name='set_new_password_confirmation'
-                                    placeholder={t('确认新密码')}
+                                    placeholder={t('ConfirmNewPassword')}
                                     value={inputs.set_new_password_confirmation}
                                     onChange={(value) =>
                                         handleInputChange('set_new_password_confirmation', value)

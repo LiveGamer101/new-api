@@ -32,7 +32,7 @@ export default function GeneralSettings(props) {
 
   function onSubmit() {
     const updateArray = compareObjects(inputs, inputsRow);
-    if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+    if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
     const requestQueue = updateArray.map((item) => {
       let value = '';
       if (typeof inputs[item.key] === 'boolean') {
@@ -51,13 +51,13 @@ export default function GeneralSettings(props) {
         if (requestQueue.length === 1) {
           if (res.includes(undefined)) return;
         } else if (requestQueue.length > 1) {
-          if (res.includes(undefined)) return showError(t('部分保存失败，请重试'));
+          if (res.includes(undefined)) return showError(t('Part.SaveFailed，PleaseRetry'));
         }
-        showSuccess(t('保存成功'));
+        showSuccess(t('SaveSuccess'));
         props.refresh();
       })
       .catch(() => {
-        showError(t('保存失败，请重试'));
+        showError(t('SaveFailed，PleaseRetry'));
       })
       .finally(() => {
         setLoading(false);
@@ -81,21 +81,21 @@ export default function GeneralSettings(props) {
       <Spin spinning={loading}>
         <Banner
           type='warning'
-          description={t('聊天链接功能已经弃用，请使用下方聊天设置功能')}
+          description={t('ChatUnit dollar amountFunctionAlreadyAbandonedUse，PleaseUseUseBelowChatSettingsFunction')}
         />
         <Form
           values={inputs}
           getFormApi={(formAPI) => (refForm.current = formAPI)}
           style={{ marginBottom: 15 }}
         >
-          <Form.Section text={t('通用设置')}>
+          <Form.Section text={t('ThroughUseSettings')}>
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Input
                   field={'TopUpLink'}
-                  label={t('充值链接')}
+                  label={t('ChargeAllUnit dollar amount')}
                   initValue={''}
-                  placeholder={t('例如发卡网站的购买链接')}
+                  placeholder={t('For exampleCard issuing websiteThePurchaseUnit dollar amount')}
                   onChange={onChange}
                   showClear
                 />
@@ -103,9 +103,9 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Input
                   field={'ChatLink'}
-                  label={t('默认聊天页面链接')}
+                  label={t('DefaultChatRemoveUnit dollar amount')}
                   initValue={''}
-                  placeholder={t('例如 ChatGPT Next Web 的部署地址')}
+                  placeholder={t('For example ChatGPT Next Web TheDeployAddress')}
                   onChange={onChange}
                   showClear
                 />
@@ -113,9 +113,9 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Input
                   field={'ChatLink2'}
-                  label={t('聊天页面 2 链接')}
+                  label={t('ChatRemove 2 Unit dollar amount')}
                   initValue={''}
-                  placeholder={t('例如 ChatGPT Next Web 的部署地址')}
+                  placeholder={t('For example ChatGPT Next Web TheDeployAddress')}
                   onChange={onChange}
                   showClear
                 />
@@ -123,9 +123,9 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Input
                   field={'QuotaPerUnit'}
-                  label={t('单位美元额度')}
+                  label={t('UnitDollarQuota')}
                   initValue={''}
-                  placeholder={t('一单位货币能兑换的额度')}
+                  placeholder={t('OneUnitCurrency canExchangeTheQuota')}
                   onChange={onChange}
                   showClear
                 />
@@ -133,9 +133,9 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Input
                   field={'RetryTimes'}
-                  label={t('失败重试次数')}
+                  label={t('FailedRetryNextNumber')}
                   initValue={''}
-                  placeholder={t('失败重试次数')}
+                  placeholder={t('FailedRetryNextNumber')}
                   onChange={onChange}
                   showClear
                 />
@@ -145,7 +145,7 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'DisplayInCurrencyEnabled'}
-                  label={t('以货币形式显示额度')}
+                  label={t('UsedCurrency formDisplayQuota')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -160,7 +160,7 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'DisplayTokenStatEnabled'}
-                  label={t('额度查询接口返回令牌额度而非用户额度')}
+                  label={t('QuotaQueryInterfaceReturnTokenQuotaAndNonUseUserQuota')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -175,7 +175,7 @@ export default function GeneralSettings(props) {
               <Col span={8}>
                 <Form.Switch
                   field={'DefaultCollapseSidebar'}
-                  label={t('默认折叠侧边栏')}
+                  label={t('Default Collapsed Sidebar')}
                   size='default'
                   checkedText='｜'
                   uncheckedText='〇'
@@ -190,7 +190,7 @@ export default function GeneralSettings(props) {
             </Row>
             <Row>
               <Button size='default' onClick={onSubmit}>
-                {t('保存通用设置')}
+                {t('SaveThroughUseSettings')}
               </Button>
             </Row>
           </Form.Section>

@@ -26,7 +26,7 @@ export default function SettingsChats(props) {
       await refForm.current.validate().then(() => {
         console.log('Validation passed');
         const updateArray = compareObjects(inputs, inputsRow);
-        if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
+        if (!updateArray.length) return showWarning(t('YouIt seemsAndNoHaveModifyWhat'));
         const requestQueue = updateArray.map((item) => {
           let value = '';
           if (typeof inputs[item.key] === 'boolean') {
@@ -46,23 +46,23 @@ export default function SettingsChats(props) {
               if (res.includes(undefined)) return;
             } else if (requestQueue.length > 1) {
               if (res.includes(undefined))
-                return showError(t('部分保存失败，请重试'));
+                return showError(t('Part.SaveFailed，PleaseRetry'));
             }
-            showSuccess(t('保存成功'));
+            showSuccess(t('SaveSuccess'));
             props.refresh();
           })
           .catch(() => {
-            showError(t('保存失败，请重试'));
+            showError(t('SaveFailed，PleaseRetry'));
           })
           .finally(() => {
             setLoading(false);
           });
       }).catch((error) => {
         console.error('Validation failed:', error);
-        showError(t('请检查输入'));
+        showError(t('Please checkInput'));
       });
     } catch (error) {
-      showError(t('请检查输入'));
+      showError(t('Please checkInput'));
       console.error(error);
     }
   }
@@ -106,19 +106,19 @@ export default function SettingsChats(props) {
         getFormApi={(formAPI) => (refForm.current = formAPI)}
         style={{ marginBottom: 15 }}
       >
-        <Form.Section text={t('令牌聊天设置')}>
+        <Form.Section text={t('TokenChatSettings')}>
           <Banner
             type='warning'
-            description={t('必须将上方聊天链接全部设置为空，才能使用下方聊天设置功能')}
+            description={t('MustConvertAboveChatUnit dollar amountAllSettingsForEmpty，ToUseUseBelowChatSettingsFunction')}
           />
           <Banner
             type='info'
-            description={t('链接中的{key}将自动替换为sk-xxxx，{address}将自动替换为系统设置的服务器地址，末尾不带/和/v1')}
+            description={t('Unit dollar amountUse predefined colorsThe{key}ConvertAutomaticReplaceForsk-xxxx，{address}ConvertAutomaticReplaceForSystemSettingsTheServerAddress，Without trailing/And/v1')}
           />
           <Form.TextArea
-            label={t('聊天配置')}
+            label={t('ChatConfiguration')}
             extraText={''}
-            placeholder={t('为一个 JSON 文本')}
+            placeholder={t('ForOneItems JSON Text')}
             field={'Chats'}
             autosize={{ minRows: 6, maxRows: 12 }}
             trigger='blur'
@@ -128,7 +128,7 @@ export default function SettingsChats(props) {
                 validator: (rule, value) => {
                   return verifyJSON(value);
                 },
-                message: t('不是合法的 JSON 字符串')
+                message: t('NotIsTogetherMethodThe JSON String')
               }
             ]}
             onChange={(value) =>
@@ -142,7 +142,7 @@ export default function SettingsChats(props) {
       </Form>
       <Space>
         <Button onClick={onSubmit}>
-          {t('保存聊天设置')}
+          {t('SaveChatSettings')}
         </Button>
       </Space>
     </Spin>

@@ -40,22 +40,20 @@ const Home = () => {
       setHomePageContent(content);
       localStorage.setItem('home_page_content', content);
 
-        // 如果内容是 URL，则发送主题模式
-        if (data.startsWith('https://')) {
-            const iframe = document.querySelector('iframe');
-            if (iframe) {
-                const theme = localStorage.getItem('theme-mode') || 'light';
-                // 测试是否正确传递theme-mode给iframe
-                // console.log('Sending theme-mode to iframe:', theme); 
-                iframe.onload = () => {
-                    iframe.contentWindow.postMessage({ themeMode: theme }, '*');
-                    iframe.contentWindow.postMessage({ lang: i18n.language }, '*');
-                };
-            }
+      // If content is a URL, send theme mode to iframe
+      if (data.startsWith('https://')) {
+        const iframe = document.querySelector('iframe');
+        if (iframe) {
+          const theme = localStorage.getItem('theme-mode') || 'light';
+          iframe.onload = () => {
+            iframe.contentWindow.postMessage({ themeMode: theme }, '*');
+            iframe.contentWindow.postMessage({ lang: i18n.language }, '*');
+          };
         }
+      }
     } else {
       showError(message);
-      setHomePageContent('加载首页内容失败...');
+      setHomePageContent('Failed to load homepage content...');
     }
     setHomePageContentLoaded(true);
   };
@@ -66,9 +64,9 @@ const Home = () => {
   };
 
   useEffect(() => {
-    displayNotice().then();
-    displayHomePageContent().then();
-  });
+    displayNotice();
+    displayHomePageContent();
+  }, []); // Run once on mount
 
   return (
     <>
@@ -77,13 +75,13 @@ const Home = () => {
           <Card
             bordered={false}
             headerLine={false}
-            title={t('系统状况')}
+            title={t('System Status')}
             bodyStyle={{ padding: '10px 20px' }}
           >
             <Row gutter={16}>
               <Col span={12}>
                 <Card
-                  title={t('系统信息')}
+                  title={t('System Information')}
                   headerExtraContent={
                     <span
                       style={{
@@ -91,19 +89,19 @@ const Home = () => {
                         color: 'var(--semi-color-text-1)',
                       }}
                     >
-                      {t('系统信息总览')}
+                      {t('System Overview')}
                     </span>
                   }
                 >
-                  <p>{t('名称')}：{statusState?.status?.system_name}</p>
+                  <p>{t('Name')}: {statusState?.status?.system_name}</p>
                   <p>
-                    {t('版本')}：
+                    {t('Version')}:
                     {statusState?.status?.version
                       ? statusState?.status?.version
                       : 'unknown'}
                   </p>
                   <p>
-                    {t('源码')}：
+                    {t('Source Code')}:
                     <a
                       href='https://github.com/Calcium-Ion/new-api'
                       target='_blank'
@@ -113,7 +111,7 @@ const Home = () => {
                     </a>
                   </p>
                   <p>
-                    {t('协议')}：
+                    {t('License')}:
                     <a
                       href='https://www.apache.org/licenses/LICENSE-2.0'
                       target='_blank'
@@ -122,12 +120,12 @@ const Home = () => {
                       Apache-2.0 License
                     </a>
                   </p>
-                  <p>{t('启动时间')}：{getStartTimeString()}</p>
+                  <p>{t('Launch Time')}: {getStartTimeString()}</p>
                 </Card>
               </Col>
               <Col span={12}>
                 <Card
-                  title={t('系统配置')}
+                  title={t('System Configuration')}
                   headerExtraContent={
                     <span
                       style={{
@@ -135,45 +133,45 @@ const Home = () => {
                         color: 'var(--semi-color-text-1)',
                       }}
                     >
-                      {t('系统配置总览')}
+                      {t('Configuration Overview')}
                     </span>
                   }
                 >
                   <p>
-                    {t('邮箱验证')}：
+                    {t('Email Verification')}:
                     {statusState?.status?.email_verification === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                   <p>
-                    {t('GitHub 身份验证')}：
+                    {t('GitHub OAuth')}:
                     {statusState?.status?.github_oauth === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                   <p>
-                    {t('微信身份验证')}：
+                    {t('WeChat Login')}:
                     {statusState?.status?.wechat_login === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                   <p>
-                    {t('Turnstile 用户校验')}：
+                    {t('Turnstile Verification')}:
                     {statusState?.status?.turnstile_check === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                   <p>
-                    {t('Telegram 身份验证')}：
+                    {t('Telegram OAuth')}:
                     {statusState?.status?.telegram_oauth === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                   <p>
-                    {t('Linux DO 身份验证')}：
+                    {t('Linux DO OAuth')}:
                     {statusState?.status?.linuxdo_oauth === true
-                      ? t('已启用')
-                      : t('未启用')}
+                      ? t('Enabled')
+                      : t('Disabled')}
                   </p>
                 </Card>
               </Col>
@@ -185,7 +183,11 @@ const Home = () => {
           {homePageContent.startsWith('https://') ? (
             <iframe
               src={homePageContent}
-              style={{ width: '100%', height: '100vh', border: 'none' }}
+              style={{
+                width: '100%',
+                height: '100vh',
+                border: 'none'
+              }}
             />
           ) : (
             <div

@@ -9,7 +9,7 @@ const Redemption = () => {
     <>
       <Layout>
         <Layout.Header>
-        <h3>{t('管理兑换码')}</h3>
+        <h3>{t('RedirectingRedemption code')}</h3>
       </Layout.Header>
       <Layout.Content>
         <RedemptionsTable />

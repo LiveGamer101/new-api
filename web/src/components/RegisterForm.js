@@ -60,7 +60,7 @@ const RegisterForm = () => {
 
   const onSubmitWeChatVerificationCode = async () => {
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+      showInfo('Please try again in a few seconds，Turnstile In progressIf it already existsUseUser environment！');
       return;
     }
     const res = await API.get(
@@ -73,7 +73,7 @@ const RegisterForm = () => {
       setUserData(data);
       updateAPI();
       navigate('/');
-      showSuccess('登录成功！');
+      showSuccess('LoginSuccess！');
       setShowWeChatLoginModal(false);
     } else {
       showError(message);
@@ -86,16 +86,16 @@ const RegisterForm = () => {
 
   async function handleSubmit(e) {
     if (password.length < 8) {
-      showInfo('密码长度不得小于 8 位！');
+      showInfo('PasswordLength must not be less than 8 Digits！');
       return;
     }
     if (password !== password2) {
-      showInfo('两次输入的密码不一致');
+      showInfo('TwiceInputThePasswordInconsistent');
       return;
     }
     if (username && password) {
       if (turnstileEnabled && turnstileToken === '') {
-        showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+        showInfo('Please try again in a few seconds，Turnstile In progressIf it already existsUseUser environment！');
         return;
       }
       setLoading(true);
@@ -110,7 +110,7 @@ const RegisterForm = () => {
       const { success, message } = res.data;
       if (success) {
         navigate('/login');
-        showSuccess('注册成功！');
+        showSuccess('RegisterSuccess！');
       } else {
         showError(message);
       }
@@ -121,7 +121,7 @@ const RegisterForm = () => {
   const sendVerificationCode = async () => {
     if (inputs.email === '') return;
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+      showInfo('Please try again in a few seconds，Turnstile In progressIf it already existsUseUser environment！');
       return;
     }
     setLoading(true);
@@ -130,7 +130,7 @@ const RegisterForm = () => {
     );
     const { success, message } = res.data;
     if (success) {
-      showSuccess('验证码发送成功，请检查你的邮箱！');
+      showSuccess('Verification code sentSuccess，Please checkYouTheEmail！');
     } else {
       showError(message);
     }
@@ -159,7 +159,7 @@ const RegisterForm = () => {
     if (success) {
       userDispatch({ type: 'login', payload: data });
       localStorage.setItem('user', JSON.stringify(data));
-      showSuccess('登录成功！');
+      showSuccess('LoginSuccess！');
       setUserData(data);
       updateAPI();
       navigate('/');
@@ -172,7 +172,6 @@ const RegisterForm = () => {
   return (
     <div>
       <Layout>
-        <Layout.Header></Layout.Header>
         <Layout.Content>
           <div
             style={{
@@ -184,28 +183,28 @@ const RegisterForm = () => {
             <div style={{ width: 500 }}>
               <Card>
                 <Title heading={2} style={{ textAlign: 'center' }}>
-                  {t('新用户注册')}
+                  {t('NewUseUserRegister')}
                 </Title>
                 <Form size="large">
                   <Form.Input
                     field={'username'}
-                    label={t('用户名')}
-                    placeholder={t('用户名')}
+                    label={t('Username')}
+                    placeholder={t('Username')}
                     name="username"
                     onChange={(value) => handleChange('username', value)}
                   />
                   <Form.Input
                     field={'password'}
-                    label={t('密码')}
-                    placeholder={t('输入密码，最短 8 位，最长 20 位')}
+                    label={t('Password')}
+                    placeholder={t('InputPassword，Shortest 8 Digits，Longest 20 Digits')}
                     name="password"
                     type="password"
                     onChange={(value) => handleChange('password', value)}
                   />
                   <Form.Input
                     field={'password2'}
-                    label={t('确认密码')}
-                    placeholder={t('确认密码')}
+                    label={t('ConfirmPassword')}
+                    placeholder={t('ConfirmPassword')}
                     name="password2"
                     type="password"
                     onChange={(value) => handleChange('password2', value)}
@@ -214,21 +213,21 @@ const RegisterForm = () => {
                     <>
                       <Form.Input
                         field={'email'}
-                        label={t('邮箱')}
-                        placeholder={t('输入邮箱地址')}
+                        label={t('Email')}
+                        placeholder={t('InputEmailAddress')}
                         onChange={(value) => handleChange('email', value)}
                         name="email"
                         type="email"
                         suffix={
                           <Button onClick={sendVerificationCode} disabled={loading}>
-                            {t('获取验证码')}
+                            {t('ObtainVerification code')}
                           </Button>
                         }
                       />
                       <Form.Input
                         field={'verification_code'}
-                        label={t('验证码')}
-                        placeholder={t('输入验证码')}
+                        label={t('Verification code')}
+                        placeholder={t('InputVerification code')}
                         onChange={(value) => handleChange('verification_code', value)}
                         name="verification_code"
                       />
@@ -244,7 +243,7 @@ const RegisterForm = () => {
                     htmlType={'submit'}
                     onClick={handleSubmit}
                   >
-                    {t('注册')}
+                    {t('Register')}
                   </Button>
                 </Form>
                 <div
@@ -255,9 +254,9 @@ const RegisterForm = () => {
                   }}
                 >
                   <Text>
-                    {t('已有账户？')}
+                    {t('AlreadyHaveAllow new users？')}
                     <Link to="/login">
-                      {t('点击登录')}
+                      {t('ClickLogin')}
                     </Link>
                   </Text>
                 </div>
@@ -267,7 +266,7 @@ const RegisterForm = () => {
                 status.linuxdo_oauth ? (
                   <>
                     <Divider margin='12px' align='center'>
-                      {t('第三方登录')}
+                      {t('TheThreeSquareLogin')}
                     </Divider>
                     <div
                       style={{
@@ -332,12 +331,12 @@ const RegisterForm = () => {
                 )}
               </Card>
               <Modal
-                title={t('微信扫码登录')}
+                title={t('WeChatScanCodeLogin')}
                 visible={showWeChatLoginModal}
                 maskClosable={true}
                 onOk={onSubmitWeChatVerificationCode}
                 onCancel={() => setShowWeChatLoginModal(false)}
-                okText={t('登录')}
+                okText={t('Login')}
                 size={'small'}
                 centered={true}
               >
@@ -352,14 +351,14 @@ const RegisterForm = () => {
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <p>
-                    {t('微信扫码关注公众号，输入「验证码」获取验证码（三分钟内有效）')}
+                    {t('WeChatScanCodeFollow the public account，Input「Verification code」ObtainVerification code（ThreeMinuteWithinConfirm reset.）')}
                   </p>
                 </div>
                 <Form size='large'>
                   <Form.Input
                     field={'wechat_verification_code'}
-                    placeholder={t('验证码')}
-                    label={t('验证码')}
+                    placeholder={t('Verification code')}
+                    label={t('Verification code')}
                     value={inputs.wechat_verification_code}
                     onChange={(value) =>
                       handleChange('wechat_verification_code', value)

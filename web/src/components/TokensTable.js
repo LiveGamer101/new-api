@@ -39,38 +39,38 @@ const TokensTable = () => {
         if (model_limits_enabled) {
           return (
             <Tag color='green' size='large'>
-              {t('已启用：限制模型')}
+              {t('AlreadyEnable：LimitModel')}
             </Tag>
           );
         } else {
           return (
             <Tag color='green' size='large'>
-              {t('已启用')}
+              {t('AlreadyEnable')}
             </Tag>
           );
         }
       case 2:
         return (
           <Tag color='red' size='large'>
-            {t('已禁用')}
+            {t('AlreadyDisable')}
           </Tag>
         );
       case 3:
         return (
           <Tag color='yellow' size='large'>
-            {t('已过期')}
+            {t('AlreadyExpired')}
           </Tag>
         );
       case 4:
         return (
           <Tag color='grey' size='large'>
-            {t('已耗尽')}
+            {t('AlreadyExhausted')}
           </Tag>
         );
       default:
         return (
           <Tag color='black' size='large'>
-            {t('未知状态')}
+            {t('UnknownStatus')}
           </Tag>
         );
     }
@@ -78,11 +78,11 @@ const TokensTable = () => {
 
   const columns = [
     {
-      title: t('名称'),
+      title: t('Name'),
       dataIndex: 'name',
     },
     {
-      title: t('状态'),
+      title: t('Status'),
       dataIndex: 'status',
       key: 'status',
       render: (text, record, index) => {
@@ -95,21 +95,21 @@ const TokensTable = () => {
       },
     },
     {
-      title: t('已用额度'),
+      title: t('AlreadyUseQuota'),
       dataIndex: 'used_quota',
       render: (text, record, index) => {
         return <div>{renderQuota(parseInt(text))}</div>;
       },
     },
     {
-      title: t('剩余额度'),
+      title: t('RemainingQuota'),
       dataIndex: 'remain_quota',
       render: (text, record, index) => {
         return (
           <div>
             {record.unlimited_quota ? (
               <Tag size={'large'} color={'white'}>
-                {t('无限制')}
+                {t('NoneLimit')}
               </Tag>
             ) : (
               <Tag size={'large'} color={'light-blue'}>
@@ -121,19 +121,19 @@ const TokensTable = () => {
       },
     },
     {
-      title: t('创建时间'),
+      title: t('CreateTime'),
       dataIndex: 'created_time',
       render: (text, record, index) => {
         return <div>{renderTimestamp(text)}</div>;
       },
     },
     {
-      title: t('过期时间'),
+      title: t('ExpiredTime'),
       dataIndex: 'expired_time',
       render: (text, record, index) => {
         return (
           <div>
-            {record.expired_time === -1 ? t('永不过期') : renderTimestamp(text)}
+            {record.expired_time === -1 ? t('ForeverNotExpired') : renderTimestamp(text)}
           </div>
         );
       },
@@ -198,7 +198,7 @@ const TokensTable = () => {
 
           } catch (e) {
             console.log(e);
-            showError(t('聊天链接配置错误，请联系管理员'));
+            showError(t('ChatUnit dollar amountConfigurationError，PleaseContactAdministrator'));
           }
         }
         return (
@@ -209,7 +209,7 @@ const TokensTable = () => {
               position='top'
             >
               <Button theme='light' type='tertiary' style={{ marginRight: 1 }}>
-                {t('查看')}
+                {t('View')}
               </Button>
             </Popover>
             <Button
@@ -220,24 +220,24 @@ const TokensTable = () => {
                 await copyText('sk-' + record.key);
               }}
             >
-              {t('复制')}
+              {t('Copy')}
             </Button>
             <SplitButtonGroup
               style={{ marginRight: 1 }}
-              aria-label={t('项目操作按钮组')}
+              aria-label={t('ItemEyeOperationPressButtonGroup')}
             >
               <Button
                 theme='light'
                 style={{ color: 'rgba(var(--semi-teal-7), 1)' }}
                 onClick={() => {
                   if (chatsArray.length === 0) {
-                    showError(t('请联系管理员配置聊天链接'));
+                    showError(t('PleaseContactAdministratorConfigurationChatUnit dollar amount'));
                   } else {
                     onOpenLink('default', chats[0][Object.keys(chats[0])[0]], record);
                   }
                 }}
               >
-                {t('聊天')}
+                {t('Chat')}
               </Button>
               <Dropdown
                 trigger='click'
@@ -255,8 +255,8 @@ const TokensTable = () => {
               </Dropdown>
             </SplitButtonGroup>
             <Popconfirm
-              title={t('确定是否要删除此令牌？')}
-              content={t('此修改将不可逆')}
+              title={t('Confirm whether toDeleteThisToken？')}
+              content={t('ThisModification will be irreversible')}
               okType={'danger'}
               position={'left'}
               onConfirm={() => {
@@ -266,7 +266,7 @@ const TokensTable = () => {
               }}
             >
               <Button theme='light' type='danger' style={{ marginRight: 1 }}>
-                {t('删除')}
+                {t('Delete')}
               </Button>
             </Popconfirm>
             {record.status === 1 ? (
@@ -278,7 +278,7 @@ const TokensTable = () => {
                   manageToken(record.id, 'disable', record);
                 }}
               >
-                {t('禁用')}
+                {t('Disable')}
               </Button>
             ) : (
               <Button
@@ -289,7 +289,7 @@ const TokensTable = () => {
                   manageToken(record.id, 'enable', record);
                 }}
               >
-                {t('启用')}
+                {t('Enable')}
               </Button>
             )}
             <Button
@@ -301,7 +301,7 @@ const TokensTable = () => {
                 setShowEdit(true);
               }}
             >
-              {t('编辑')}
+              {t('Edit')}
             </Button>
           </div>
         );
@@ -370,10 +370,10 @@ const TokensTable = () => {
 
   const copyText = async (text) => {
     if (await copy(text)) {
-      showSuccess(t('已复制到剪贴板！'));
+      showSuccess(t('AlreadyCopyTo clipboard！'));
     } else {
       Modal.error({
-        title: t('无法复制到剪贴板，请手动复制'),
+        title: t('NoneMethodCopyTo clipboard，PleaseManualCopy'),
         content: text,
         size: 'large',
       });
@@ -437,7 +437,7 @@ const TokensTable = () => {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('操作成功完成！');
+      showSuccess('OperationSuccessDone！');
       let token = res.data.data;
       let newTokens = [...tokens];
       // let realIdx = (activePage - 1) * ITEMS_PER_PAGE + idx;
@@ -539,29 +539,29 @@ const TokensTable = () => {
       >
         <Form.Input
           field='keyword'
-          label={t('搜索关键字')}
-          placeholder={t('令牌名称')}
+          label={t('SearchKeyword')}
+          placeholder={t('TokenName')}
           value={searchKeyword}
           loading={searching}
           onChange={handleKeywordChange}
         />
         <Form.Input
           field='token'
-          label={t('密钥')}
-          placeholder={t('密钥')}
+          label={t('Key')}
+          placeholder={t('Key')}
           value={searchToken}
           loading={searching}
           onChange={handleSearchTokenChange}
         />
         <Button
-          label={t('查询')}
+          label={t('Query')}
           type='primary'
           htmlType='submit'
           className='btn-margin-right'
           onClick={searchTokens}
           style={{ marginRight: 8 }}
         >
-          {t('查询')}
+          {t('Query')}
         </Button>
       </Form>
       <Divider style={{margin:'15px 0'}}/>
@@ -577,14 +577,14 @@ const TokensTable = () => {
               setShowEdit(true);
             }}
         >
-            {t('添加令牌')}
+            {t('AddToken')}
         </Button>
         <Button
-            label={t('复制所选令牌')}
+            label={t('CopySelectedToken')}
             type='warning'
             onClick={async () => {
               if (selectedKeys.length === 0) {
-                showError(t('请至少选择一个令牌！'));
+                showError(t('PleaseAt leastSelectOneItemsToken！'));
                 return;
               }
               let keys = '';
@@ -595,7 +595,7 @@ const TokensTable = () => {
               await copyText(keys);
             }}
         >
-          {t('复制所选令牌到剪贴板')}
+          {t('CopySelectedTokenTo clipboard')}
         </Button>
       </div>
 
@@ -610,7 +610,7 @@ const TokensTable = () => {
           showSizeChanger: true,
           pageSizeOptions: [10, 20, 50, 100],
           formatPageText: (page) =>
-            t('第 {{start}} - {{end}} 条，共 {{total}} 条', {
+            t('The {{start}} - {{end}} Item，Total {{total}} Item', {
               start: page.currentStart,
               end: page.currentEnd,
               total: tokens.length
